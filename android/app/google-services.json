@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "726384647343",
+    "project_id": "veggo-fresh-865c2",
+    "storage_bucket": "veggo-fresh-865c2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726384647343:android:bbb7e2b0db8955d102885a",
+        "android_client_info": {
+          "package_name": "com.application.vegGoDelivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsjiV7UDbVmmbJA6kLMMDEu2rMQNvhVug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726384647343:android:0968f12540c336f602885a",
+        "android_client_info": {
+          "package_name": "com.example.vegon_user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsjiV7UDbVmmbJA6kLMMDEu2rMQNvhVug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726384647343:android:8d937822a5f191b702885a",
+        "android_client_info": {
+          "package_name": "com.example.vendor_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsjiV7UDbVmmbJA6kLMMDEu2rMQNvhVug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
