@@ -40,7 +40,7 @@ class ApiEndpoints {
   static const String googleMapsGeocodeApi =
       'https://maps.googleapis.com/maps/api/geocode/json';
   static const String googleMapsApiKey =
-      'AIzaSyB-s6iI0DPblvyH-8qocSqi6yQo9vggXMs';
+      String.fromEnvironment('MAPS_API_KEY', defaultValue: '');
 
   // Razorpay API
   static const String razorpayKey = 'rzp_test_TTUpC17cOLtNl8';

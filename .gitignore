@@ -33,6 +33,12 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Secrets and local configurations
+**/android/local.properties
+**/android/key.properties
+*.env
+.env*
+
 # Symbolication related
 app.*.symbols
 
