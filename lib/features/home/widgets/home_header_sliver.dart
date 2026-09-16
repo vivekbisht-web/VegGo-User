@@ -312,19 +312,7 @@ class HomeHeader extends StatelessWidget {
                           ),
                         );
                       }
-                      return Container(
-                        width: 30,
-                        height: 30,
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.mic_none_rounded,
-                          color: AppColors.surface,
-                          size: 17,
-                        ),
-                      );
+                      return const SizedBox.shrink();
                     }),
                   ],
                 ),
