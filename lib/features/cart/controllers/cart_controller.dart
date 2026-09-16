@@ -148,7 +148,6 @@ class CartController extends GetxController {
           (sum, item) => sum + item.quantity,
         );
         cartItems.refresh();
-        SnackbarHelper.showCartSnackbar();
         return true;
       } else if (cartData == true) {
         // Successfully added, but no cart data returned. Fetch it.
@@ -158,12 +157,11 @@ class CartController extends GetxController {
           (sum, item) => sum + item.quantity,
         );
         cartItems.refresh();
-        SnackbarHelper.showCartSnackbar();
         return true;
       }
 
       if (showSnackbarOnError) {
-        _showErrorSnackbar("Unable to add product to cart.");
+        _showErrorSnackbar(AppStrings.unableToAddProduct);
       }
       return false;
     } catch (e, stackTrace) {
@@ -172,7 +170,7 @@ class CartController extends GetxController {
         final rawMsg = e.toString().replaceAll('Exception: ', '').trim();
         final cleanMsg = rawMsg.isNotEmpty
             ? rawMsg.split('\n')[0]
-            : "Unable to add product to cart.";
+            : AppStrings.unableToAddProduct;
         _showErrorSnackbar(cleanMsg);
       }
       return false;
@@ -216,7 +214,7 @@ class CartController extends GetxController {
         cartItems.refresh();
       }
     } catch (e) {
-      _showErrorSnackbar("Failed to update item quantity.");
+      _showErrorSnackbar(AppStrings.failedToUpdateQuantity);
     } finally {
       isProcessingOperation.value = false;
     }
@@ -246,7 +244,7 @@ class CartController extends GetxController {
         cartItems.refresh();
       }
     } catch (e) {
-      _showErrorSnackbar("Failed to update item quantity.");
+      _showErrorSnackbar(AppStrings.failedToUpdateQuantity);
     } finally {
       isProcessingOperation.value = false;
     }
@@ -283,7 +281,7 @@ class CartController extends GetxController {
         }
       }
     } catch (e) {
-      _showErrorSnackbar("Failed to remove item.");
+      _showErrorSnackbar(AppStrings.failedToRemoveItem);
     } finally {
       isProcessingOperation.value = false;
     }
@@ -311,7 +309,7 @@ class CartController extends GetxController {
 
   bool applyPromoCode(String promoCode) {
     if (promoCode.trim().isEmpty) {
-      _showErrorSnackbar("Please enter a promo code");
+      _showErrorSnackbar(AppStrings.pleaseEnterPromo);
       return false;
     }
 
@@ -320,7 +318,7 @@ class CartController extends GetxController {
     if (code == 'FRESH20') {
       if (subtotal < 150.0) {
         _showErrorSnackbar(
-          "Minimum order value for FRESH20 is ${AppStrings.rupeeSymbol}150",
+          "${AppStrings.minimumOrderValue} FRESH20: ${AppStrings.rupeeSymbol}150",
         );
         return false;
       }
@@ -333,7 +331,7 @@ class CartController extends GetxController {
     } else if (code == 'FREESHIP') {
       if (subtotal < 99.0) {
         _showErrorSnackbar(
-          "Minimum order value for FREESHIP is ${AppStrings.rupeeSymbol}99",
+          "${AppStrings.minimumOrderValue} FREESHIP: ${AppStrings.rupeeSymbol}99",
         );
         return false;
       }
@@ -347,7 +345,7 @@ class CartController extends GetxController {
       isFreeShipping.value = false;
       return true;
     } else {
-      _showErrorSnackbar("Invalid coupon code");
+      _showErrorSnackbar(AppStrings.invalidCouponCode);
       return false;
     }
   }

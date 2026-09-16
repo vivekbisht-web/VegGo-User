@@ -9,6 +9,7 @@ import 'package:vegon_user/features/home/screens/home_screen.dart';
 import 'package:vegon_user/features/orders/screens/my_orders_screen.dart';
 import 'package:vegon_user/features/profile/screens/favorites_screen.dart';
 import 'package:vegon_user/features/profile/screens/profile_screen.dart';
+import 'package:vegon_user/core/widgets/floating_cart_bar.dart';
 import '../controllers/dashboard_controller.dart';
 import '../widgets/app_drawer.dart';
 
@@ -49,7 +50,13 @@ class DashboardScreen extends StatelessWidget {
                   : const SizedBox.shrink(),
             ),
           ),
-          bottomNavigationBar: _buildCustomBottomNavBar(context),
+          bottomNavigationBar: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const FloatingCartBar(bottomPadding: 6),
+              _buildCustomBottomNavBar(context),
+            ],
+          ),
         ),
       ),
     );
@@ -68,11 +75,11 @@ class DashboardScreen extends StatelessWidget {
               width: 1,
             ),
           ),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Colors.black26,
+              color: AppColors.black.withValues(alpha: 0.08),
               blurRadius: 8,
-              offset: Offset(0, -2),
+              offset: const Offset(0, -2),
             ),
           ],
         ),

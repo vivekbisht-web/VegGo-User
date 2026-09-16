@@ -6,6 +6,7 @@ import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/widgets/custom_app_bar.dart';
 import 'package:vegon_user/core/widgets/empty_state_widget.dart';
+import 'package:vegon_user/core/widgets/floating_cart_bar.dart';
 import 'package:vegon_user/features/category/widgets/category_product_card.dart';
 
 class RelatedItemsScreen extends StatelessWidget {
@@ -25,7 +26,7 @@ class RelatedItemsScreen extends StatelessWidget {
           ? const Center(
               child: EmptyStateWidget(
                 title: AppStrings.noProductsFound,
-                subtitle: 'No related items found for this product.',
+                subtitle: AppStrings.noRelatedItemsFound,
                 icon: Icons.inventory_2_outlined,
               ),
             )
@@ -43,6 +44,7 @@ class RelatedItemsScreen extends StatelessWidget {
                 return CategoryProductCard(product: product);
               },
             ),
+      bottomNavigationBar: const FloatingCartBar(bottomPadding: 16),
     );
   }
 }

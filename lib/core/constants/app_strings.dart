@@ -37,6 +37,14 @@ class AppStrings {
       'Requested quantity exceeds available stock.';
   static const String invalidQuantity = 'Invalid item quantity.';
   static const String invalidPrice = 'Invalid item price.';
+  static const String unableToAddProduct = 'Unable to add product to cart.';
+  static const String failedToUpdateQuantity = 'Failed to update item quantity.';
+  static const String failedToRemoveItem = 'Failed to remove item.';
+  static const String pleaseEnterPromo = 'Please enter a promo code';
+  static const String invalidCouponCode = 'Invalid coupon code';
+  static const String minimumOrderValue = 'Minimum order value for';
+  static const String noRelatedItemsFound =
+      'No related items found for this product.';
   static const String total = 'Total';
   static const String proceedToCheckout = 'Proceed to Checkout';
   static const String carbonNeutralDesc =
@@ -561,6 +569,8 @@ class AppStrings {
   static const String searchVegetables = 'Search vegetables...';
   static const String sortByPopular = 'Sort by Popular';
   static const String viewCart = 'View Cart';
+  static const String itemsInCart = 'Items in Cart';
+  static const String itemInCart = 'Item in Cart';
   static const String youSaveOnOrderPrefix = 'You save ';
   static const String youSaveOnOrderSuffix = ' on this order';
   static const String itemsCountSuffix = ' Items';
