@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
+import '../../../core/constants/app_strings.dart';
 import '../controllers/orders_controller.dart';
 import '../models/order_track_response_model.dart';
+import 'order_tracking_animated_stepper.dart';
 
 class OrderTrackingStatusCard extends StatelessWidget {
   const OrderTrackingStatusCard({super.key});
@@ -20,14 +22,21 @@ class OrderTrackingStatusCard extends StatelessWidget {
       if (ordersController.isTrackingLoading.value && trackData == null) {
         return const Padding(
           padding: EdgeInsets.symmetric(vertical: 40),
-          child: Center(child: CircularProgressIndicator()),
+          child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
         );
       }
 
       if (trackData == null) {
-        return const Padding(
-          padding: EdgeInsets.symmetric(vertical: 24),
-          child: Center(child: Text('No tracking data available')),
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Center(
+            child: Text(
+              AppStrings.noTrackingData,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
         );
       }
 
@@ -70,7 +79,7 @@ class OrderTrackingStatusCard extends StatelessWidget {
                             Text(
                               trackData.orderNumber!,
                               style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(color: AppColors.textSecondary),
+                                    ?.copyWith(color: AppColors.textSecondary),
                             ),
                         ],
                       ),
@@ -100,7 +109,8 @@ class OrderTrackingStatusCard extends StatelessWidget {
                   ],
                 ),
                 AppSpacing.responsiveHeight(0.04),
-                if (timeline.isNotEmpty) _AnimatedStepper(timeline: timeline),
+                if (timeline.isNotEmpty)
+                  OrderTrackingAnimatedStepper(timeline: timeline),
               ],
             ),
           ),
@@ -132,7 +142,7 @@ class OrderTrackingStatusCard extends StatelessWidget {
             _buildInfoTile(
               context,
               icon: Icons.location_on_outlined,
-              title: 'Delivery Address',
+              title: AppStrings.deliveryAddress,
               subtitle: trackData.deliveryAddress,
             ),
 
@@ -149,15 +159,15 @@ class OrderTrackingStatusCard extends StatelessWidget {
   String _statusLabel(String? status) {
     switch (status) {
       case 'PLACED':
-        return 'Order Placed';
+        return AppStrings.orderPlaced;
       case 'PREPARED':
-        return 'Prepared';
+        return AppStrings.orderPrepared;
       case 'OUT_FOR_DELIVERY':
-        return 'Out for Delivery';
+        return AppStrings.outForDeliveryStatus;
       case 'DELIVERED':
-        return 'Delivered';
+        return AppStrings.delivered;
       default:
-        return status ?? 'Tracking Order';
+        return status ?? AppStrings.trackingOrder;
     }
   }
 
@@ -166,14 +176,14 @@ class OrderTrackingStatusCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: AppSpacing.screenWidth * 0.03),
       padding: AppSpacing.paddingResponsiveAll(0.04),
       decoration: BoxDecoration(
-        color: AppColors.secondary.withOpacity(0.15),
+        color: AppColors.secondary.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.04),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            ' this is  OTP',
+            AppStrings.otpPrefix,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
@@ -275,7 +285,7 @@ class OrderTrackingStatusCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Order Items',
+            AppStrings.orderItems,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -300,7 +310,7 @@ class OrderTrackingStatusCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '₹${(item.subTotal ?? 0).toStringAsFixed(2)}',
+                    '${AppStrings.currencySymbol}${(item.subTotal ?? 0).toStringAsFixed(2)}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w500,
@@ -310,19 +320,22 @@ class OrderTrackingStatusCard extends StatelessWidget {
               ),
             ),
           ),
-          const Divider(height: 20),
+          Divider(
+            height: 20,
+            color: AppColors.borderLight.withValues(alpha: 0.8),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total',
+                AppStrings.total,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.textPrimary,
                 ),
               ),
               Text(
-                '₹${(trackData.total ?? 0).toStringAsFixed(2)}',
+                '${AppStrings.currencySymbol}${(trackData.total ?? 0).toStringAsFixed(2)}',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.primary,
@@ -339,219 +352,5 @@ class OrderTrackingStatusCard extends StatelessWidget {
     // Requires the `url_launcher` package in pubspec.yaml.
     // final uri = Uri(scheme: 'tel', path: phone);
     // if (await canLaunchUrl(uri)) await launchUrl(uri);
-  }
-}
-
-/// Stepper row with a bike icon that continuously animates back and forth
-/// along the line segment of whichever step is currently active
-/// (the "On the way" step), giving a "moving/in-transit" feel.
-class _AnimatedStepper extends StatefulWidget {
-  final List<OrderStatusTimeline> timeline;
-
-  const _AnimatedStepper({required this.timeline});
-
-  @override
-  State<_AnimatedStepper> createState() => _AnimatedStepperState();
-}
-
-class _AnimatedStepperState extends State<_AnimatedStepper>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _bikeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1400),
-    )..repeat(reverse: true);
-
-    _bikeAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final sorted = [...widget.timeline]
-      ..sort((a, b) => (a.step ?? 0).compareTo(b.step ?? 0));
-
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: List.generate(sorted.length, (index) {
-        final step = sorted[index];
-        final isCompleted = step.completedAt != null && step.current != true;
-        final isCurrent = step.current == true;
-        final isFirst = index == 0;
-        final isLast = index == sorted.length - 1;
-
-        // Bike only animates on the connector line that comes *before*
-        // the currently active step (i.e. the segment being travelled).
-        final bool animateLeadingLine = isCurrent && !isFirst;
-
-        return _buildStep(
-          context,
-          step.label ?? 'Step ${step.step ?? index + 1}',
-          isCompleted || isCurrent,
-          isCurrent: isCurrent,
-          isFirst: isFirst,
-          isLast: isLast,
-          animateLeadingLine: animateLeadingLine,
-        );
-      }),
-    );
-  }
-
-  Widget _buildStep(
-    BuildContext context,
-    String label,
-    bool isCompleted, {
-    bool isCurrent = false,
-    bool isFirst = false,
-    bool isLast = false,
-    bool animateLeadingLine = false,
-  }) {
-    final Color activeColor = AppColors.primary;
-    final Color inactiveColor = AppColors.borderLight;
-    const double lineHeight = 3;
-    const double bikeSize = 20;
-
-    return Expanded(
-      child: Column(
-        children: [
-          Row(
-            children: [
-              // ---- Leading connector line (with bike if active) ----
-              Expanded(
-                child: isFirst
-                    ? const SizedBox()
-                    : animateLeadingLine
-                    ? SizedBox(
-                        height: bikeSize,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Container(height: lineHeight, color: activeColor),
-                            AnimatedBuilder(
-                              animation: _bikeAnimation,
-                              builder: (context, child) {
-                                return LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    final maxOffset =
-                                        constraints.maxWidth - bikeSize;
-                                    final dx =
-                                        _bikeAnimation.value *
-                                        (maxOffset < 0 ? 0 : maxOffset);
-                                    return Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: dx),
-                                        child: child,
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: Container(
-                                width: bikeSize,
-                                height: bikeSize,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppColors.surface,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.15),
-                                      blurRadius: 3,
-                                      offset: const Offset(0, 1),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Icons.pedal_bike,
-                                  size: 14,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    : Container(
-                        height: lineHeight,
-                        color: isCompleted ? activeColor : inactiveColor,
-                      ),
-              ),
-
-              // ---- Step circle ----
-              Container(
-                width: AppSpacing.screenWidth * 0.06,
-                height: AppSpacing.screenWidth * 0.06,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isCompleted && !isCurrent
-                      ? activeColor
-                      : (isCurrent ? AppColors.surface : AppColors.background),
-                  border: Border.all(
-                    color: isCompleted || isCurrent
-                        ? activeColor
-                        : inactiveColor,
-                    width: 2,
-                  ),
-                ),
-                child: (isCompleted && !isCurrent)
-                    ? const Icon(
-                        Icons.check,
-                        size: 14,
-                        color: AppColors.surface,
-                      )
-                    : (isCurrent
-                          ? Center(
-                              child: Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            )
-                          : null),
-              ),
-
-              // ---- Trailing connector line ----
-              Expanded(
-                child: isLast
-                    ? const SizedBox()
-                    : Container(
-                        height: lineHeight,
-                        color: isCompleted && !isCurrent
-                            ? activeColor
-                            : inactiveColor,
-                      ),
-              ),
-            ],
-          ),
-          AppSpacing.h8,
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: isCompleted || isCurrent
-                  ? AppColors.textPrimary
-                  : AppColors.textSecondary,
-              fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
   }
 }

@@ -16,6 +16,7 @@ class AppStrings {
   static const String removeItemDescSuffix = ' from your cart?';
   static const String remove = 'Remove';
   static const String orderSummary = 'Order Summary';
+  static const String orderItems = 'Order Items';
   static const String subtotal = 'Subtotal';
   static const String deliveryFee = 'Delivery Fee';
   static const String deliveryFeeInfo = 'Delivery Fee Information';
@@ -399,6 +400,15 @@ class AppStrings {
   static const String mapTileUrl =
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   static const String mapTileUserAgent = 'com.example.vegon_user';
+  static const String liveOrderTracking = 'Live Order Tracking';
+  static const String deliveryPartner = 'Delivery Partner';
+  static const String deliveryLocation = 'Delivery Location';
+  static const String etaPrefix = 'ETA: ';
+  static const String arrivingIn = 'Arriving in';
+  static const String recenterMap = 'Recenter Map';
+  static const String orderLiveStatus = 'Live Status';
+  static const String dropLocation = 'Drop Location';
+  static const String pickupLocation = 'Pickup Store';
   static const String invalidEmailError = 'Please enter a valid email';
   static const String networkError = 'Please check your internet connection';
   static const String resendCodeIn = 'Resend code in ';
@@ -604,7 +614,12 @@ class AppStrings {
   static const String viewAllOrdersAction = 'View All Orders >';
   static const String toPay = 'To Pay';
   static const String processing = 'Processing';
+  static const String orderPlaced = 'Order Placed';
+  static const String orderPrepared = 'Prepared';
   static const String outForDeliveryStatus = 'Out for Delivery';
+  static const String trackingOrder = 'Tracking Order';
+  static const String noTrackingData = 'No tracking data available';
+  static const String otpPrefix = 'OTP: ';
   static const String cancelled = 'Cancelled';
   static const String manageAddresses = 'Manage Addresses';
   static const String manageAddressesDesc =

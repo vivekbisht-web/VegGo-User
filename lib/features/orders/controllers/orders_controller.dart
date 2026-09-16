@@ -175,7 +175,9 @@ class OrdersController extends GetxController {
 
   Future<void> fetchOrderTrack(String orderId) async {
     if (orderId.isEmpty) return;
-    isTrackingLoading.value = true;
+    if (orderTrackingData.value == null) {
+      isTrackingLoading.value = true;
+    }
     try {
       final response = await _ordersRepo.getOrderTrack(orderId);
       if (response != null && response.data != null) {
