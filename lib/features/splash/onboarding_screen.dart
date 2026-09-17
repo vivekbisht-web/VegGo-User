@@ -8,7 +8,7 @@ import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/widgets/custom_button.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/auth/screens/login_screen.dart';
-import 'package:vegon_user/features/auth/screens/register_screen.dart';
+//import 'package:vegon_user/features/auth/screens/register_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -39,10 +39,7 @@ class OnboardingScreen extends StatelessWidget {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: [
-                          AppColors.transparent,
-                          AppColors.background,
-                        ],
+                        colors: [AppColors.transparent, AppColors.background],
                       ),
                     ),
                   ),
@@ -116,31 +113,17 @@ class OnboardingScreen extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  AppSpacing.responsiveHeight(0.04),
 
-                  CustomButton(
-                    text: AppStrings.getStarted,
-                    icon: Icons.arrow_forward,
-                    onPressed: () {
-                      Get.to(
-                        () => const RegisterScreen(),
-                        transition: Transition.rightToLeft,
-                      );
-                    },
-                  ),
-                  AppSpacing.responsiveHeight(0.02),
-
-                  CustomButton(
-                    text: AppStrings.login,
-                    isOutlined: true,
-                    onPressed: () {
-                      Get.to(
-                        () => const LoginScreen(),
-                        transition: Transition.rightToLeft,
-                      );
-                    },
-                  ),
-
+                  // CustomButton(
+                  //   text: AppStrings.login,
+                  //   isOutlined: true,
+                  //   onPressed: () {
+                  //     Get.to(
+                  //       () => const LoginScreen(),
+                  //       transition: Transition.rightToLeft,
+                  //     );
+                  //   },
+                  // ),
                   AppSpacing.responsiveHeight(0.04),
 
                   Row(
@@ -212,75 +195,81 @@ class OnboardingScreen extends StatelessWidget {
                   ),
 
                   AppSpacing.responsiveHeight(0.04),
+
+                  CustomButton(
+                    text: AppStrings.getStarted,
+                    icon: Icons.arrow_forward,
+                    // onPressed: () {
+                    //   Get.to(
+                    //     () => const RegisterScreen(),
+                    //     transition: Transition.rightToLeft,
+                    //   );
+                    // },
+                    onPressed: () {
+                      Get.to(
+                        () => const LoginScreen(),
+                        transition: Transition.rightToLeft,
+                      );
+                    },
+                  ),
+                  AppSpacing.responsiveHeight(0.02),
                   const Divider(color: AppColors.borderLight, height: 1),
                   AppSpacing.responsiveHeight(0.03),
 
-                  RichText(
-                    text: TextSpan(
-                      text: AppStrings.joinFamiliesPrefix,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: AppStrings.joinFamiliesHighlight,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        TextSpan(text: AppStrings.joinFamiliesSuffix),
-                      ],
-                    ),
-                  ),
-                  AppSpacing.responsiveHeight(0.015),
+                  // RichText(
+                  //   text: TextSpan(
+                  //     text: AppStrings.joinFamiliesPrefix,
+                  //     style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  //       color: AppColors.textSecondary,
+                  //       fontWeight: FontWeight.w500,
+                  //     ),
+                  //     children: [
+                  //       TextSpan(
+                  //         text: AppStrings.joinFamiliesHighlight,
+                  //         style: Theme.of(context).textTheme.labelSmall
+                  //             ?.copyWith(
+                  //               color: AppColors.primary,
+                  //               fontWeight: FontWeight.bold,
+                  //             ),
+                  //       ),
+                  //       TextSpan(text: AppStrings.joinFamiliesSuffix),
+                  //     ],
+                  //   ),
+                  // ),
+                  // AppSpacing.responsiveHeight(0.015),
 
-                  Row(
-                    children: [
-                      _buildAvatar(
-                        AppImages.avatar1,
-                        0,
-                        AppColors.background,
-                      ),
-                      _buildAvatar(
-                        AppImages.avatar2,
-                        1,
-                        AppColors.background,
-                      ),
-                      _buildAvatar(
-                        AppImages.avatar3,
-                        2,
-                        AppColors.background,
-                      ),
-                      Transform.translate(
-                        offset: Offset(AppSpacing.screenWidth * -0.09, 0),
-                        child: Container(
-                          width: AppSpacing.screenWidth * 0.08,
-                          height: AppSpacing.screenWidth * 0.08,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppColors.secondary,
-                            border: Border.all(
-                              color: AppColors.background,
-                              width: 2,
-                            ),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            AppStrings.eightKPlus,
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.surface,
-                                ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  AppSpacing.responsiveHeight(0.05),
+                  // Row(
+                  //   children: [
+                  //     _buildAvatar(AppImages.avatar1, 0, AppColors.background),
+                  //     _buildAvatar(AppImages.avatar2, 1, AppColors.background),
+                  //     _buildAvatar(AppImages.avatar3, 2, AppColors.background),
+                  //     Transform.translate(
+                  //       offset: Offset(AppSpacing.screenWidth * -0.09, 0),
+                  //       child: Container(
+                  //         width: AppSpacing.screenWidth * 0.08,
+                  //         height: AppSpacing.screenWidth * 0.08,
+                  //         decoration: BoxDecoration(
+                  //           shape: BoxShape.circle,
+                  //           color: AppColors.secondary,
+                  //           border: Border.all(
+                  //             color: AppColors.background,
+                  //             width: 2,
+                  //           ),
+                  //         ),
+                  //         alignment: Alignment.center,
+                  //         child: Text(
+                  //           AppStrings.eightKPlus,
+                  //           style: Theme.of(context).textTheme.labelSmall
+                  //               ?.copyWith(
+                  //                 fontWeight: FontWeight.bold,
+                  //                 color: AppColors.surface,
+                  //               ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+                  // AppSpacing.responsiveHeight(0.05),
                 ],
               ),
             ),
@@ -290,25 +279,25 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAvatar(String url, int index, Color borderColor) {
-    return Transform.translate(
-      offset: Offset((AppSpacing.screenWidth * -0.03) * index, 0),
-      child: Container(
-        width: AppSpacing.screenWidth * 0.08,
-        height: AppSpacing.screenWidth * 0.08,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: borderColor, width: 2),
-        ),
-        child: ClipOval(
-          child: CustomImageView(
-            imageUrl: url,
-            width: AppSpacing.screenWidth * 0.08,
-            height: AppSpacing.screenWidth * 0.08,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildAvatar(String url, int index, Color borderColor) {
+  //   return Transform.translate(
+  //     offset: Offset((AppSpacing.screenWidth * -0.03) * index, 0),
+  //     child: Container(
+  //       width: AppSpacing.screenWidth * 0.08,
+  //       height: AppSpacing.screenWidth * 0.08,
+  //       decoration: BoxDecoration(
+  //         shape: BoxShape.circle,
+  //         border: Border.all(color: borderColor, width: 2),
+  //       ),
+  //       child: ClipOval(
+  //         child: CustomImageView(
+  //           imageUrl: url,
+  //           width: AppSpacing.screenWidth * 0.08,
+  //           height: AppSpacing.screenWidth * 0.08,
+  //           fit: BoxFit.cover,
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

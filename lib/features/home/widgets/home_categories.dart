@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
@@ -40,6 +39,7 @@ class HomeCategories extends StatelessWidget {
 
       return GridView.builder(
         shrinkWrap: true,
+        padding: AppSpacing.paddingZero,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: totalCount,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

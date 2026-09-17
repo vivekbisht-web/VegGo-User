@@ -227,8 +227,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-
-
   Widget _buildNotificationButton(BuildContext context) {
     return InkWell(
       onTap: () {
@@ -259,6 +257,4 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
-
-
 }

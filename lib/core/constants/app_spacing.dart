@@ -124,7 +124,7 @@ class AppSpacing {
   static const double categoryMoreSquareRadius = 3.5;
   static const double categoryMoreSpacing = 3.5;
   static const double moreIconRotationAngle = 0.785398;
-  static const EdgeInsets categoryCardPadding = EdgeInsets.fromLTRB(4.0, 8.0, 4.0, 8.0);
+  static const EdgeInsets categoryCardPadding = EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 4.0);
 
   static const double sectionHeaderTitleSize = 16.0;
   static const double sectionHeaderActionSize = 12.0;

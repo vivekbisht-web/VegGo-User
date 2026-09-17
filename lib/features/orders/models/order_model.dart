@@ -1,4 +1,3 @@
-//
 import 'order_history_response_model.dart';
 
 enum OrderStatus {
@@ -197,7 +196,7 @@ class OrderModel {
 
     final List<dynamic> rawItems = item.items ?? [];
     final List<String> thumbnails = (item.itemThumbnails ?? [])
-        .map((e) => e?.toString() ?? '')
+        .map((e) => e.toString())
         .toList();
 
     final List<OrderItemModel> mappedItems = [];

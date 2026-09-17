@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
@@ -25,8 +24,6 @@ class ProductDetailsScreen extends StatelessWidget {
             ? Get.find<ProductDetailsController>()
             : Get.put(ProductDetailsController());
     
-    // Fallback if accessed without routing arguments. ProductDetailsController 
-    // now handles initialization internally via Get.arguments, or falls back to this widget's productData.
     final passedData = productData ?? (Get.arguments as Map<String, dynamic>? ?? {});
     final Map<String, dynamic> mergedProductData = Map<String, dynamic>.from(passedData);
 
@@ -39,13 +36,22 @@ class ProductDetailsScreen extends StatelessWidget {
             AppSpacing.h12,
 
             Expanded(
-              child: SingleChildScrollView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ProductHeroSection(productData: mergedProductData),
+              child: RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: () async {
+                  final id = mergedProductData['id']?.toString() ?? '';
+                  if (id.isNotEmpty) {
+                    await controller.fetchProductDetails(id);
+                  }
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ProductHeroSection(productData: mergedProductData),
                     AppSpacing.h16,
 
                     const ProductTrustBanner(),
@@ -138,6 +144,7 @@ class ProductDetailsScreen extends StatelessWidget {
                 ),
               ),
             ),
+          ),
 
             ProductBottomBar(productData: mergedProductData),
           ],

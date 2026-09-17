@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
@@ -41,6 +40,7 @@ class HomeAllProductsGrid extends StatelessWidget {
 
       return GridView.builder(
         shrinkWrap: true,
+        padding: AppSpacing.paddingZero,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: products.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

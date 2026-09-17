@@ -1,9 +1,7 @@
-//
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vegon_user/core/constants/api_endpoints.dart';
 import 'package:vegon_user/core/network/api_client.dart';
 import '../../../core/constants/app_colors.dart';
@@ -14,7 +12,6 @@ import '../../../routes/app_routes.dart';
 import '../../cart/controllers/cart_controller.dart';
 import '../../orders/controllers/orders_controller.dart';
 import '../../profile/controllers/address_controller.dart';
-import '../services/auth_service.dart';
 
 class AuthController extends GetxController {
   final ApiClient _apiClient = ApiClient(baseUrl: ApiEndpoints.baseUrl);

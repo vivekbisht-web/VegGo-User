@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
@@ -72,23 +71,30 @@ class WalletScreen extends StatelessWidget {
             AppSpacing.responsiveHeight(0.02),
 
             Expanded(
-              child: ListView(
-                children: [
-                  _buildTransactionTile(
-                    context,
-                    title: 'Cashback Received',
-                    subtitle: 'Jul 24, 2026',
-                    amount: '+${AppStrings.currencySymbol}50.00',
-                    isCredit: true,
-                  ),
-                  _buildTransactionTile(
-                    context,
-                    title: 'Paid for Order #DM-2940110',
-                    subtitle: 'Jul 22, 2026',
-                    amount: '-${AppStrings.currencySymbol}230.00',
-                    isCredit: false,
-                  ),
-                ],
+              child: RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: () async {
+                  await Future.delayed(const Duration(milliseconds: 500));
+                },
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    _buildTransactionTile(
+                      context,
+                      title: 'Cashback Received',
+                      subtitle: 'Jul 24, 2026',
+                      amount: '+${AppStrings.currencySymbol}50.00',
+                      isCredit: true,
+                    ),
+                    _buildTransactionTile(
+                      context,
+                      title: 'Paid for Order #DM-2940110',
+                      subtitle: 'Jul 22, 2026',
+                      amount: '-${AppStrings.currencySymbol}230.00',
+                      isCredit: false,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

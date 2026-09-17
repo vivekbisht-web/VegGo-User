@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
@@ -24,25 +23,35 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const CustomAppBar(showBackButton: true, showCartButton: false),
-      body: Obx(() {
-        if (cartController.cartItems.isEmpty) {
-          return Center(
-            child: EmptyStateWidget(
-              icon: Icons.shopping_cart_outlined,
-              title: AppStrings.cartEmpty,
-              subtitle: AppStrings.cartEmptyDesc,
-              buttonText: AppStrings.startShopping,
-              onButtonPressed: () {
-                if (Get.isRegistered<DashboardController>()) {
-                  Get.find<DashboardController>().changeTabIndex(0);
-                }
-                Get.back();
-              },
-            ),
-          );
-        }
-        return CustomScrollView(
-          slivers: [
+      body: RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: () => cartController.loadCart(),
+        child: Obx(() {
+          if (cartController.cartItems.isEmpty) {
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: AppSpacing.screenHeight * 0.75,
+                child: Center(
+                  child: EmptyStateWidget(
+                    icon: Icons.shopping_cart_outlined,
+                    title: AppStrings.cartEmpty,
+                    subtitle: AppStrings.cartEmptyDesc,
+                    buttonText: AppStrings.startShopping,
+                    onButtonPressed: () {
+                      if (Get.isRegistered<DashboardController>()) {
+                        Get.find<DashboardController>().changeTabIndex(0);
+                      }
+                      Get.back();
+                    },
+                  ),
+                ),
+              ),
+            );
+          }
+          return CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
             SliverPadding(
               padding: AppSpacing.paddingSymmetric(
                 horizontal: AppSpacing.screenWidth * 0.04,
@@ -86,7 +95,8 @@ class CartScreen extends StatelessWidget {
           ],
         );
       }),
-    );
+    ),
+  );
   }
 
   Widget _buildCartHeader(BuildContext context) {

@@ -1,10 +1,8 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
-import 'package:vegon_user/core/widgets/ai_assistant_fab.dart';
 import 'package:vegon_user/core/widgets/custom_button.dart';
 import 'package:vegon_user/features/home/controllers/home_search_controller.dart';
 import 'package:vegon_user/features/home/widgets/home_header_sliver.dart';
@@ -37,7 +35,7 @@ class CategoryScreen extends StatelessWidget {
           children: [
             Column(
               children: [
-                const HomeHeader(showBackButton: false),
+                const HomeHeader(showBackButton: true),
 
                 Expanded(
                   child: Obx(() {
@@ -55,7 +53,7 @@ class CategoryScreen extends StatelessWidget {
               ],
             ),
 
-            const AiAssistantFab(bottom: 16, right: 12),
+            // const AiAssistantFab(bottom: 16, right: 12),
           ],
         ),
       ),
@@ -101,32 +99,44 @@ class _CategoryScreenContent extends StatelessWidget {
       if (controller.errorMessage.value.isNotEmpty &&
           controller.categories.isEmpty &&
           !controller.isCategoriesLoading.value) {
-        return Center(
-          child: Padding(
-            padding: AppSpacing.paddingAll16,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.error_outline_rounded,
-                  color: AppColors.error,
-                  size: 44,
+        return RefreshIndicator(
+          onRefresh: () => controller.refreshAll(),
+          color: AppColors.primary,
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              SizedBox(
+                height: AppSpacing.screenHeight * 0.5,
+                child: Center(
+                  child: Padding(
+                    padding: AppSpacing.paddingAll16,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.error_outline_rounded,
+                          color: AppColors.error,
+                          size: 44,
+                        ),
+                        AppSpacing.h12,
+                        Text(
+                          controller.errorMessage.value,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        AppSpacing.h16,
+                        CustomButton(
+                          text: AppStrings.retry,
+                          onPressed: () => controller.fetchCategories(),
+                          backgroundColor: AppColors.primary,
+                          width: 120,
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-                AppSpacing.h12,
-                Text(
-                  controller.errorMessage.value,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                AppSpacing.h16,
-                CustomButton(
-                  text: AppStrings.retry,
-                  onPressed: () => controller.fetchCategories(),
-                  backgroundColor: AppColors.primary,
-                  width: 120,
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       }

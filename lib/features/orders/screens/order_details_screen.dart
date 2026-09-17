@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
@@ -20,17 +19,35 @@ class OrderDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const CustomAppBar(showBackButton: true),
-      body: Obx(() {
-        final order =
-            controller.selectedOrder.value ??
-            (controller.orders.isNotEmpty ? controller.orders.first : null);
-        if (order == null) {
-          return const Center(child: Text(AppStrings.cartEmpty));
-        }
+      body: RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: () async {
+          if (controller.selectedOrder.value != null) {
+            await controller.fetchOrderDetails(controller.selectedOrder.value!.id);
+          } else {
+            await controller.fetchOrders(isRefresh: true);
+          }
+        },
+        child: Obx(() {
+          final order =
+              controller.selectedOrder.value ??
+              (controller.orders.isNotEmpty ? controller.orders.first : null);
+          if (order == null) {
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                SizedBox(
+                  height: AppSpacing.screenHeight * 0.7,
+                  child: const Center(child: Text(AppStrings.cartEmpty)),
+                ),
+              ],
+            );
+          }
 
-        return SingleChildScrollView(
-          padding: AppSpacing.paddingResponsiveAll(0.04),
-          child: Column(
+          return SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: AppSpacing.paddingResponsiveAll(0.04),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
@@ -245,7 +262,8 @@ class OrderDetailsScreen extends StatelessWidget {
           ),
         );
       }),
-    );
+    ),
+  );
   }
 
   Widget _buildRow(

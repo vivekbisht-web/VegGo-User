@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
@@ -37,10 +36,16 @@ class CouponsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const CustomAppBar(showBackButton: true),
-      body: ListView.separated(
-        padding: AppSpacing.paddingResponsiveAll(0.04),
-        itemCount: coupons.length,
-        separatorBuilder: (_, _) => AppSpacing.responsiveHeight(0.02),
+      body: RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: () async {
+          await Future.delayed(const Duration(milliseconds: 500));
+        },
+        child: ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: AppSpacing.paddingResponsiveAll(0.04),
+          itemCount: coupons.length,
+          separatorBuilder: (_, _) => AppSpacing.responsiveHeight(0.02),
         itemBuilder: (context, index) {
           final coupon = coupons[index];
           return Container(
@@ -115,6 +120,7 @@ class CouponsScreen extends StatelessWidget {
           );
         },
       ),
-    );
+    ),
+  );
   }
 }

@@ -1,11 +1,10 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
-import 'package:vegon_user/core/widgets/ai_assistant_fab.dart';
 import 'package:vegon_user/core/widgets/section_header.dart';
+import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:vegon_user/features/dashboard/widgets/app_drawer.dart';
 import 'package:vegon_user/features/home/controllers/home_controller.dart';
@@ -35,6 +34,9 @@ class HomeScreen extends StatelessWidget {
 
     Future<void> onRefresh() async {
       await homeController.refreshHome();
+      if (Get.isRegistered<CartController>()) {
+        await Get.find<CartController>().fetchCartBadgeCount();
+      }
     }
 
     return Scaffold(
@@ -51,7 +53,7 @@ class HomeScreen extends StatelessWidget {
               child: CustomScrollView(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
-                physics: const BouncingScrollPhysics(
+                physics: const ClampingScrollPhysics(
                   parent: AlwaysScrollableScrollPhysics(),
                 ),
                 slivers: [
@@ -74,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                               onActionTap: () =>
                                   dashboardController.changeTabIndex(1),
                             ),
-                            AppSpacing.h12,
+                            AppSpacing.h8,
                             const HomeCategories(),
                             AppSpacing.h20,
                             Obx(() {
@@ -91,7 +93,7 @@ class HomeScreen extends StatelessWidget {
                                     onActionTap: () =>
                                         dashboardController.changeTabIndex(1),
                                   ),
-                                  AppSpacing.h12,
+                                  AppSpacing.h8,
                                   const HomeBestDeals(),
                                   AppSpacing.h20,
                                 ],
@@ -111,7 +113,7 @@ class HomeScreen extends StatelessWidget {
                                     onActionTap: () =>
                                         dashboardController.changeTabIndex(1),
                                   ),
-                                  AppSpacing.h12,
+                                  AppSpacing.h8,
                                   HomeProductSection(
                                     products: homeController.freshProduce,
                                   ),
@@ -124,7 +126,7 @@ class HomeScreen extends StatelessWidget {
                               onActionTap: () =>
                                   dashboardController.changeTabIndex(1),
                             ),
-                            AppSpacing.h12,
+                            AppSpacing.h8,
                             const HomeNearbyStores(),
                             AppSpacing.h20,
                             SectionHeader(
@@ -132,7 +134,7 @@ class HomeScreen extends StatelessWidget {
                               onActionTap: () =>
                                   dashboardController.changeTabIndex(1),
                             ),
-                            AppSpacing.h12,
+                            AppSpacing.h8,
                             const HomeAllProductsGrid(),
                             AppSpacing.h32,
                           ],
@@ -144,10 +146,9 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
 
-            // const AiAssistantFab(),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
   }
 }

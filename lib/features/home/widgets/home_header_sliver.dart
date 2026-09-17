@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
@@ -19,19 +18,32 @@ import 'package:vegon_user/features/profile/screens/saved_addresses_screen.dart'
 
 class HomeHeaderSliver extends StatelessWidget {
   final bool showBackButton;
-  const HomeHeaderSliver({super.key, this.showBackButton = false});
+  final bool showMenuButton;
+  const HomeHeaderSliver({
+    super.key,
+    this.showBackButton = false,
+    this.showMenuButton = true,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      child: HomeHeader(showBackButton: showBackButton),
+      child: HomeHeader(
+        showBackButton: showBackButton,
+        showMenuButton: showMenuButton,
+      ),
     );
   }
 }
 
 class HomeHeader extends StatelessWidget {
   final bool showBackButton;
-  const HomeHeader({super.key, this.showBackButton = false});
+  final bool showMenuButton;
+  const HomeHeader({
+    super.key,
+    this.showBackButton = false,
+    this.showMenuButton = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -85,38 +97,57 @@ class HomeHeader extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _HeaderIconButton(
-                  icon: showBackButton
-                      ? Icons.arrow_back_ios_new_rounded
-                      : Icons.menu_rounded,
-                  onTap: () {
-                    if (showBackButton) {
+                if (showBackButton)
+                  InkWell(
+                    onTap: () {
                       final canPop = Navigator.canPop(context);
                       if (canPop) {
                         Get.back();
                       } else if (Get.isRegistered<DashboardController>()) {
                         Get.find<DashboardController>().changeTabIndex(0);
                       }
-                    } else {
+                    },
+                    borderRadius: BorderRadius.circular(AppSpacing.radius12),
+                    child: Container(
+                      width: 38,
+                      height: 38,
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(AppSpacing.radius12),
+                        border: Border.all(
+                          color: AppColors.chipBorder.withValues(alpha: 0.8),
+                          width: 1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.black.withValues(alpha: 0.04),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_rounded,
+                        color: AppColors.textPrimary,
+                        size: 20,
+                      ),
+                    ),
+                  )
+                else if (showMenuButton)
+                  _HeaderIconButton(
+                    icon: Icons.menu_rounded,
+                    onTap: () {
                       Scaffold.maybeOf(context)?.openDrawer();
-                    }
-                  },
-                ),
+                    },
+                  )
+                else
+                  const SizedBox.shrink(),
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     _HeaderIconButton(
                       icon: Icons.notifications_none_rounded,
                       onTap: () => Get.to(() => const NotificationScreen()),
-                    ),
-                    AppSpacing.w12,
-                    CircleAvatar(
-                      backgroundColor: AppColors.surface,
-                      radius: 16,
-                      child: _HeaderIconButton(
-                        icon: Icons.person_outline_rounded,
-                        iconColor: AppColors.darkHeaderStart,
-                        onTap: () => Get.to(() => const ProfileScreen()),
-                      ),
                     ),
                     AppSpacing.w12,
                     Obx(() {
@@ -127,6 +158,16 @@ class HomeHeader extends StatelessWidget {
                         onTap: () => Get.to(() => CartScreen()),
                       );
                     }),
+                    AppSpacing.w12,
+                    CircleAvatar(
+                      backgroundColor: AppColors.surface,
+                      radius: 16,
+                      child: _HeaderIconButton(
+                        icon: Icons.person_outline_rounded,
+                        iconColor: AppColors.darkHeaderStart,
+                        onTap: () => Get.to(() => const ProfileScreen()),
+                      ),
+                    ),
                   ],
                 ),
               ],

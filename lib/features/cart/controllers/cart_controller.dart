@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -47,7 +46,6 @@ class CartController extends GetxController {
   }
 
   Future<void> loadCart() async {
-    print("😀😀😀😀");
     try {
       isProcessingOperation.value = true;
       double? lat;

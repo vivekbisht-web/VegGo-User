@@ -1,4 +1,3 @@
-//
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +5,7 @@ import 'package:get/get.dart';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
+import 'package:vegon_user/core/theme/app_scroll_behavior.dart';
 import 'package:vegon_user/core/theme/app_theme.dart';
 import 'package:vegon_user/core/local_storage/shared_prefs_helper.dart';
 import 'firebase_options.dart';
@@ -23,9 +23,7 @@ class AppHttpOverrides extends HttpOverrides {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpOverrides.global = AppHttpOverrides();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SharedPrefsHelper.init();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -48,6 +46,7 @@ class MyApp extends StatelessWidget {
       title: AppStrings.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      scrollBehavior: const AppScrollBehavior(),
       defaultTransition: Transition.cupertino,
       transitionDuration: const Duration(milliseconds: 350),
       initialRoute: AppPages.initial,

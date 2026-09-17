@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
@@ -13,21 +12,35 @@ class NotificationScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: const CustomAppBar(showBackButton: true),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+      body: RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: () async {
+          await Future.delayed(const Duration(milliseconds: 500));
+        },
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
           children: [
-            Icon(
-              Icons.notifications_off_outlined,
-              size: AppSpacing.screenWidth * 0.2,
-              color: AppColors.borderLight,
-            ),
-            AppSpacing.h16,
-            Text(
-              AppStrings.noNewNotifications,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.bold,
+            SizedBox(
+              height: AppSpacing.screenHeight * 0.7,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.notifications_off_outlined,
+                      size: AppSpacing.screenWidth * 0.2,
+                      color: AppColors.borderLight,
+                    ),
+                    AppSpacing.h16,
+                    Text(
+                      AppStrings.noNewNotifications,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

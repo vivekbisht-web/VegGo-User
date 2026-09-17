@@ -98,27 +98,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               AppSpacing.responsiveHeight(0.06),
-              GestureDetector(
-                onTap: () => Get.toNamed(AppRoutes.register),
-                child: RichText(
-                  text: TextSpan(
-                    text: AppStrings.noAccount,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: AppStrings.createAccount,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              AppSpacing.responsiveHeight(0.05),
+              // GestureDetector(
+              //   onTap: () => Get.toNamed(AppRoutes.register),
+              //   child: RichText(
+              //     text: TextSpan(
+              //       text: AppStrings.noAccount,
+              //       style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              //         color: AppColors.textSecondary,
+              //       ),
+              //       children: [
+              //         TextSpan(
+              //           text: AppStrings.createAccount,
+              //           style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              //             color: AppColors.primary,
+              //             fontWeight: FontWeight.bold,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // AppSpacing.responsiveHeight(0.05),
               const FreshnessGuaranteeBadge(),
               AppSpacing.responsiveHeight(0.04),
             ],
