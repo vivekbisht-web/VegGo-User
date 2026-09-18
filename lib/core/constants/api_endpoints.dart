@@ -6,7 +6,10 @@ class ApiEndpoints {
   static const String requestOtp = '/auth/otp/request';
   static const String verifyOtp = '/auth/otp/verify';
   static const String refreshToken = '/auth/refresh';
-  static const String userProfile = '/auth/me';
+  static const String userProfile = '/customer/profile';
+  static const String customerProfile = '/customer/profile';
+  static const String onboardingStatus = '/customer/onboarding/status';
+  static const String onboardingBasicInfo = '/customer/onboarding/basic-info';
   static const String addToCart = '/customer/carts/items';
   static const String viewCart = '/customer/carts';
   static const String cartBadgeCount = '/customer/carts/badge-count';

@@ -128,4 +128,44 @@ class AuthService {
       return SessionVerificationResult(isValid: false, isOffline: isOffline);
     }
   }
+
+  Future<OnboardingStatusResponse> getOnboardingStatus() async {
+    try {
+      final response = await _apiClient.get(ApiEndpoints.onboardingStatus);
+      final data = response.data is Map<String, dynamic>
+          ? response.data as Map<String, dynamic>
+          : null;
+      return OnboardingStatusResponse.fromJson(data);
+    } on DioException catch (e) {
+      final data = e.response?.data is Map<String, dynamic>
+          ? e.response!.data as Map<String, dynamic>
+          : null;
+      return OnboardingStatusResponse.fromJson(data);
+    } catch (e) {
+      return OnboardingStatusResponse(
+        success: false,
+        message: e.toString(),
+      );
+    }
+  }
+
+  Future<bool> submitBasicInfo(String fullName) async {
+    try {
+      final response = await _apiClient.put(
+        ApiEndpoints.onboardingBasicInfo,
+        data: {'fullName': fullName},
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data;
+        if (data is Map<String, dynamic>) {
+          return data['success'] == true;
+        }
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('AuthService.submitBasicInfo error: $e');
+      return false;
+    }
+  }
 }

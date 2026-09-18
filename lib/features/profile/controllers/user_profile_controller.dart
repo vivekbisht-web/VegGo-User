@@ -1,4 +1,4 @@
-//
+import 'dart:io';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
 import '../models/user_profile_models.dart';
@@ -12,6 +12,7 @@ class UserProfileController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isUpdating = false.obs;
   final RxString errorMessage = ''.obs;
+  final Rxn<File> selectedAvatarFile = Rxn<File>();
 
   @override
   void onInit() {
@@ -47,17 +48,23 @@ class UserProfileController extends GetxController {
 
   Future<bool> updateProfile({
     String? name,
+    String? fullName,
     String? email,
     String? phone,
+    File? avatarFile,
   }) async {
     isUpdating.value = true;
     errorMessage.value = '';
 
     try {
+      final fileToUpload = avatarFile ?? selectedAvatarFile.value;
+      final effectiveName = fullName ?? name;
       final response = await _userProfileService.updateUserProfile(
-        name: name,
+        name: effectiveName,
+        fullName: effectiveName,
         email: email,
         phone: phone,
+        avatarFile: fileToUpload,
       );
 
       if (response.success == true) {
@@ -67,16 +74,22 @@ class UserProfileController extends GetxController {
           final current = userData.value;
           userData.value = Data(
             id: current?.id,
-            name: name ?? current?.name,
+            userId: current?.userId,
+            name: effectiveName ?? current?.name,
+            fullName: effectiveName ?? current?.fullName ?? current?.name,
             email: email ?? current?.email,
             phone: phone ?? current?.phone,
             role: current?.role,
             avatar: current?.avatar,
+            avatarUrl: current?.avatarUrl,
+            memberSinceYear: current?.memberSinceYear,
             createdAt: current?.createdAt,
+            updatedAt: current?.updatedAt,
             blocked: current?.blocked,
             verified: current?.verified,
           );
         }
+        selectedAvatarFile.value = null;
         return true;
       } else {
         errorMessage.value =
@@ -91,9 +104,21 @@ class UserProfileController extends GetxController {
     }
   }
 
+  void setSelectedAvatar(File file) {
+    selectedAvatarFile.value = file;
+  }
+
+  void clearSelectedAvatar() {
+    selectedAvatarFile.value = null;
+  }
+
   String get id => userData.value?.id ?? '';
 
-  String get name => userData.value?.name ?? '';
+  String get userId => userData.value?.userId ?? '';
+
+  String get name => userData.value?.fullName ?? userData.value?.name ?? '';
+
+  String get fullName => name;
 
   String get email => userData.value?.email ?? '';
 
@@ -107,7 +132,13 @@ class UserProfileController extends GetxController {
 
   String get createdAt => userData.value?.createdAt ?? '';
 
-  String get avatar => userData.value?.avatar ?? '';
+  String get updatedAt => userData.value?.updatedAt ?? '';
+
+  int? get memberSinceYear => userData.value?.memberSinceYear;
+
+  String get avatar => userData.value?.avatarUrl ?? userData.value?.avatar ?? '';
+
+  String get avatarUrl => avatar;
 
   String get displayName {
     if (name.isNotEmpty) return name;

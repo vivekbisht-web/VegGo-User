@@ -1,4 +1,4 @@
-// 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'custom_shimmer.dart';
@@ -6,6 +6,7 @@ import '../constants/app_images.dart';
 
 class CustomImageView extends StatelessWidget {
   final String imageUrl;
+  final File? file;
   final double height;
   final double width;
   final BoxFit fit;
@@ -13,7 +14,8 @@ class CustomImageView extends StatelessWidget {
 
   const CustomImageView({
     super.key,
-    required this.imageUrl,
+    this.imageUrl = '',
+    this.file,
     this.height = 100,
     this.width = 100,
     this.fit = BoxFit.cover,
@@ -22,6 +24,20 @@ class CustomImageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (file != null) {
+      return Image.file(
+        file!,
+        height: height,
+        width: width,
+        fit: fit,
+        errorBuilder: (context, error, stackTrace) => Image.asset(
+          AppImages.logo,
+          height: height,
+          width: width,
+          fit: BoxFit.contain,
+        ),
+      );
+    }
     if (isAsset) {
       return Image.asset(
         imageUrl,

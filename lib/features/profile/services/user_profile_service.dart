@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../../../core/constants/api_endpoints.dart';
@@ -14,7 +15,7 @@ class UserProfileService {
 
   Future<UserProfileModel> getUserProfile() async {
     try {
-      final response = await _apiClient.get(ApiEndpoints.userProfile);
+      final response = await _apiClient.get(ApiEndpoints.customerProfile);
       var data = response.data;
 
       if (data is String) {
@@ -26,7 +27,7 @@ class UserProfileService {
       }
       return UserProfileModel(
         success: false,
-        message: 'Invalid response format',
+        message: AppStrings.invalidResponseFormat,
       );
     } on DioException catch (e) {
       final responseData = e.response?.data;
@@ -42,7 +43,7 @@ class UserProfileService {
       }
       return UserProfileModel(
         success: false,
-        message: e.response?.statusMessage ?? 'Failed to fetch profile',
+        message: e.response?.statusMessage ?? AppStrings.failedToFetchProfile,
       );
     } catch (e) {
       debugPrint('Error fetching user profile: $e');
@@ -52,18 +53,34 @@ class UserProfileService {
 
   Future<UserProfileModel> updateUserProfile({
     String? name,
+    String? fullName,
     String? email,
     String? phone,
+    File? avatarFile,
   }) async {
-    final Map<String, dynamic> body = {};
-    if (name != null && name.trim().isNotEmpty) body['name'] = name.trim();
-    if (email != null && email.trim().isNotEmpty) body['email'] = email.trim();
-    if (phone != null && phone.trim().isNotEmpty) body['phone'] = phone.trim();
+    final effectiveName = fullName ?? name;
+    final Map<String, dynamic> formMap = {};
+    if (effectiveName != null && effectiveName.trim().isNotEmpty) {
+      formMap['fullName'] = effectiveName.trim();
+    }
+    if (email != null && email.trim().isNotEmpty) {
+      formMap['email'] = email.trim();
+    }
+    if (phone != null && phone.trim().isNotEmpty) {
+      formMap['phone'] = phone.trim();
+    }
+    if (avatarFile != null) {
+      final fileName = avatarFile.path.split(RegExp(r'[\\/]')).last;
+      formMap['avatar'] = await MultipartFile.fromFile(
+        avatarFile.path,
+        filename: fileName,
+      );
+    }
 
     try {
       final response = await _apiClient.put(
-        ApiEndpoints.userProfile,
-        data: body,
+        ApiEndpoints.customerProfile,
+        data: FormData.fromMap(formMap),
       );
 
       var data = response.data;

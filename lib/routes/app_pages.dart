@@ -9,6 +9,7 @@ import '../features/splash/onboarding_screen.dart';
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/register_screen.dart';
 import '../features/auth/screens/otp_verification_screen.dart';
+import '../features/auth/screens/basic_info_screen.dart';
 
 import '../features/dashboard/screens/dashboard_screen.dart';
 import '../features/dashboard/controllers/dashboard_controller.dart';
@@ -71,6 +72,10 @@ class AppPages {
     GetPage(
       name: AppRoutes.otpVerification,
       page: () => const OTPVerificationScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.basicInfo,
+      page: () => const BasicInfoScreen(),
     ),
     GetPage(
       name: AppRoutes.dashboard,

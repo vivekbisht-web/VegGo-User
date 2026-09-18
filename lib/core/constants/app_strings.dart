@@ -39,7 +39,8 @@ class AppStrings {
   static const String invalidQuantity = 'Invalid item quantity.';
   static const String invalidPrice = 'Invalid item price.';
   static const String unableToAddProduct = 'Unable to add product to cart.';
-  static const String failedToUpdateQuantity = 'Failed to update item quantity.';
+  static const String failedToUpdateQuantity =
+      'Failed to update item quantity.';
   static const String failedToRemoveItem = 'Failed to remove item.';
   static const String pleaseEnterPromo = 'Please enter a promo code';
   static const String invalidCouponCode = 'Invalid coupon code';
@@ -172,7 +173,7 @@ class AppStrings {
   static const String category = 'Category';
   static const String continueBtn = 'Continue';
   static const String submit = 'Submit';
-  static const String cancel = 'Cancel';
+  //static const String cancel = 'Cancel';
   static const String viewAll = 'View All';
   static const String showLess = 'Show Less';
   static const String addedToCart = 'Added to Cart';
@@ -280,6 +281,13 @@ class AppStrings {
   static const String enterValidEmail = 'Please enter a valid email';
   static const String enterValidPhone = 'Please enter a valid phone number';
   static const String enterName = 'Please enter your name';
+  static const String invalidResponseFormat = 'Invalid response format';
+  static const String failedToFetchProfile = 'Failed to fetch profile';
+  static const String chooseImageSource = 'Choose Image Source';
+  static const String camera = 'Camera';
+  static const String gallery = 'Gallery';
+  static const String cancel = 'Cancel';
+  static const String memberSince = 'Member since';
 
   static const String notificationPreferences = 'Notification Preferences';
   static const String pushNotifications = 'Push Notifications';
@@ -839,20 +847,15 @@ class AppStrings {
   static const String defaultText = 'Default';
   static const String cartEmptyWarning =
       'Your cart is empty. Please add items to proceed.';
-  static const String pleaseSelectAddress =
-      'Please select a delivery address.';
-  static const String paymentMethodSaved =
-      'Payment method saved successfully.';
+  static const String pleaseSelectAddress = 'Please select a delivery address.';
+  static const String paymentMethodSaved = 'Payment method saved successfully.';
   static const String invalidCardNumber =
       'Please enter a valid 16-digit card number.';
   static const String invalidExpiry =
       'Please enter a valid expiry date (MM/YY).';
-  static const String invalidCvv =
-      'Please enter a valid 3 or 4 digit CVV.';
-  static const String invalidCardHolder =
-      'Please enter the cardholder name.';
-  static const String verifyingPayment =
-      'Verifying payment with bank...';
+  static const String invalidCvv = 'Please enter a valid 3 or 4 digit CVV.';
+  static const String invalidCardHolder = 'Please enter the cardholder name.';
+  static const String verifyingPayment = 'Verifying payment with bank...';
   static const String paymentVerificationFailed =
       'Payment verification failed. Please contact support if amount was debited.';
   static const String apiRazorpayPaymentId = 'razorpayPaymentId';
@@ -867,4 +870,20 @@ class AppStrings {
   static const String useLiveLocation = 'Use Live Location';
   static const String today = 'TODAY';
   static const String tomorrow = 'TOMORROW';
+  static const String basicInfoTitle = 'Complete Your Profile';
+  static const String basicInfoSubtitle =
+      'Please enter your full name to get started.';
+  static const String enterFullNameError = 'Please enter your full name';
+  static const String continueText = 'Continue';
+  static const String basicInfoUpdatedSuccess =
+      'Profile details saved successfully';
+  static const String basicInfoUpdateFailed = 'Failed to save profile details';
+  static const String onboardingActionHome = 'HOME';
+  static const String onboardingActionBasicInfo = 'BASIC_INFO';
+  static const String otpSessionExpired =
+      'Verification session expired. Please request OTP again.';
+  static const String otpCredentialInUse =
+      'This phone number is already linked to another account.';
+  static const String otpGenericError =
+      'Something went wrong while verifying OTP.';
 }
