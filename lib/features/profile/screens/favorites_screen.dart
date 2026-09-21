@@ -18,12 +18,7 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
-  int _selectedCategoryIndex = 0;
-  final List<String> _categories = [
-    AppStrings.all,
-    AppStrings.fruits,
-    AppStrings.vegetables,
-  ];
+  String _selectedCategory = AppStrings.all;
 
   @override
   void initState() {
@@ -46,99 +41,97 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       body: RefreshIndicator(
         onRefresh: () => wishlistController.fetchWishlist(),
         color: AppColors.primary,
-        child: Column(
-          children: [
-            _buildCategoryFilter(),
-            Expanded(
-              child: Obx(() {
-                if (wishlistController.isLoading.value &&
-                    wishlistController.wishlistProducts.isEmpty) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: AppColors.primary),
-                  );
-                }
+        child: Obx(() {
+          final categories = wishlistController.uniqueCategories;
+          return Column(
+            children: [
+              _buildCategoryFilter(categories),
+              Expanded(
+                child: Builder(
+                  builder: (_) {
+                    if (wishlistController.isLoading.value &&
+                        wishlistController.wishlistProducts.isEmpty) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                            color: AppColors.primary),
+                      );
+                    }
 
                 List<ProductDetailsData> items =
                     List<ProductDetailsData>.from(
                       wishlistController.wishlistProducts,
                     );
 
-                if (_selectedCategoryIndex == 1) {
+                if (_selectedCategory != AppStrings.all) {
                   items = items
                       .where(
-                        (p) =>
-                            p.category.toLowerCase().contains('fruit'),
-                      )
-                      .toList();
-                } else if (_selectedCategoryIndex == 2) {
-                  items = items
-                      .where(
-                        (p) =>
-                            p.category.toLowerCase().contains('veg'),
+                        (p) => p.category.trim() == _selectedCategory,
                       )
                       .toList();
                 }
 
-                if (items.isEmpty) {
-                  return SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: SizedBox(
-                      height: AppSpacing.screenHeight * 0.7,
-                      child: const Center(
-                        child: EmptyStateWidget(
-                          title: AppStrings.noFavoritesYet,
-                          subtitle: AppStrings.exploreAndAddFavorites,
-                          icon: Icons.favorite_border_rounded,
+                    if (items.isEmpty) {
+                      return SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        child: SizedBox(
+                          height: AppSpacing.screenHeight * 0.7,
+                          child: const Center(
+                            child: EmptyStateWidget(
+                              title: AppStrings.noFavoritesYet,
+                              subtitle: AppStrings.exploreAndAddFavorites,
+                              icon: Icons.favorite_border_rounded,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                }
+                      );
+                    }
 
-                return GridView.builder(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: AppSpacing.paddingResponsiveAll(0.04),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.65,
-                    crossAxisSpacing: 14,
-                    mainAxisSpacing: 14,
-                  ),
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return CategoryProductCard(
-                      product: items[index].toMap(),
+                    return GridView.builder(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: AppSpacing.paddingResponsiveAll(0.04),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.65,
+                        crossAxisSpacing: 14,
+                        mainAxisSpacing: 14,
+                      ),
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        return CategoryProductCard(
+                          product: items[index].toMap(),
+                        );
+                      },
                     );
                   },
-                );
-              }),
-            ),
-          ],
-        ),
+                ),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }
 
-  Widget _buildCategoryFilter() {
+  Widget _buildCategoryFilter(List<String> categories) {
     return Container(
       height: 40,
       margin: AppSpacing.paddingVertical8,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: AppSpacing.paddingHorizontal16,
-        itemCount: _categories.length,
+        itemCount: categories.length,
         itemBuilder: (context, index) {
-          final isSelected = _selectedCategoryIndex == index;
+          final cat = categories[index];
+          final isSelected = _selectedCategory == cat;
           return Padding(
             padding: AppSpacing.paddingOnly(right: 8),
             child: ChoiceChip(
-              label: Text(_categories[index]),
+              label: Text(cat),
               selected: isSelected,
               onSelected: (selected) {
                 if (selected) {
-                  setState(() {
-                    _selectedCategoryIndex = index;
-                  });
+                  setState(() => _selectedCategory = cat);
                 }
               },
               backgroundColor: AppColors.surface,

@@ -15,9 +15,22 @@ class WishlistController extends GetxController {
   final WishlistRepository _wishlistRepo = WishlistRepository();
 
   final RxSet<String> wishlistIds = <String>{}.obs;
-  final RxList<ProductDetailsData> wishlistProducts = <ProductDetailsData>[].obs;
+  final RxList<ProductDetailsData> wishlistProducts =
+      <ProductDetailsData>[].obs;
   final RxBool isLoading = false.obs;
   final RxString error = ''.obs;
+
+  /// Returns [All, ...unique categories from API] derived from live wishlist data.
+  List<String> get uniqueCategories {
+    final cats =
+        wishlistProducts
+            .map((p) => p.category.trim())
+            .where((c) => c.isNotEmpty)
+            .toSet()
+            .toList()
+          ..sort();
+    return [AppStrings.all, ...cats];
+  }
 
   @override
   void onInit() {
