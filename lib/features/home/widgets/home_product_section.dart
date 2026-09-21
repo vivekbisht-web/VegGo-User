@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
+import 'package:vegon_user/core/utils/animation_overlay_helper.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/category/models/category_product_model.dart';
@@ -11,12 +12,21 @@ import 'package:vegon_user/features/product/screens/product_details_screen.dart'
 
 class HomeProductSection extends StatelessWidget {
   final List<dynamic> products;
+  final int? maxItems;
 
-  const HomeProductSection({super.key, required this.products});
+  const HomeProductSection({
+    super.key,
+    required this.products,
+    this.maxItems,
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (products.isEmpty) return const SizedBox.shrink();
+    final displayList = maxItems != null
+        ? products.take(maxItems!).toList()
+        : products;
+
+    if (displayList.isEmpty) return const SizedBox.shrink();
 
     final cardRadius = BorderRadius.circular(AppSpacing.radius16);
     final cartController = Get.isRegistered<CartController>()
@@ -28,7 +38,7 @@ class HomeProductSection extends StatelessWidget {
       shrinkWrap: true,
       padding: AppSpacing.paddingZero,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: products.length,
+      itemCount: displayList.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: AppSpacing.radius12,
@@ -36,7 +46,7 @@ class HomeProductSection extends StatelessWidget {
         childAspectRatio: 0.72,
       ),
       itemBuilder: (context, index) {
-        final raw = products[index];
+        final raw = displayList[index];
         final Map<String, dynamic> productMap = raw is CategoryProductItem
             ? raw.toMap()
             : (raw is Map<String, dynamic> ? raw : {});
@@ -176,8 +186,14 @@ class HomeProductSection extends StatelessWidget {
                                   shape: const CircleBorder(),
                                   child: InkWell(
                                     customBorder: const CircleBorder(),
-                                    onTap: () =>
-                                        cartController.addToCart(productMap),
+                                    onTap: () {
+                                      cartController.addToCart(productMap);
+                                      AnimationOverlayHelper
+                                          .showRocketAddToCart(
+                                        context,
+                                        onComplete: () {},
+                                      );
+                                    },
                                     child: const SizedBox(
                                       width: AppSpacing.addCircleButtonSize,
                                       height: AppSpacing.addCircleButtonSize,

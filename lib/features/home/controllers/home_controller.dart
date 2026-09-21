@@ -70,6 +70,9 @@ class HomeController extends GetxController {
       final response = await _repository.fetchCategories();
       if (response.success) {
         categories.assignAll(response.categories);
+        if (allProducts.isNotEmpty) {
+          _filterFreshProduce(allProducts);
+        }
       }
     } catch (e) {
       debugPrint("Error fetching categories: $e");
@@ -125,20 +128,113 @@ class HomeController extends GetxController {
         latitude: lat,
         longitude: lng,
       );
-      if (deals.isNotEmpty) {
-        bestDeals.assignAll(deals);
-      } else if (allProducts.isNotEmpty && bestDeals.isEmpty) {
-        final withDiscount = allProducts
-            .where((p) => p.bestSeller || p.discountPercent > 0)
-            .toList();
-        bestDeals.assignAll(
-          withDiscount.isNotEmpty ? withDiscount.take(6) : allProducts.take(6),
-        );
+      final realDeals = deals
+          .where((p) =>
+              p.discountPercent > 0 ||
+              (p.originalPrice != null && p.originalPrice! > p.price) ||
+              p.bestSeller)
+          .toList();
+
+      if (realDeals.isNotEmpty) {
+        realDeals.sort((a, b) => b.discountPercent.compareTo(a.discountPercent));
+        bestDeals.assignAll(realDeals.take(6));
+      } else {
+        _populateDealsFromProducts(allProducts);
       }
     } catch (e) {
       debugPrint("Error fetching daily deals: $e");
+      _populateDealsFromProducts(allProducts);
     } finally {
       isDealsLoading.value = false;
+    }
+  }
+
+  void _populateDealsFromProducts(List<CategoryProductItem> products) {
+    if (products.isEmpty) {
+      bestDeals.clear();
+      return;
+    }
+    final withDiscount = products
+        .where((p) =>
+            p.discountPercent > 0 ||
+            (p.originalPrice != null && p.originalPrice! > p.price) ||
+            p.bestSeller)
+        .toList();
+
+    withDiscount.sort((a, b) => b.discountPercent.compareTo(a.discountPercent));
+
+    if (withDiscount.isNotEmpty) {
+      bestDeals.assignAll(withDiscount.take(6));
+    } else {
+      bestDeals.clear();
+    }
+  }
+
+  void _filterFreshProduce(List<CategoryProductItem> products) {
+    if (products.isEmpty) {
+      freshProduce.clear();
+      return;
+    }
+
+    final vegCategoryNames = <String>{};
+    final vegCategoryIds = <String>{};
+
+    for (final cat in categories) {
+      final name = cat.name.toLowerCase();
+      if (name.contains('veg') && !name.contains('non-veg')) {
+        vegCategoryNames.add(name);
+        vegCategoryIds.add(cat.id.toLowerCase());
+      }
+    }
+
+    final filtered = products.where((p) {
+      final pCat = p.category.toLowerCase().trim();
+      final pName = p.name.toLowerCase().trim();
+
+      // Skip fruits explicitly
+      if (pCat.contains('fruit') ||
+          pName.contains('apple') ||
+          pName.contains('banana') ||
+          pName.contains('mango') ||
+          pName.contains('orange')) {
+        return false;
+      }
+
+      if (vegCategoryIds.contains(pCat) || vegCategoryNames.contains(pCat)) {
+        return true;
+      }
+
+      if (pCat.contains('vegetable') || pCat.contains('veggie')) {
+        return true;
+      }
+
+      if (pCat.contains('veg') && !pCat.contains('non-veg')) {
+        return true;
+      }
+
+      const commonVegWords = [
+        'potato', 'onion', 'tomato', 'carrot', 'cabbage', 'cauliflower',
+        'spinach', 'broccoli', 'cucumber', 'capsicum', 'pepper', 'peas',
+        'beans', 'garlic', 'ginger', 'chilli', 'chili', 'radish', 'beetroot',
+        'gourd', 'brinjal', 'eggplant', 'lady finger', 'okra', 'coriander',
+        'palak', 'methi', 'pudina', 'mushroom', 'corn', 'lettuce'
+      ];
+      for (final word in commonVegWords) {
+        if (pName.contains(word)) return true;
+      }
+
+      return false;
+    }).toList();
+
+    if (filtered.isNotEmpty) {
+      freshProduce.assignAll(filtered.take(4));
+    } else {
+      final dealIds = bestDeals.map((d) => d.id).toSet();
+      final nonDealProducts =
+          products.where((p) => !dealIds.contains(p.id)).toList();
+      freshProduce.assignAll(
+        (nonDealProducts.isNotEmpty ? nonDealProducts : products).take(4),
+      );
     }
   }
 
@@ -171,24 +267,10 @@ class HomeController extends GetxController {
         allProducts.assignAll(products);
 
         if (bestDeals.isEmpty) {
-          final withDiscount = products
-              .where((p) => p.bestSeller || p.discountPercent > 0)
-              .toList();
-          bestDeals.assignAll(
-            withDiscount.isNotEmpty ? withDiscount.take(6) : products.take(6),
-          );
+          _populateDealsFromProducts(products);
         }
 
-        freshProduce.assignAll(
-          products
-              .where(
-                (p) =>
-                    p.category.toLowerCase().contains('veg') ||
-                    p.category.toLowerCase().contains('produce') ||
-                    p.category.toLowerCase().contains('fruit'),
-              )
-              .toList(),
-        );
+        _filterFreshProduce(products);
       } else {
         hasError.value = true;
         errorMessage.value = response.message.isNotEmpty

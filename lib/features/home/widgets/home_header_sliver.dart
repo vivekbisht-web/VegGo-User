@@ -98,38 +98,42 @@ class HomeHeader extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 if (showBackButton)
-                  InkWell(
-                    onTap: () {
-                      final canPop = Navigator.canPop(context);
-                      if (canPop) {
-                        Get.back();
-                      } else if (Get.isRegistered<DashboardController>()) {
-                        Get.find<DashboardController>().changeTabIndex(0);
-                      }
-                    },
+                  Material(
+                    color: AppColors.transparent,
                     borderRadius: BorderRadius.circular(AppSpacing.radius12),
-                    child: Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(AppSpacing.radius12),
-                        border: Border.all(
-                          color: AppColors.chipBorder.withValues(alpha: 0.8),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.black.withValues(alpha: 0.04),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
+                    child: InkWell(
+                      onTap: () {
+                        final canPop = Navigator.canPop(context);
+                        if (canPop) {
+                          Get.back();
+                        } else if (Get.isRegistered<DashboardController>()) {
+                          Get.find<DashboardController>().changeTabIndex(0);
+                        }
+                      },
+                      borderRadius: BorderRadius.circular(AppSpacing.radius12),
+                      child: Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(AppSpacing.radius12),
+                          border: Border.all(
+                            color: AppColors.chipBorder.withValues(alpha: 0.8),
+                            width: 1,
                           ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_rounded,
-                        color: AppColors.textPrimary,
-                        size: 20,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.black.withValues(alpha: 0.04),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.arrow_back_rounded,
+                          color: AppColors.textPrimary,
+                          size: 20,
+                        ),
                       ),
                     ),
                   )
@@ -177,101 +181,105 @@ class HomeHeader extends StatelessWidget {
           Positioned(
             left: sidePadding,
             top: heroHeight - 52,
-            child: InkWell(
+            child: Material(
+              color: AppColors.transparent,
               borderRadius: BorderRadius.circular(AppSpacing.radius16),
-              onTap: () => Get.to(() => SavedAddressesScreen()),
-              child: Container(
-                height: locationHeight,
-                constraints: BoxConstraints(
-                  maxWidth: media.width - (sidePadding * 2),
-                ),
-                padding: AppSpacing.paddingHorizontal12,
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(AppSpacing.radius16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.overlayLight.withValues(alpha: 0.15),
-                      blurRadius: 8,
-                      spreadRadius: -2,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.location_on_outlined,
-                      color: AppColors.primary,
-                      size: 22,
-                    ),
-                    AppSpacing.w6,
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppStrings.deliverTo,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                color: AppColors.textSecondary,
-                                fontSize: 9,
-                                height: 1,
-                              ),
-                        ),
-                        AppSpacing.h4,
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Obx(() {
-                              final locName =
-                                  locationController.currentLocationName.value;
-                              return ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: media.width * 0.35,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(AppSpacing.radius16),
+                onTap: () => Get.to(() => SavedAddressesScreen()),
+                child: Container(
+                  height: locationHeight,
+                  constraints: BoxConstraints(
+                    maxWidth: media.width - (sidePadding * 2),
+                  ),
+                  padding: AppSpacing.paddingHorizontal12,
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(AppSpacing.radius16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.overlayLight.withValues(alpha: 0.15),
+                        blurRadius: 8,
+                        spreadRadius: -2,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.location_on_outlined,
+                        color: AppColors.primary,
+                        size: 22,
+                      ),
+                      AppSpacing.w6,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppStrings.deliverTo,
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 9,
+                                  height: 1,
                                 ),
-                                child: Text(
-                                  locName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodyMedium
-                                      ?.copyWith(
-                                        color: AppColors.textPrimary,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 12,
-                                        height: 1,
-                                      ),
-                                ),
-                              );
-                            }),
-                            AppSpacing.w4,
-                            GestureDetector(
-                              onTap: () =>
-                                  locationController.fetchAndSaveUserLocation(),
-                              child: Obx(
-                                () =>
-                                    locationController.isFetchingLocation.value
-                                    ? const SizedBox(
-                                        width: 16,
-                                        height: 16,
-                                        child: CircularProgressIndicator(
-                                          color: AppColors.primary,
-                                          strokeWidth: 2,
+                          ),
+                          AppSpacing.h4,
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Obx(() {
+                                final locName =
+                                    locationController.currentLocationName.value;
+                                return ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: media.width * 0.35,
+                                  ),
+                                  child: Text(
+                                    locName,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context).textTheme.bodyMedium
+                                        ?.copyWith(
+                                          color: AppColors.textPrimary,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 12,
+                                          height: 1,
                                         ),
-                                      )
-                                    : const Icon(
-                                        Icons.refresh_rounded,
-                                        color: AppColors.primary,
-                                        size: 16,
-                                      ),
+                                  ),
+                                );
+                              }),
+                              AppSpacing.w4,
+                              GestureDetector(
+                                onTap: () =>
+                                    locationController.fetchAndSaveUserLocation(),
+                                child: Obx(
+                                  () =>
+                                      locationController.isFetchingLocation.value
+                                      ? const SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(
+                                            color: AppColors.primary,
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : const Icon(
+                                          Icons.refresh_rounded,
+                                          color: AppColors.primary,
+                                          size: 16,
+                                        ),
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -381,44 +389,48 @@ class _HeaderIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      customBorder: const CircleBorder(),
-      child: SizedBox(
-        width: 30,
-        height: 30,
-        child: Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.center,
-          children: [
-            Icon(icon, color: iconColor, size: 27),
-            if (badge != null)
-              Positioned(
-                right: -4,
-                top: -5,
-                child: Container(
-                  constraints: const BoxConstraints(
-                    minWidth: 15,
-                    minHeight: 15,
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 3),
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    color: AppColors.error,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Text(
-                    badge!,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: AppColors.surface,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 8,
-                      height: 1,
+    return Material(
+      color: AppColors.transparent,
+      shape: const CircleBorder(),
+      child: InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: SizedBox(
+          width: 30,
+          height: 30,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              Icon(icon, color: iconColor, size: 27),
+              if (badge != null)
+                Positioned(
+                  right: -4,
+                  top: -5,
+                  child: Container(
+                    constraints: const BoxConstraints(
+                      minWidth: 15,
+                      minHeight: 15,
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    alignment: Alignment.center,
+                    decoration: const BoxDecoration(
+                      color: AppColors.error,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      badge!,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppColors.surface,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 8,
+                        height: 1,
+                      ),
                     ),
                   ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

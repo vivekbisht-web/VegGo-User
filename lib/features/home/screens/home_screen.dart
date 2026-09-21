@@ -116,6 +116,7 @@ class HomeScreen extends StatelessWidget {
                                   AppSpacing.h8,
                                   HomeProductSection(
                                     products: homeController.freshProduce,
+                                    maxItems: 4,
                                   ),
                                   AppSpacing.h20,
                                 ],

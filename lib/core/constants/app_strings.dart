@@ -557,6 +557,8 @@ class AppStrings {
   static const String off20Percent = '20% OFF';
   static const String off16Percent = '16% OFF';
   static const String off15Percent = '15% OFF';
+  static const String percentOffSuffix = '% OFF';
+  static const String deal = 'DEAL';
   static const String tomato = 'Tomato';
   static const String potato = 'Potato';
   static const String banana = 'Banana';

@@ -4,6 +4,7 @@ import 'package:shimmer/shimmer.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
+import 'package:vegon_user/core/utils/animation_overlay_helper.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/home/controllers/home_controller.dart';
@@ -35,7 +36,7 @@ class HomeBestDeals extends StatelessWidget {
         return _buildShimmerGrid();
       }
 
-      final deals = homeController.bestDeals;
+      final deals = homeController.bestDeals.take(6).toList();
       if (deals.isEmpty) {
         return const SizedBox.shrink();
       }
@@ -58,9 +59,19 @@ class HomeBestDeals extends StatelessWidget {
           final original = (item.originalPrice ?? (item.price * 1.25)).toInt();
           final name = item.name;
           final unit = item.unit;
-          final discountTag = item.discountPercent > 0
-              ? '${item.discountPercent}% OFF'
-              : AppStrings.off20Percent;
+          final calculatedDiscount = (item.originalPrice != null &&
+                  item.originalPrice! > item.price &&
+                  item.originalPrice! > 0)
+              ? (((item.originalPrice! - item.price) / item.originalPrice!) *
+                      100)
+                  .round()
+              : 0;
+          final effectivePercent = item.discountPercent > 0
+              ? item.discountPercent
+              : calculatedDiscount;
+          final String? discountTag = effectivePercent > 0
+              ? '$effectivePercent${AppStrings.percentOffSuffix}'
+              : (item.bestSeller ? AppStrings.bestSeller : null);
 
           return Material(
             color: AppColors.surface,
@@ -166,8 +177,14 @@ class HomeBestDeals extends StatelessWidget {
                                     shape: const CircleBorder(),
                                     child: InkWell(
                                       customBorder: const CircleBorder(),
-                                      onTap: () =>
-                                          cartController.addToCart(productMap),
+                                      onTap: () {
+                                        cartController.addToCart(productMap);
+                                        AnimationOverlayHelper
+                                            .showRocketAddToCart(
+                                          context,
+                                          onComplete: () {},
+                                        );
+                                      },
                                       child: const SizedBox(
                                         width: AppSpacing.addCircleButtonSize,
                                         height: AppSpacing.addCircleButtonSize,
@@ -187,14 +204,14 @@ class HomeBestDeals extends StatelessWidget {
                       ],
                     ),
 
-                    if (item.discountPercent > 0)
+                    if (discountTag != null)
                       Positioned(
                         top: AppSpacing.radius8,
                         left: AppSpacing.radius8,
                         child: Container(
                           padding: AppSpacing.paddingSymmetric(
                             horizontal: AppSpacing.radius8,
-                            vertical: 3,
+                            vertical: AppSpacing.radius2,
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.bannerDarkGreen,
