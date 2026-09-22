@@ -47,4 +47,10 @@ class ApiEndpoints {
 
   // Razorpay API
   static const String razorpayKey = 'rzp_test_TTUpC17cOLtNl8';
+
+  // Notification endpoints
+  static const String notifications = '/notifications';
+  static const String notificationsUnreadCount = '/notifications/unread-count';
+  static const String notificationsReadAll = '/notifications/read-all';
+  static String markNotificationRead(String id) => '/notifications/$id/read';
 }

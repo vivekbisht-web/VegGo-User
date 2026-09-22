@@ -888,4 +888,18 @@ class AppStrings {
       'This phone number is already linked to another account.';
   static const String otpGenericError =
       'Something went wrong while verifying OTP.';
+
+  // Notifications (extended)
+  static const String noNewNotificationsDesc =
+      'You\'ll see your order updates and alerts here.';
+  static const String markAllRead = 'Mark all read';
+  static const String failedToLoadNotifications =
+      'Failed to load notifications';
+  static const String failedToMarkRead = 'Failed to mark notification as read';
+  static const String allMarkedRead = 'All notifications marked as read';
+  static const String tryAgain = 'Try Again';
+  static const String justNow = 'Just now';
+  static const String minuteAgo = 'm ago';
+  static const String hourAgo = 'h ago';
+  static const String dayAgo = 'd ago';
 }

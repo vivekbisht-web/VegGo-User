@@ -7,10 +7,11 @@ import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/core/widgets/custom_text_field.dart';
 import 'package:vegon_user/features/dashboard/controllers/dashboard_controller.dart';
-import 'package:vegon_user/features/dashboard/screens/notification_screen.dart';
+import 'package:vegon_user/features/dashboard/controllers/notification_controller.dart';
 import 'package:vegon_user/features/profile/screens/profile_screen.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/screens/cart_screen.dart';
+import 'package:vegon_user/routes/app_routes.dart';
 
 import 'package:vegon_user/features/home/controllers/location_controller.dart';
 import 'package:vegon_user/features/home/controllers/home_search_controller.dart';
@@ -149,10 +150,15 @@ class HomeHeader extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    _HeaderIconButton(
-                      icon: Icons.notifications_none_rounded,
-                      onTap: () => Get.to(() => const NotificationScreen()),
-                    ),
+                    Obx(() {
+                      final count =
+                          Get.find<NotificationController>().unreadCount.value;
+                      return _HeaderIconButton(
+                        icon: Icons.notifications_none_rounded,
+                        badge: count > 0 ? '$count' : null,
+                        onTap: () => Get.toNamed(AppRoutes.notifications),
+                      );
+                    }),
                     AppSpacing.w12,
                     Obx(() {
                       final count = cartController.totalItems;

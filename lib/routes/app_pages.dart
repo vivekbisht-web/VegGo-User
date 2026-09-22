@@ -13,6 +13,7 @@ import '../features/auth/screens/basic_info_screen.dart';
 
 import '../features/dashboard/screens/dashboard_screen.dart';
 import '../features/dashboard/controllers/dashboard_controller.dart';
+import '../features/dashboard/controllers/notification_controller.dart';
 import '../features/dashboard/screens/notification_screen.dart';
 import '../features/home/screens/home_screen.dart';
 
@@ -87,6 +88,10 @@ class AppPages {
         Get.lazyPut<CategoryController>(() => CategoryController(), fenix: true);
         Get.lazyPut<AddressController>(() => AddressController(), fenix: true);
         Get.lazyPut<OrdersController>(() => OrdersController(), fenix: true);
+        Get.lazyPut<NotificationController>(
+          () => NotificationController(),
+          fenix: true,
+        );
       }),
     ),
     GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
