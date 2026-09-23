@@ -30,81 +30,88 @@ class AppDialogs {
             borderRadius: BorderRadius.circular(AppSpacing.radius16),
           ),
           insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (icon != null) ...[
-                  Container(
-                    width: 52,
-                    height: 52,
-                    decoration: BoxDecoration(
-                      color: effectiveIconColor.withValues(alpha: 0.12),
-                      shape: BoxShape.circle,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (icon != null) ...[
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: effectiveIconColor.withValues(alpha: 0.12),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        icon,
+                        color: effectiveIconColor,
+                        size: 26,
+                      ),
                     ),
-                    child: Icon(
-                      icon,
-                      color: effectiveIconColor,
-                      size: 26,
+                    const SizedBox(height: 16),
+                  ],
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                      fontSize: 17,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                ],
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                    fontSize: 17,
+                  const SizedBox(height: 8),
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(ctx).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                      fontSize: 13,
+                      height: 1.4,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  message,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(ctx).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontSize: 13,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 42,
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.of(ctx).pop(),
                           style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 12,
+                            ),
                             side: const BorderSide(color: AppColors.borderLight),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text(
-                            cancelText ?? AppStrings.cancel,
-                            style: Theme.of(ctx).textTheme.labelLarge?.copyWith(
-                              color: AppColors.textSecondary,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              cancelText ?? AppStrings.cancel,
+                              style: Theme.of(ctx).textTheme.labelLarge?.copyWith(
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: SizedBox(
-                        height: 42,
+                      const SizedBox(width: 12),
+                      Expanded(
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.of(ctx).pop();
                             onConfirm();
                           },
                           style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 12,
+                            ),
                             backgroundColor: isDestructive
                                 ? AppColors.error
                                 : AppColors.primary,
@@ -113,20 +120,23 @@ class AppDialogs {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          child: Text(
-                            confirmText,
-                            style: Theme.of(ctx).textTheme.labelLarge?.copyWith(
-                              color: AppColors.surface,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              confirmText,
+                              style: Theme.of(ctx).textTheme.labelLarge?.copyWith(
+                                color: AppColors.surface,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );

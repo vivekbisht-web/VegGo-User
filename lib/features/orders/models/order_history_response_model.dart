@@ -95,6 +95,7 @@ class OrderHistoryItem {
   final double? deliveryFee;
   final double? estimatedTax;
   final double? promoDiscount;
+  final double? platformCharge;
   final String? deliveryAddress;
   final double? latitude;
   final double? longitude;
@@ -117,6 +118,7 @@ class OrderHistoryItem {
     this.deliveryFee,
     this.estimatedTax,
     this.promoDiscount,
+    this.platformCharge,
     this.deliveryAddress,
     this.latitude,
     this.longitude,
@@ -143,6 +145,7 @@ class OrderHistoryItem {
         deliveryFee: (json['deliveryFee'] as num?)?.toDouble(),
         estimatedTax: (json['estimatedTax'] as num?)?.toDouble() ?? (json['tax'] as num?)?.toDouble(),
         promoDiscount: (json['promoDiscount'] as num?)?.toDouble() ?? (json['discount'] as num?)?.toDouble(),
+        platformCharge: (json['platformCharge'] as num?)?.toDouble() ?? (json['platformFee'] as num?)?.toDouble(),
         deliveryAddress: json['deliveryAddress']?.toString() ?? json['address']?.toString(),
         latitude: (json['latitude'] as num?)?.toDouble(),
         longitude: (json['longitude'] as num?)?.toDouble(),
@@ -171,6 +174,7 @@ class OrderHistoryItem {
         'deliveryFee': deliveryFee,
         'estimatedTax': estimatedTax,
         'promoDiscount': promoDiscount,
+        'platformCharge': platformCharge,
         'deliveryAddress': deliveryAddress,
         'latitude': latitude,
         'longitude': longitude,

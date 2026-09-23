@@ -7,7 +7,6 @@ import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/widgets/custom_app_bar.dart';
 import 'package:vegon_user/core/widgets/custom_button.dart';
 import 'package:vegon_user/core/widgets/custom_text_field.dart';
-import 'package:vegon_user/features/dashboard/screens/dashboard_screen.dart';
 import 'package:vegon_user/features/orders/controllers/orders_controller.dart';
 
 class OrderDeliveredScreen extends StatefulWidget {
@@ -40,12 +39,13 @@ class _OrderDeliveredScreenState extends State<OrderDeliveredScreen> {
       backgroundColor: AppColors.background,
       appBar: const CustomAppBar(showBackButton: true),
       body: SingleChildScrollView(
-        padding: AppSpacing.paddingResponsiveAll(0.05),
+        physics: const ClampingScrollPhysics(),
+        padding: AppSpacing.paddingResponsiveAll(0.04),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              padding: AppSpacing.paddingAll24,
+              padding: AppSpacing.paddingAll16,
               decoration: const BoxDecoration(
                 color: AppColors.successBackground,
                 shape: BoxShape.circle,
@@ -53,28 +53,28 @@ class _OrderDeliveredScreenState extends State<OrderDeliveredScreen> {
               child: Icon(
                 Icons.check_circle_outline,
                 color: AppColors.success,
-                size: AppSpacing.screenWidth * 0.16,
+                size: AppSpacing.screenWidth * 0.12,
               ),
             ),
-            AppSpacing.h24,
+            AppSpacing.h12,
             Text(
               AppStrings.delivered,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: AppColors.success,
               ),
             ),
-            AppSpacing.h8,
+            AppSpacing.h4,
             Text(
               AppStrings.orderSuccessSub1,
               style: Theme.of(
                 context,
-              ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+              ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
             ),
-            AppSpacing.h32,
+            AppSpacing.h16,
 
             Container(
-              padding: AppSpacing.paddingAll24,
+              padding: AppSpacing.paddingAll16,
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(AppSpacing.radius16),
@@ -86,11 +86,11 @@ class _OrderDeliveredScreenState extends State<OrderDeliveredScreen> {
                 children: [
                   Text(
                     AppStrings.rateYourDelivery,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  AppSpacing.h16,
+                  AppSpacing.h12,
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(5, (index) {
@@ -106,19 +106,19 @@ class _OrderDeliveredScreenState extends State<OrderDeliveredScreen> {
                           child: Icon(
                             starIndex <= _rating ? Icons.star : Icons.star_border,
                             color: AppColors.warning,
-                            size: AppSpacing.screenWidth * 0.1,
+                            size: AppSpacing.screenWidth * 0.085,
                           ),
                         ),
                       );
                     }),
                   ),
-                  AppSpacing.h24,
+                  AppSpacing.h16,
                   CustomTextField(
                     controller: _commentController,
                     hintText: AppStrings.rateYourDeliveryDesc,
-                    maxLines: 3,
+                    maxLines: 2,
                   ),
-                  AppSpacing.h16,
+                  AppSpacing.h12,
                   Obx(() {
                     return CustomButton(
                       text: _hasSubmitted ? AppStrings.success : AppStrings.submitFeedback,
@@ -142,16 +142,8 @@ class _OrderDeliveredScreenState extends State<OrderDeliveredScreen> {
                 ],
               ),
             ),
-            AppSpacing.h32,
+            AppSpacing.h16,
             _buildOrderSummaryDropdown(context, ordersController),
-            AppSpacing.h32,
-            CustomButton(
-              text: AppStrings.backToHome,
-              isOutlined: true,
-              onPressed: () {
-                Get.offAll(() => DashboardScreen());
-              },
-            ),
           ],
         ),
       ),

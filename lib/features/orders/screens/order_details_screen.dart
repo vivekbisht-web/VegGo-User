@@ -48,219 +48,324 @@ class OrderDetailsScreen extends StatelessWidget {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: AppSpacing.paddingResponsiveAll(0.04),
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: AppSpacing.paddingResponsiveAll(0.04),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(
-                    AppSpacing.screenWidth * 0.03,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ── Order Header ──
+                Container(
+                  padding: AppSpacing.paddingResponsiveAll(0.04),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(
+                      AppSpacing.screenWidth * 0.03,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Order #${order.orderNumber.isNotEmpty ? order.orderNumber : order.id}',
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                          ),
+                          AppSpacing.h4,
+                          Text(
+                            order.orderDate.toString().split('.')[0],
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                      Container(
+                        padding: AppSpacing.paddingSymmetric(
+                          horizontal: AppSpacing.screenWidth * 0.03,
+                          vertical: AppSpacing.screenWidth * 0.015,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.screenWidth * 0.02,
+                          ),
+                        ),
+                        child: Text(
+                          order.statusText.toUpperCase(),
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
+                AppSpacing.responsiveHeight(0.015),
+
+                // ── Delivery Address & Payment Method ──
+                if (order.deliveryAddress.isNotEmpty || order.paymentMethod.isNotEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: AppSpacing.paddingResponsiveAll(0.04),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(
+                        AppSpacing.screenWidth * 0.03,
+                      ),
+                    ),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Order #${order.orderNumber}',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textPrimary,
+                        if (order.deliveryAddress.isNotEmpty) ...[
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.location_on_outlined,
+                                size: 20,
+                                color: AppColors.primary,
                               ),
-                        ),
-                        AppSpacing.h4,
-                        Text(
-                          order.orderDate.toString().split('.')[0],
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: AppColors.textSecondary),
-                        ),
+                              AppSpacing.w8,
+                              Text(
+                                AppStrings.deliveryAddress,
+                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textPrimary,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          AppSpacing.h4,
+                          Padding(
+                            padding: const EdgeInsets.only(left: 28),
+                            child: Text(
+                              order.deliveryAddress,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                            ),
+                          ),
+                        ],
+                        if (order.deliveryAddress.isNotEmpty && order.paymentMethod.isNotEmpty)
+                          const Divider(color: AppColors.borderLight, height: 20),
+                        if (order.paymentMethod.isNotEmpty) ...[
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.payment_outlined,
+                                size: 20,
+                                color: AppColors.primary,
+                              ),
+                              AppSpacing.w8,
+                              Text(
+                                AppStrings.paymentMethod,
+                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textPrimary,
+                                    ),
+                              ),
+                            ],
+                          ),
+                          AppSpacing.h4,
+                          Padding(
+                            padding: const EdgeInsets.only(left: 28),
+                            child: Text(
+                              order.paymentMethod,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: AppColors.textSecondary,
+                                  ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
-                    Container(
-                      padding: AppSpacing.paddingSymmetric(
-                        horizontal: AppSpacing.screenWidth * 0.03,
-                        vertical: AppSpacing.screenWidth * 0.015,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(
-                          AppSpacing.screenWidth * 0.02,
-                        ),
-                      ),
-                      child: Text(
-                        order.status.name.toUpperCase(),
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: AppColors.primary,
+                  ),
+                if (order.deliveryAddress.isNotEmpty || order.paymentMethod.isNotEmpty)
+                  AppSpacing.responsiveHeight(0.015),
+
+                // ── Item Summary ──
+                Container(
+                  padding: AppSpacing.paddingResponsiveAll(0.04),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(
+                      AppSpacing.screenWidth * 0.03,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppStrings.itemSummary,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              AppSpacing.responsiveHeight(0.02),
-
-              Container(
-                padding: AppSpacing.paddingResponsiveAll(0.04),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(
-                    AppSpacing.screenWidth * 0.03,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppStrings.itemSummary,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    AppSpacing.h8,
-                    ...order.items.map(
-                      (item) => Padding(
-                        padding: AppSpacing.paddingResponsiveVertical(0.02),
-                        child: Row(
-                          children: [
-                            CustomImageView(
-                              imageUrl: item.imagePath,
-                              width: 45,
-                              height: 45,
-                              fit: BoxFit.cover,
-                            ),
-                            AppSpacing.responsiveWidth(0.03),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.title,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium
-                                        ?.copyWith(fontWeight: FontWeight.w600),
-                                  ),
-                                  Text(
-                                    '${item.weight} x ${item.quantity}',
-                                    style: Theme.of(context).textTheme.bodySmall
-                                        ?.copyWith(
-                                          color: AppColors.textSecondary,
-                                        ),
-                                  ),
-                                ],
+                      AppSpacing.h8,
+                      ...order.items.map(
+                        (item) => Padding(
+                          padding: AppSpacing.paddingResponsiveVertical(0.015),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(AppSpacing.radius8),
+                                child: CustomImageView(
+                                  imageUrl: item.imagePath,
+                                  width: 45,
+                                  height: 45,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                            ),
-                            Text(
-                              '${AppStrings.currencySymbol}${(item.price * item.quantity).toStringAsFixed(2)}',
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primary,
-                                  ),
-                            ),
-                          ],
+                              AppSpacing.responsiveWidth(0.03),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      item.title,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(
+                                      '${item.weight} x ${item.quantity}',
+                                      style: Theme.of(context).textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: AppColors.textSecondary,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Text(
+                                '${AppStrings.currencySymbol}${(item.price * item.quantity).toStringAsFixed(2)}',
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary,
+                                    ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              AppSpacing.responsiveHeight(0.02),
-
-              Container(
-                padding: AppSpacing.paddingResponsiveAll(0.04),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(
-                    AppSpacing.screenWidth * 0.03,
+                    ],
                   ),
                 ),
-                child: Column(
-                  children: [
-                    _buildRow(
-                      context,
-                      AppStrings.subtotal,
-                      '${AppStrings.currencySymbol}${order.subtotal.toStringAsFixed(2)}',
-                    ),
-                    AppSpacing.h8,
-                    _buildRow(
-                      context,
-                      AppStrings.deliveryFee,
-                      '${AppStrings.currencySymbol}${order.deliveryFee.toStringAsFixed(2)}',
-                    ),
-                    AppSpacing.h8,
-                    _buildRow(
-                      context,
-                      AppStrings.estimatedTaxes,
-                      '${AppStrings.currencySymbol}${order.tax.toStringAsFixed(2)}',
-                    ),
-                    const Divider(color: AppColors.borderLight, height: 24),
-                    _buildRow(
-                      context,
-                      AppStrings.total,
-                      '${AppStrings.currencySymbol}${order.totalAmount.toStringAsFixed(2)}',
-                      isBold: true,
-                    ),
-                  ],
-                ),
-              ),
-              AppSpacing.responsiveHeight(0.03),
+                AppSpacing.responsiveHeight(0.015),
 
-              CustomButton(
-                text: AppStrings.reorder,
-                icon: Icons.refresh,
-                isLoading: controller.isReordering.value,
-                onPressed: () {
-                  if (order.id.isNotEmpty) {
-                    controller.reorder(order.id);
-                  }
-                },
-              ),
-              AppSpacing.h8,
-              CustomButton(
-                text: AppStrings.downloadInvoice,
-                icon: Icons.file_download_outlined,
-                isLoading: controller.isInvoiceLoading.value,
-                isOutlined: true,
-                onPressed: () async {
-                  if (order.id.isNotEmpty) {
-                    await controller.fetchOrderInvoice(order.id);
-                    final invoice = controller.orderInvoiceData.value;
-                    if (invoice != null) {
-                      final invoiceUrl = invoice.invoiceUrl;
-                      if (invoiceUrl != null && invoiceUrl.isNotEmpty) {
+                // ── Bill Details ──
+                Container(
+                  padding: AppSpacing.paddingResponsiveAll(0.04),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(
+                      AppSpacing.screenWidth * 0.03,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      _buildRow(
+                        context,
+                        AppStrings.subtotal,
+                        '${AppStrings.currencySymbol}${order.subtotal.toStringAsFixed(2)}',
+                      ),
+                      AppSpacing.h8,
+                      _buildRow(
+                        context,
+                        AppStrings.deliveryFee,
+                        '${AppStrings.currencySymbol}${order.deliveryFee.toStringAsFixed(2)}',
+                      ),
+                      AppSpacing.h8,
+                      _buildRow(
+                        context,
+                        AppStrings.estimatedTaxes,
+                        '${AppStrings.currencySymbol}${order.tax.toStringAsFixed(2)}',
+                      ),
+                      if (order.platformCharge > 0) ...[
+                        AppSpacing.h8,
+                        _buildRow(
+                          context,
+                          AppStrings.platformCharge,
+                          '${AppStrings.currencySymbol}${order.platformCharge.toStringAsFixed(2)}',
+                        ),
+                      ],
+                      if (order.discount > 0) ...[
+                        AppSpacing.h8,
+                        _buildRow(
+                          context,
+                          AppStrings.discount,
+                          '-${AppStrings.currencySymbol}${order.discount.toStringAsFixed(2)}',
+                        ),
+                      ],
+                      const Divider(color: AppColors.borderLight, height: 24),
+                      _buildRow(
+                        context,
+                        AppStrings.total,
+                        '${AppStrings.currencySymbol}${order.totalAmount.toStringAsFixed(2)}',
+                        isBold: true,
+                      ),
+                    ],
+                  ),
+                ),
+                AppSpacing.responsiveHeight(0.025),
+
+                // ── Action Buttons ──
+                if (order.canReorder) ...[
+                  CustomButton(
+                    text: AppStrings.reorder,
+                    icon: Icons.refresh,
+                    isLoading: controller.isReordering.value,
+                    onPressed: () {
+                      if (order.id.isNotEmpty) {
+                        controller.reorder(order.id);
+                      }
+                    },
+                  ),
+                  AppSpacing.h8,
+                ],
+                CustomButton(
+                  text: AppStrings.downloadInvoice,
+                  icon: Icons.file_download_outlined,
+                  isLoading: controller.isInvoiceLoading.value,
+                  isOutlined: true,
+                  onPressed: () async {
+                    if (order.id.isNotEmpty) {
+                      await controller.fetchOrderInvoice(order.id);
+                      final invoice = controller.orderInvoiceData.value;
+                      if (invoice != null) {
+                        final invoiceUrl = invoice.invoiceUrl;
+                        if (invoiceUrl != null && invoiceUrl.isNotEmpty) {
+                          Get.snackbar(
+                            AppStrings.downloadInvoice,
+                            invoiceUrl,
+                            backgroundColor: AppColors.primary,
+                            colorText: AppColors.surface,
+                          );
+                        } else {
+                          if (!context.mounted) return;
+                          OrderInvoiceBottomSheet.show(context, invoice);
+                        }
+                      } else {
                         Get.snackbar(
                           AppStrings.downloadInvoice,
-                          invoiceUrl,
-                          backgroundColor: AppColors.primary,
+                          controller.errorMessage.value.isNotEmpty
+                              ? controller.errorMessage.value
+                              : AppStrings.invoiceUnavailable,
+                          backgroundColor: AppColors.error,
                           colorText: AppColors.surface,
                         );
-                      } else {
-                        if (!context.mounted) return;
-                        OrderInvoiceBottomSheet.show(context, invoice);
                       }
-                    } else {
-                      Get.snackbar(
-                        AppStrings.downloadInvoice,
-                        controller.errorMessage.value.isNotEmpty
-                            ? controller.errorMessage.value
-                            : AppStrings.invoiceUnavailable,
-                        backgroundColor: AppColors.error,
-                        colorText: AppColors.surface,
-                      );
                     }
-                  }
-                },
-              ),
-            ],
-          ),
-        );
+                  },
+                ),
+              ],
+            ),
+          );
       }),
     ),
   );

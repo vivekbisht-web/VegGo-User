@@ -7,6 +7,7 @@ import 'package:vegon_user/core/network/api_client.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/local_storage/shared_prefs_helper.dart';
+import '../../../core/services/push_notification_service.dart';
 import '../../../core/widgets/app_dialogs.dart';
 import '../../../routes/app_routes.dart';
 import '../../cart/controllers/cart_controller.dart';
@@ -203,6 +204,7 @@ class AuthController extends GetxController {
   Future<void> _clearSession() async {
     _cancelTimer();
     isLoading.value = false;
+    await PushNotificationService.instance.unregisterDeviceToken();
     await SharedPrefsHelper.clearAll();
 
     if (Get.isRegistered<CartController>()) {
@@ -380,6 +382,7 @@ class AuthController extends GetxController {
             if (refreshToken.isNotEmpty) {
               await SharedPrefsHelper.saveRefreshToken(refreshToken);
             }
+            PushNotificationService.instance.registerDeviceToken();
             _cancelTimer();
             await checkOnboardingStatusAndNavigate();
             return true;

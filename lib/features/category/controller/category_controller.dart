@@ -138,6 +138,8 @@ class CategoryController extends GetxController {
         subcategoryId: subcategoryId,
         latitude: lat,
         longitude: lng,
+        minPrice: minPrice.value > 0 ? minPrice.value : null,
+        maxPrice: maxPrice.value > 0 ? maxPrice.value : null,
       );
 
       if (response.success && isCurrentCategory(categoryId)) {
@@ -201,6 +203,16 @@ class CategoryController extends GetxController {
         return name.contains(query) ||
             desc.contains(query) ||
             cat.contains(query);
+      }).toList();
+    }
+
+    // Client-side price filter (secondary guard)
+    if (minPrice.value > 0 || maxPrice.value > 0) {
+      filtered = filtered.where((p) {
+        final price = p.price;
+        if (minPrice.value > 0 && price < minPrice.value) return false;
+        if (maxPrice.value > 0 && price > maxPrice.value) return false;
+        return true;
       }).toList();
     }
 

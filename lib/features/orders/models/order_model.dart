@@ -57,6 +57,7 @@ class OrderModel {
   final double deliveryFee;
   final double tax;
   final double discount;
+  final double platformCharge;
   final double totalAmount;
   final String deliveryAddress;
   final String paymentMethod;
@@ -89,6 +90,7 @@ class OrderModel {
     required this.deliveryAddress,
     required this.paymentMethod,
     required this.items,
+    this.platformCharge = 0.0,
     this.driverName,
     this.driverPhone,
     this.estimatedDeliveryTime,
@@ -225,6 +227,7 @@ class OrderModel {
       deliveryFee: item.deliveryFee ?? 0.0,
       tax: item.estimatedTax ?? 0.0,
       discount: item.promoDiscount ?? 0.0,
+      platformCharge: item.platformCharge ?? 0.0,
       totalAmount: item.totalAmount ?? 0.0,
       deliveryAddress: item.deliveryAddress ?? '',
       paymentMethod: item.paymentMethod ?? 'COD',
@@ -259,6 +262,10 @@ class OrderModel {
       discount:
           (json['discount'] as num?)?.toDouble() ??
           (json['promoDiscount'] as num?)?.toDouble() ??
+          0.0,
+      platformCharge:
+          (json['platformCharge'] as num?)?.toDouble() ??
+          (json['platformFee'] as num?)?.toDouble() ??
           0.0,
       totalAmount:
           (json['totalAmount'] as num?)?.toDouble() ??

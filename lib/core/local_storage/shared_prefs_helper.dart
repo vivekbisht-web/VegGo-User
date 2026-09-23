@@ -9,6 +9,7 @@ class SharedPrefsHelper {
   static const String _keyAccessToken = 'access_token';
   static const String _keyRefreshToken = 'refresh_token';
   static const String _keyOnboardingComplete = 'onboarding_complete';
+  static const String _keyFcmToken = 'fcm_device_token';
 
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
@@ -152,5 +153,18 @@ class SharedPrefsHelper {
     await _prefs.remove(_keyLatitude);
     await _prefs.remove(_keyLongitude);
     await _prefs.remove(_keyLocationName);
+  }
+
+  // FCM Token methods
+  static Future<void> saveFcmToken(String token) async {
+    await _prefs.setString(_keyFcmToken, token);
+  }
+
+  static String? getFcmToken() {
+    return _prefs.getString(_keyFcmToken);
+  }
+
+  static Future<void> clearFcmToken() async {
+    await _prefs.remove(_keyFcmToken);
   }
 }

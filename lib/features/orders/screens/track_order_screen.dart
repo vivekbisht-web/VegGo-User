@@ -96,38 +96,6 @@ class _TrackOrderScreenState extends State<TrackOrderScreen> {
                 onPressed: () => Get.to(() => const OrderDetailsScreen()),
               ),
               AppSpacing.responsiveHeight(0.02),
-
-              Obx(() {
-                final status = ordersController
-                    .orderTrackingData.value?.status
-                    ?.toUpperCase();
-                final isDelivered = status == 'DELIVERED';
-                final isCancelled = status == 'CANCELLED';
-                if (isDelivered || isCancelled) {
-                  return const SizedBox.shrink();
-                }
-
-                return Column(
-                  children: [
-                    CustomButton(
-                      text: AppStrings.cancelOrder,
-                      isOutlined: true,
-                      textColor: AppColors.error,
-                      onPressed: () {
-                        final id =
-                            widget.orderId ??
-                            ordersController.selectedOrder.value?.id;
-                        if (id != null) {
-                          ordersController.cancelOrder(id);
-                        }
-                        Get.back();
-                      },
-                    ),
-                    AppSpacing.responsiveHeight(0.02),
-                  ],
-                );
-              }),
-              AppSpacing.responsiveHeight(0.02),
             ],
           ),
         ),

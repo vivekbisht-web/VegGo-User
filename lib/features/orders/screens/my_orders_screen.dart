@@ -323,8 +323,9 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
               Expanded(
                 child: CustomButton(
                   text: isDelivered
-                      ? AppStrings.rateReorder
+                      ? AppStrings.rateOrder
                       : AppStrings.trackOrder,
+                  icon: isDelivered ? Icons.star_outline_rounded : Icons.location_on_outlined,
                   isOutlined: true,
                   onPressed: () {
                     controller.selectOrder(order);

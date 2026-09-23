@@ -24,6 +24,7 @@ class AppStrings {
       'Get FREE delivery on orders over ${currencySymbol}299!\nStandard delivery charge is ${currencySymbol}30.';
   static const String gotIt = 'Got it';
   static const String estimatedTaxes = 'Estimated Taxes';
+  static const String platformCharge = 'Platform Charge';
   static const String promoPrefix = 'Promo: ';
   static const String promoRemove = '(Remove)';
   static const String promoCode = 'Promo code';
@@ -330,6 +331,7 @@ class AppStrings {
   static const String allOrders = 'All Orders';
   static const String inProgress = 'In Progress';
   static const String rateReorder = 'Rate / Reorder';
+  static const String rateOrder = 'Rate Order';
   static const String details = 'Details';
   static const String description = 'Description';
   static const String trackOrder = 'Track Order';

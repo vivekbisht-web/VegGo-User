@@ -8,6 +8,7 @@ import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/theme/app_scroll_behavior.dart';
 import 'package:vegon_user/core/theme/app_theme.dart';
 import 'package:vegon_user/core/local_storage/shared_prefs_helper.dart';
+import 'package:vegon_user/core/services/push_notification_service.dart';
 import 'firebase_options.dart';
 import 'routes/app_pages.dart';
 
@@ -25,6 +26,7 @@ void main() async {
   HttpOverrides.global = AppHttpOverrides();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SharedPrefsHelper.init();
+  await PushNotificationService.instance.init();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
