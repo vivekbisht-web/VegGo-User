@@ -65,10 +65,12 @@ class CustomImageView extends StatelessWidget {
     }
 
     final double pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    final int? cacheWidth =
-        width != double.infinity ? (width * pixelRatio).toInt() : null;
-    final int? cacheHeight =
-        height != double.infinity ? (height * pixelRatio).toInt() : null;
+    final int? cacheWidth = width != double.infinity
+        ? (width * pixelRatio).toInt()
+        : null;
+    final int? cacheHeight = height != double.infinity
+        ? (height * pixelRatio).toInt()
+        : null;
 
     return CachedNetworkImage(
       imageUrl: cleanUrl,

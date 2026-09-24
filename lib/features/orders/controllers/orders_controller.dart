@@ -36,6 +36,7 @@ class OrdersController extends GetxController {
 
   final RxInt currentPage = 0.obs;
   final RxBool hasMorePages = true.obs;
+  final RxInt totalOrdersCount = 0.obs;
 
   static const int _pageSize = 10;
 
@@ -69,6 +70,7 @@ class OrdersController extends GetxController {
       );
 
       if (response != null && response.data != null) {
+        totalOrdersCount.value = response.data!.totalElements ?? 0;
         final content = response.data!.content ?? [];
         final fetchedOrders = content
             .map((item) => OrderModel.fromHistoryItem(item))
@@ -279,13 +281,11 @@ class OrdersController extends GetxController {
       )
       .toList();
 
-  List<OrderModel> get completedOrders => orders
-      .where(
-        (o) =>
-            o.status == OrderStatus.delivered ||
-            o.status == OrderStatus.cancelled,
-      )
+  List<OrderModel> get deliveredOrders => orders
+      .where((o) => o.status == OrderStatus.delivered)
       .toList();
+
+  List<OrderModel> get completedOrders => deliveredOrders;
 
   void selectOrder(OrderModel order) {
     selectedOrder.value = order;

@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
@@ -51,16 +50,20 @@ class HomeQuickActions extends StatelessWidget {
       ),
     ];
 
-    return SizedBox(
-      height: AppSpacing.quickActionHeight,
-      child: Row(
-        children: [
-          for (var i = 0; i < actions.length; i++) ...[
-            Expanded(child: _QuickActionCard(action: actions[i])),
-            if (i != actions.length - 1) AppSpacing.w4,
-          ],
-        ],
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: AppSpacing.paddingZero,
+      itemCount: actions.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: AppSpacing.radius10,
+        mainAxisSpacing: AppSpacing.radius10,
+        childAspectRatio: 2.65,
       ),
+      itemBuilder: (context, index) {
+        return _QuickActionCard(action: actions[index]);
+      },
     );
   }
 }
@@ -72,20 +75,28 @@ class _QuickActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardRadius = BorderRadius.circular(AppSpacing.radius10);
+    final cardRadius = BorderRadius.circular(AppSpacing.radius12);
     final textTheme = Theme.of(context).textTheme;
 
     return Material(
       color: AppColors.surface,
       borderRadius: cardRadius,
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: action.onTap,
         borderRadius: cardRadius,
         child: Container(
-          padding: AppSpacing.paddingFromLTRB(5, 6, 5, 6),
+          padding: AppSpacing.paddingSymmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
             borderRadius: cardRadius,
             border: Border.all(color: AppColors.chipBorder, width: 0.8),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.overlayLight.withValues(alpha: 0.03),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
           child: Row(
             children: [
@@ -93,38 +104,39 @@ class _QuickActionCard extends StatelessWidget {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    width: AppSpacing.quickActionIconSize,
-                    height: AppSpacing.quickActionIconSize,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: action.iconBackground,
-                      shape: BoxShape.circle,
+                      borderRadius: BorderRadius.circular(AppSpacing.radius10),
                     ),
                     child: Center(
                       child: Icon(
                         action.icon,
                         color: action.iconColor,
-                        size: 16,
+                        size: 20,
                       ),
                     ),
                   ),
                   if (action.badge != null)
                     Positioned(
-                      right: -3,
-                      top: -3,
+                      right: -4,
+                      top: -4,
                       child: Container(
-                        width: 14,
-                        height: 14,
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 1,
+                        ),
+                        decoration: BoxDecoration(
                           color: AppColors.error,
-                          shape: BoxShape.circle,
+                          borderRadius: BorderRadius.circular(AppSpacing.radius8),
                         ),
                         child: Text(
                           action.badge!,
                           style: textTheme.labelSmall?.copyWith(
                             color: AppColors.surface,
                             fontWeight: FontWeight.w800,
-                            fontSize: 7.5,
+                            fontSize: 8.5,
                             height: 1,
                           ),
                         ),
@@ -132,38 +144,32 @@ class _QuickActionCard extends StatelessWidget {
                     ),
                 ],
               ),
-              AppSpacing.w4,
+              AppSpacing.w8,
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        action.title,
-                        maxLines: 1,
-                        style: textTheme.labelSmall?.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 9.5,
-                          height: 1.1,
-                        ),
+                    Text(
+                      action.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.titleSmall?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12.5,
+                        height: 1.15,
                       ),
                     ),
                     AppSpacing.h2,
-                    FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        action.subtitle,
-                        maxLines: 1,
-                        style: textTheme.labelSmall?.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 8,
-                          height: 1.1,
-                        ),
+                    Text(
+                      action.subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontSize: 10.5,
+                        height: 1.15,
                       ),
                     ),
                   ],

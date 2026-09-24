@@ -7,8 +7,23 @@ import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/features/dashboard/controllers/notification_controller.dart';
 import 'package:vegon_user/features/dashboard/widgets/notification_tile.dart';
 
-class NotificationScreen extends StatelessWidget {
+class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
+
+  @override
+  State<NotificationScreen> createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<NotificationController>()) {
+        Get.find<NotificationController>().onNotificationScreenOpened();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +63,10 @@ class NotificationScreen extends StatelessWidget {
                 return _PaginationLoader(ctrl: ctrl);
               }
               final item = ctrl.notifications[index];
+              final isHighlighted = ctrl.highlightedIds.contains(item.id);
               return NotificationTile(
                 notification: item,
+                isHighlighted: isHighlighted,
                 onTap: () => ctrl.markAsRead(item.id),
               );
             },

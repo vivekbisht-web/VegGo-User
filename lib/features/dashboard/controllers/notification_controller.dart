@@ -78,13 +78,33 @@ class NotificationController extends GetxController {
     }
   }
 
+  final RxSet<String> highlightedIds = <String>{}.obs;
+
+  void onNotificationScreenOpened() {
+    final unreadIds =
+        notifications.where((n) => !n.read).map((n) => n.id).toList();
+    highlightedIds.addAll(unreadIds);
+
+    for (var i = 0; i < notifications.length; i++) {
+      if (!notifications[i].read) {
+        notifications[i] = notifications[i].copyWith(read: true);
+      }
+    }
+    unreadCount.value = 0;
+    _repo.markAllAsRead();
+  }
+
+  void dismissHighlight(String id) {
+    highlightedIds.remove(id);
+  }
+
   Future<void> fetchUnreadCount() async {
     final count = await _repo.getUnreadCount();
     if (count != null) unreadCount.value = count;
   }
 
   Future<void> markAsRead(String id) async {
-    // Optimistic update
+    dismissHighlight(id);
     final idx = notifications.indexWhere((n) => n.id == id);
     if (idx == -1 || notifications[idx].read) return;
 
@@ -93,7 +113,6 @@ class NotificationController extends GetxController {
 
     final success = await _repo.markAsRead(id);
     if (!success) {
-      // Revert on failure
       notifications[idx] = notifications[idx].copyWith(read: false);
       if (unreadCount.value < notifications.where((n) => !n.read).length + 1) {
         unreadCount.value++;
@@ -108,10 +127,13 @@ class NotificationController extends GetxController {
     }
   }
 
-  Future<void> markAllAsRead() async {
-    if (notifications.every((n) => n.read)) return;
+  Future<void> markAllAsRead({bool showSnackbar = true}) async {
+    highlightedIds.clear();
+    if (notifications.every((n) => n.read)) {
+      unreadCount.value = 0;
+      return;
+    }
 
-    // Optimistic update
     for (var i = 0; i < notifications.length; i++) {
       if (!notifications[i].read) {
         notifications[i] = notifications[i].copyWith(read: true);
@@ -120,7 +142,7 @@ class NotificationController extends GetxController {
     unreadCount.value = 0;
 
     final success = await _repo.markAllAsRead();
-    if (success) {
+    if (success && showSnackbar) {
       Get.snackbar(
         AppStrings.notifications,
         AppStrings.allMarkedRead,
@@ -128,8 +150,7 @@ class NotificationController extends GetxController {
         colorText: AppColors.surface,
         duration: const Duration(seconds: 2),
       );
-    } else {
-      // Reload to sync correct state from server
+    } else if (!success) {
       await fetchNotifications(isRefresh: true);
       await fetchUnreadCount();
     }

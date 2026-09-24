@@ -26,6 +26,11 @@ class HomeController extends GetxController {
   final RxBool hasError = false.obs;
   final RxString errorMessage = ''.obs;
 
+  final RxInt currentPage = 0.obs;
+  final RxInt totalPages = 1.obs;
+  final RxBool hasMoreProducts = true.obs;
+  final RxBool isMoreProductsLoading = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -255,16 +260,20 @@ class HomeController extends GetxController {
     }
 
     try {
+      currentPage.value = 0;
       final response = await _repository.fetchProducts(
         latitude: lat,
         longitude: lng,
         page: 0,
-        size: 30,
+        size: 10,
       );
 
       if (response.success) {
         final products = response.content;
         allProducts.assignAll(products);
+        currentPage.value = response.page;
+        totalPages.value = response.totalPages;
+        hasMoreProducts.value = response.page < response.totalPages - 1;
 
         if (bestDeals.isEmpty) {
           _populateDealsFromProducts(products);
@@ -282,6 +291,43 @@ class HomeController extends GetxController {
       errorMessage.value = e.toString();
     } finally {
       isProductsLoading.value = false;
+    }
+  }
+
+  Future<void> loadMoreProducts() async {
+    if (isMoreProductsLoading.value || !hasMoreProducts.value) return;
+
+    isMoreProductsLoading.value = true;
+
+    double? lat;
+    double? lng;
+    if (Get.isRegistered<LocationController>()) {
+      final locCtrl = Get.find<LocationController>();
+      lat = locCtrl.latitude;
+      lng = locCtrl.longitude;
+    }
+
+    try {
+      final nextPage = currentPage.value + 1;
+      final response = await _repository.fetchProducts(
+        latitude: lat,
+        longitude: lng,
+        page: nextPage,
+        size: 10,
+      );
+
+      if (response.success && response.content.isNotEmpty) {
+        allProducts.addAll(response.content);
+        currentPage.value = response.page;
+        totalPages.value = response.totalPages;
+        hasMoreProducts.value = response.page < response.totalPages - 1;
+      } else {
+        hasMoreProducts.value = false;
+      }
+    } catch (e) {
+      debugPrint("Error loading more products: $e");
+    } finally {
+      isMoreProductsLoading.value = false;
     }
   }
 

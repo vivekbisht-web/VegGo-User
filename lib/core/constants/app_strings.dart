@@ -904,4 +904,9 @@ class AppStrings {
   static const String minuteAgo = 'm ago';
   static const String hourAgo = 'h ago';
   static const String dayAgo = 'd ago';
+
+  // Home Products Pagination
+  static const String loadMoreProducts = 'Load More Products';
+  static const String exploreAllProducts = 'Explore All Products';
+  static const String allProductsLoaded = 'All Products Loaded';
 }

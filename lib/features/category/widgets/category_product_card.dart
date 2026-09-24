@@ -109,11 +109,22 @@ class CategoryProductCard extends StatelessWidget {
                         ),
                         customBorder: const CircleBorder(),
                         child: Container(
-                          width: 26,
-                          height: 26,
+                          width: 28,
+                          height: 28,
                           decoration: BoxDecoration(
-                            color: AppColors.surface.withValues(alpha: 0.9),
+                            color: AppColors.surface,
                             shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.chipBorder,
+                              width: 0.8,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.overlayLight.withValues(alpha: 0.12),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
                           ),
                           child: Icon(
                             isFav
@@ -121,8 +132,8 @@ class CategoryProductCard extends StatelessWidget {
                                 : Icons.favorite_border_rounded,
                             color: isFav
                                 ? AppColors.error
-                                : AppColors.borderLight,
-                            size: 16,
+                                : AppColors.textSecondary,
+                            size: 17,
                           ),
                         ),
                       );

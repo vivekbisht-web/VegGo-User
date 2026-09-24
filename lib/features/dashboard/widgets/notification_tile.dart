@@ -6,28 +6,29 @@ import 'package:vegon_user/features/dashboard/models/notification_model.dart';
 
 class NotificationTile extends StatelessWidget {
   final NotificationItem notification;
+  final bool isHighlighted;
   final VoidCallback onTap;
 
   const NotificationTile({
     super.key,
     required this.notification,
+    this.isHighlighted = false,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isNew = isHighlighted || !notification.read;
     return InkWell(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
-        color: notification.read
-            ? AppColors.surface
-            : AppColors.mintLight,
+        color: isNew ? AppColors.mintLight : AppColors.surface,
         padding: AppSpacing.paddingAll16,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _TypeIcon(type: notification.type, isRead: notification.read),
+            _TypeIcon(type: notification.type, isRead: !isNew),
             AppSpacing.w12,
             Expanded(
               child: Column(
@@ -40,9 +41,9 @@ class NotificationTile extends StatelessWidget {
                           notification.title,
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
-                                fontWeight: notification.read
-                                    ? FontWeight.w500
-                                    : FontWeight.w700,
+                                fontWeight: isNew
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
                                 color: AppColors.textPrimary,
                               ),
                         ),
@@ -66,7 +67,7 @@ class NotificationTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (!notification.read) ...[
+            if (isNew) ...[
               AppSpacing.w8,
               Container(
                 width: 8,

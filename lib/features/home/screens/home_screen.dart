@@ -15,7 +15,6 @@ import 'package:vegon_user/features/home/widgets/home_best_deals.dart';
 import 'package:vegon_user/features/home/widgets/home_categories.dart';
 import 'package:vegon_user/features/home/widgets/home_header_sliver.dart';
 import 'package:vegon_user/features/home/widgets/home_live_search_results.dart';
-import 'package:vegon_user/features/home/widgets/home_nearby_stores.dart';
 import 'package:vegon_user/features/home/widgets/home_product_section.dart';
 import 'package:vegon_user/features/home/widgets/home_quick_actions.dart';
 
@@ -122,14 +121,6 @@ class HomeScreen extends StatelessWidget {
                                 ],
                               );
                             }),
-                            SectionHeader(
-                              title: AppStrings.nearbyStores,
-                              onActionTap: () =>
-                                  dashboardController.changeTabIndex(1),
-                            ),
-                            AppSpacing.h8,
-                            const HomeNearbyStores(),
-                            AppSpacing.h20,
                             SectionHeader(
                               title: AppStrings.allProducts,
                               onActionTap: () =>

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
+import 'package:vegon_user/features/orders/controllers/orders_controller.dart';
 import 'package:vegon_user/features/profile/controllers/user_profile_controller.dart';
 import 'package:vegon_user/features/profile/widgets/profile_header_card.dart';
 import 'package:vegon_user/features/profile/widgets/profile_menu_list.dart';
@@ -24,6 +25,9 @@ class ProfileScreen extends StatelessWidget {
                 ? Get.find<UserProfileController>()
                 : Get.put(UserProfileController());
             await controller.fetchUserProfile(showLoading: false);
+            if (Get.isRegistered<OrdersController>()) {
+              await Get.find<OrdersController>().fetchOrders(isRefresh: true);
+            }
           },
           child: SingleChildScrollView(
             physics: const ClampingScrollPhysics(

@@ -13,7 +13,9 @@ import 'package:vegon_user/features/orders/screens/track_order_screen.dart';
 import 'package:vegon_user/features/orders/screens/order_delivered_screen.dart';
 
 class MyOrdersScreen extends StatefulWidget {
-  const MyOrdersScreen({super.key});
+  final int initialTabIndex;
+
+  const MyOrdersScreen({super.key, this.initialTabIndex = 0});
 
   @override
   State<MyOrdersScreen> createState() => _MyOrdersScreenState();
@@ -31,7 +33,11 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: widget.initialTabIndex.clamp(0, 2),
+    );
 
     _attachPaginationListener(_allScrollController);
     _attachPaginationListener(_activeScrollController);
@@ -135,7 +141,7 @@ class _MyOrdersScreenState extends State<MyOrdersScreen>
       if (type == 1) {
         list = controller.activeOrders;
       } else if (type == 2) {
-        list = controller.completedOrders;
+        list = controller.deliveredOrders;
       } else {
         list = controller.orders;
       }

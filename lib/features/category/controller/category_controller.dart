@@ -220,9 +220,19 @@ class CategoryController extends GetxController {
       filtered.sort((a, b) => a.price.compareTo(b.price));
     } else if (selectedSortOption.value == AppStrings.sortPriceHighToLow) {
       filtered.sort((a, b) => b.price.compareTo(a.price));
+    } else if (selectedSortOption.value == AppStrings.sortByPopular ||
+        selectedSortOption.value == AppStrings.bestSeller) {
+      filtered.sort(
+        (a, b) => (b.bestSeller ? 1 : 0).compareTo(a.bestSeller ? 1 : 0),
+      );
     }
 
     return filtered;
+  }
+
+  void setSortOption(String option) {
+    selectedSortOption.value = option;
+    products.refresh();
   }
 
   String get currentCategoryName {

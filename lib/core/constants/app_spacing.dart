@@ -46,6 +46,7 @@ class AppSpacing {
 
   static const EdgeInsets paddingZero = EdgeInsets.zero;
   static const EdgeInsets paddingAll4 = EdgeInsets.all(4);
+  static const EdgeInsets paddingAll6 = EdgeInsets.all(6);
   static const EdgeInsets paddingAll3 = EdgeInsets.all(3);
   static const EdgeInsets paddingHorizontal2_5 = EdgeInsets.symmetric(horizontal: 2.5);
   static const EdgeInsets paddingAll8 = EdgeInsets.all(8);
@@ -115,8 +116,8 @@ class AppSpacing {
   static const EdgeInsets bannerBadgePadding = EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0);
 
   static const double categoryCardRadius = 16.0;
-  static const double categoryCardAspectRatio = 0.85;
-  static const double categoryCardImageHeight = 44.0;
+  static const double categoryCardAspectRatio = 0.88;
+  static const double categoryCardImageHeight = 56.0;
   static const double categoryGridCrossAxisSpacing = 8.0;
   static const double categoryGridMainAxisSpacing = 8.0;
   static const double categoryFontSize = 11.5;

@@ -96,30 +96,38 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardRadius = BorderRadius.circular(AppSpacing.categoryCardRadius);
+    final imageRadius = BorderRadius.circular(AppSpacing.radius14);
     final textTheme = Theme.of(context).textTheme;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: cardRadius,
-      child: Padding(
-        padding: AppSpacing.categoryCardPadding,
+    return Material(
+      color: AppColors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: imageRadius,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: Center(
+            Container(
+              width: AppSpacing.categoryCardImageHeight,
+              height: AppSpacing.categoryCardImageHeight,
+              decoration: BoxDecoration(
+                borderRadius: imageRadius,
+                color: AppColors.chipBackground,
+              ),
+              child: ClipRRect(
+                borderRadius: imageRadius,
                 child: isMore
                     ? const _MoreCategoryIcon()
                     : CustomImageView(
                         imageUrl: imageUrl,
-                        height: AppSpacing.categoryCardImageHeight,
                         width: AppSpacing.categoryCardImageHeight,
-                        fit: BoxFit.contain,
+                        height: AppSpacing.categoryCardImageHeight,
+                        fit: BoxFit.cover,
                       ),
               ),
             ),
-            AppSpacing.h4,
+            AppSpacing.h6,
             Text(
               name,
               textAlign: TextAlign.center,

@@ -195,7 +195,11 @@ class _CategoryScreenContent extends StatelessWidget {
           ),
           itemCount: products.length,
           itemBuilder: (context, index) {
-            return CategoryProductCard(product: products[index]);
+            final p = products[index];
+            return CategoryProductCard(
+              key: ValueKey('${p.id}_${controller.selectedSortOption.value}'),
+              product: p,
+            );
           },
         ),
       );

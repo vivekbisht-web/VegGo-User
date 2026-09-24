@@ -8,6 +8,7 @@ import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/core/widgets/custom_text_field.dart';
 import 'package:vegon_user/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:vegon_user/features/dashboard/controllers/notification_controller.dart';
+import 'package:vegon_user/features/profile/controllers/user_profile_controller.dart';
 import 'package:vegon_user/features/profile/screens/profile_screen.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/screens/cart_screen.dart';
@@ -67,6 +68,10 @@ class HomeHeader extends StatelessWidget {
         Get.isRegistered<HomeSearchController>()
         ? Get.find<HomeSearchController>()
         : Get.put(HomeSearchController());
+    final UserProfileController profileController =
+        Get.isRegistered<UserProfileController>()
+            ? Get.find<UserProfileController>()
+            : Get.put(UserProfileController());
 
     return SizedBox(
       height: heroHeight + 46,
@@ -169,15 +174,36 @@ class HomeHeader extends StatelessWidget {
                       );
                     }),
                     AppSpacing.w12,
-                    CircleAvatar(
-                      backgroundColor: AppColors.surface,
-                      radius: 16,
-                      child: _HeaderIconButton(
-                        icon: Icons.person_outline_rounded,
-                        iconColor: AppColors.darkHeaderStart,
+                    Obx(() {
+                      final avatarUrl = profileController.avatar;
+                      return GestureDetector(
                         onTap: () => Get.to(() => const ProfileScreen()),
-                      ),
-                    ),
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: const BoxDecoration(
+                            color: AppColors.surface,
+                            shape: BoxShape.circle,
+                          ),
+                          child: ClipOval(
+                            child: avatarUrl.isNotEmpty
+                                ? CustomImageView(
+                                    imageUrl: avatarUrl,
+                                    fit: BoxFit.cover,
+                                    width: 32,
+                                    height: 32,
+                                  )
+                                : const Center(
+                                    child: Icon(
+                                      Icons.person_outline_rounded,
+                                      color: AppColors.darkHeaderStart,
+                                      size: 20,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ],
