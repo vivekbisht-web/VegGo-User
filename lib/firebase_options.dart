@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDsjiV7UDbVmmbJA6kLMMDEu2rMQNvhVug',
-    appId: '1:726384647343:android:0968f12540c336f602885a',
+    appId: '1:726384647343:android:f7172ed40323c38f02885a',
     messagingSenderId: '726384647343',
     projectId: 'veggo-fresh-865c2',
     storageBucket: 'veggo-fresh-865c2.firebasestorage.app',

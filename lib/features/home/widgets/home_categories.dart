@@ -71,7 +71,7 @@ class HomeCategories extends StatelessWidget {
             imageUrl: imageUrl,
             isMore: false,
             onTap: () {
-              categoryController.selectCategory(index);
+              categoryController.selectCategoryById(category.id);
               dashboardController.changeTabIndex(1);
             },
           );

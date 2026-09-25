@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/theme/app_scroll_behavior.dart';

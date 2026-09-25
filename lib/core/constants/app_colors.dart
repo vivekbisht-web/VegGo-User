@@ -19,6 +19,7 @@ abstract final class AppColors {
   static const black = Colors.black;
   static const transparent = Colors.transparent;
   static const overlayLight = Color(0x1F000000);
+  static const shadowLight = Color(0x42000000); // Colors.black26 equivalent
 
   static const mintHeader = Color(0xFFDCF4DE);
   static const mintBadge = Color(0xFFC8E6C9);

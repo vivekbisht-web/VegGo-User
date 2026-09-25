@@ -409,7 +409,7 @@ class AppStrings {
   static const String emptyFieldError = 'This field cannot be empty';
   static const String mapTileUrl =
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  static const String mapTileUserAgent = 'com.example.vegon_user';
+  static const String mapTileUserAgent = 'com.veggofresh.customer';
   static const String liveOrderTracking = 'Live Order Tracking';
   static const String deliveryPartner = 'Delivery Partner';
   static const String deliveryLocation = 'Delivery Location';

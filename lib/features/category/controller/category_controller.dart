@@ -16,6 +16,9 @@ class CategoryController extends GetxController {
   final RxList<CategoryProductItem> products = <CategoryProductItem>[].obs;
 
   final RxBool isCategoriesLoading = false.obs;
+  final RxBool isMoreCategoriesLoading = false.obs;
+  final RxBool hasMoreCategories = false.obs;
+  final RxInt categoriesPage = 0.obs;
   final RxBool isSubcategoriesLoading = false.obs;
   final RxBool isProductsLoading = false.obs;
   final RxString errorMessage = ''.obs;
@@ -33,33 +36,94 @@ class CategoryController extends GetxController {
     fetchCategories();
   }
 
-  Future<void> fetchCategories({int? initialIndex}) async {
-    if (categories.isEmpty) {
-      isCategoriesLoading.value = true;
-    }
+  Future<void> fetchCategories({
+    int? initialIndex,
+    String? targetCategoryId,
+  }) async {
+    isCategoriesLoading.value = true;
     errorMessage.value = '';
+    categoriesPage.value = 0;
 
     try {
-      final response = await _repository.fetchCategories();
+      final response = await _repository.fetchCategories(page: 0, size: 20);
       if (response.success && response.content.isNotEmpty) {
         categories.assignAll(response.content);
-        final currentIdx = initialIndex ?? selectedCategoryIndex.value;
-        final targetIndex = currentIdx.clamp(0, categories.length - 1);
+        hasMoreCategories.value = response.page < response.totalPages - 1;
+
+        int targetIndex = 0;
+        if (targetCategoryId != null && targetCategoryId.isNotEmpty) {
+          final foundIdx = categories.indexWhere(
+            (c) => c.id == targetCategoryId,
+          );
+          if (foundIdx != -1) {
+            targetIndex = foundIdx;
+          }
+        } else {
+          final currentIdx = initialIndex ?? selectedCategoryIndex.value;
+          targetIndex = currentIdx.clamp(0, categories.length - 1);
+        }
+
         selectedCategoryIndex.value = targetIndex;
         await onCategoryChanged();
       } else {
-        if (categories.isEmpty) {
-          errorMessage.value = response.message.isNotEmpty
-              ? response.message
-              : AppStrings.failedToLoadCategories;
-        }
+        errorMessage.value = response.message.isNotEmpty
+            ? response.message
+            : AppStrings.failedToLoadCategories;
       }
     } catch (e) {
-      if (categories.isEmpty) {
-        errorMessage.value = e.toString();
-      }
+      errorMessage.value = e.toString();
     } finally {
       isCategoriesLoading.value = false;
+    }
+  }
+
+  Future<void> loadMoreCategories() async {
+    if (isMoreCategoriesLoading.value || !hasMoreCategories.value) return;
+    isMoreCategoriesLoading.value = true;
+    try {
+      final nextPage = categoriesPage.value + 1;
+      final response = await _repository.fetchCategories(
+        page: nextPage,
+        size: 20,
+      );
+      if (response.success && response.content.isNotEmpty) {
+        categories.addAll(response.content);
+        categoriesPage.value = response.page;
+        hasMoreCategories.value = response.page < response.totalPages - 1;
+      } else {
+        hasMoreCategories.value = false;
+      }
+    } catch (_) {
+      hasMoreCategories.value = false;
+    } finally {
+      isMoreCategoriesLoading.value = false;
+    }
+  }
+
+  /// Navigate to a category by its server ID — safe for cross-list navigation
+  Future<void> selectCategoryById(
+    String categoryId, {
+    CategoryItem? fallbackCategory,
+  }) async {
+    searchQuery.value = '';
+
+    if (categories.isEmpty) {
+      await fetchCategories(targetCategoryId: categoryId);
+      if (categories.any((c) => c.id == categoryId)) {
+        return;
+      }
+    }
+
+    int idx = categories.indexWhere((c) => c.id == categoryId);
+    if (idx == -1 && fallbackCategory != null) {
+      categories.add(fallbackCategory);
+      idx = categories.length - 1;
+    }
+
+    if (idx != -1) {
+      selectedCategoryIndex.value = idx;
+      selectedSubcategoryId.value = '';
+      await onCategoryChanged();
     }
   }
 
@@ -193,7 +257,9 @@ class CategoryController extends GetxController {
 
   List<CategoryProductItem> get currentProducts {
     final query = searchQuery.value.trim().toLowerCase();
-    List<CategoryProductItem> filtered = List<CategoryProductItem>.from(products);
+    List<CategoryProductItem> filtered = List<CategoryProductItem>.from(
+      products,
+    );
 
     if (query.isNotEmpty) {
       filtered = filtered.where((p) {
@@ -258,6 +324,10 @@ class CategoryController extends GetxController {
   }
 
   Future<void> refreshAll() async {
-    await fetchCategories(initialIndex: selectedCategoryIndex.value);
+    final currentTargetId = categories.isNotEmpty &&
+            selectedCategoryIndex.value < categories.length
+        ? categories[selectedCategoryIndex.value].id
+        : null;
+    await fetchCategories(targetCategoryId: currentTargetId);
   }
 }

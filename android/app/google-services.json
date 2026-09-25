@@ -61,6 +61,44 @@
           "other_platform_oauth_client": []
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726384647343:android:f7172ed40323c38f02885a",
+        "android_client_info": {
+          "package_name": "com.veggofresh.customer"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsjiV7UDbVmmbJA6kLMMDEu2rMQNvhVug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:726384647343:android:4e8fa4530f5eba2602885a",
+        "android_client_info": {
+          "package_name": "com.veggofresh.delivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsjiV7UDbVmmbJA6kLMMDEu2rMQNvhVug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
     }
   ],
   "configuration_version": "1"
