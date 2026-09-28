@@ -16,7 +16,7 @@ import 'package:vegon_user/routes/app_routes.dart';
 
 import 'package:vegon_user/features/home/controllers/location_controller.dart';
 import 'package:vegon_user/features/home/controllers/home_search_controller.dart';
-import 'package:vegon_user/features/profile/screens/saved_addresses_screen.dart';
+import 'package:vegon_user/core/widgets/address_selection_bottom_sheet.dart';
 
 class HomeHeaderSliver extends StatelessWidget {
   final bool showBackButton;
@@ -214,104 +214,136 @@ class HomeHeader extends StatelessWidget {
             left: sidePadding,
             top: heroHeight - 52,
             child: Material(
-              color: AppColors.transparent,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(AppSpacing.radius16),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(AppSpacing.radius16),
-                onTap: () => Get.to(() => SavedAddressesScreen()),
-                child: Container(
-                  height: locationHeight,
-                  constraints: BoxConstraints(
-                    maxWidth: media.width - (sidePadding * 2),
-                  ),
-                  padding: AppSpacing.paddingHorizontal12,
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(AppSpacing.radius16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.overlayLight.withValues(alpha: 0.15),
-                        blurRadius: 8,
-                        spreadRadius: -2,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.location_on_outlined,
-                        color: AppColors.primary,
-                        size: 22,
-                      ),
-                      AppSpacing.w6,
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            AppStrings.deliverTo,
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: AppColors.textSecondary,
-                                  fontSize: 9,
-                                  height: 1,
+              elevation: 3,
+              shadowColor: AppColors.overlayLight.withValues(alpha: 0.15),
+              child: Container(
+                height: locationHeight,
+                constraints: BoxConstraints(
+                  maxWidth: media.width - (sidePadding * 2),
+                ),
+                padding: const EdgeInsets.only(left: 10, right: 6),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Address Selection Button
+                    InkWell(
+                      borderRadius: BorderRadius.circular(AppSpacing.radius12),
+                      onTap: () => AddressSelectionBottomSheet.show(context),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 6,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.location_on_outlined,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
+                            AppSpacing.w6,
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppStrings.deliverTo,
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color: AppColors.textSecondary,
+                                        fontSize: 9,
+                                        height: 1,
+                                      ),
                                 ),
-                          ),
-                          AppSpacing.h4,
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Obx(() {
-                                final locName =
-                                    locationController.currentLocationName.value;
-                                return ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                    maxWidth: media.width * 0.35,
-                                  ),
-                                  child: Text(
-                                    locName,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context).textTheme.bodyMedium
-                                        ?.copyWith(
-                                          color: AppColors.textPrimary,
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 12,
-                                          height: 1,
+                                AppSpacing.h4,
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Obx(() {
+                                      final locName =
+                                          locationController
+                                              .currentLocationName
+                                              .value;
+                                      return ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: media.width * 0.36,
                                         ),
-                                  ),
-                                );
-                              }),
-                              AppSpacing.w4,
-                              GestureDetector(
-                                onTap: () =>
-                                    locationController.fetchAndSaveUserLocation(),
-                                child: Obx(
-                                  () =>
-                                      locationController.isFetchingLocation.value
-                                      ? const SizedBox(
-                                          width: 16,
-                                          height: 16,
-                                          child: CircularProgressIndicator(
-                                            color: AppColors.primary,
-                                            strokeWidth: 2,
-                                          ),
-                                        )
-                                      : const Icon(
-                                          Icons.refresh_rounded,
-                                          color: AppColors.primary,
-                                          size: 16,
+                                        child: Text(
+                                          locName.isNotEmpty
+                                              ? locName
+                                              : AppStrings.useCurrentLocation,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
+                                                color: AppColors.textPrimary,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 12,
+                                                height: 1,
+                                              ),
                                         ),
+                                      );
+                                    }),
+                                    AppSpacing.w2,
+                                    const Icon(
+                                      Icons.keyboard_arrow_down_rounded,
+                                      size: 16,
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
+                    ),
+
+                    // Vertical Divider
+                    Container(
+                      width: 1,
+                      height: 22,
+                      margin: AppSpacing.paddingHorizontal4,
+                      color: AppColors.borderLight,
+                    ),
+
+                    // Dedicated Refresh / GPS Fetch Button
+                    Material(
+                      color: AppColors.transparent,
+                      borderRadius: BorderRadius.circular(AppSpacing.radius16),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radius16,
+                        ),
+                        onTap: () => locationController
+                            .fetchAndSaveUserLocation(showFeedback: true),
+                        child: Padding(
+                          padding: AppSpacing.paddingAll6,
+                          child: Obx(
+                            () => locationController.isFetchingLocation.value
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.primary,
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.my_location_rounded,
+                                    color: AppColors.primary,
+                                    size: 18,
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -410,13 +442,11 @@ class _HeaderIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
   final String? badge;
-  final Color iconColor;
 
   const _HeaderIconButton({
     required this.icon,
     required this.onTap,
     this.badge,
-    this.iconColor = AppColors.surface,
   });
 
   @override
@@ -434,7 +464,7 @@ class _HeaderIconButton extends StatelessWidget {
             clipBehavior: Clip.none,
             alignment: Alignment.center,
             children: [
-              Icon(icon, color: iconColor, size: 27),
+              Icon(icon, color: AppColors.surface, size: 27),
               if (badge != null)
                 Positioned(
                   right: -4,

@@ -1,8 +1,9 @@
-//
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/api_endpoints.dart';
+import 'package:vegon_user/core/constants/app_colors.dart';
+import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/utils/permission_handler_service.dart';
 import 'package:vegon_user/core/local_storage/shared_prefs_helper.dart';
 import 'package:vegon_user/features/home/controllers/home_controller.dart';
@@ -29,10 +30,10 @@ class LocationController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadLocationFromLocal();
+    _initLocation();
   }
 
-  void _loadLocationFromLocal() {
+  Future<void> _initLocation() async {
     final lat = SharedPrefsHelper.getLatitude();
     final lng = SharedPrefsHelper.getLongitude();
     final name = SharedPrefsHelper.getLocationName();
@@ -42,22 +43,41 @@ class LocationController extends GetxController {
       currentLongitude.value = lng;
       currentLocationName.value = name ?? '';
       _notifyControllers(lat, lng);
-    } else {
-      fetchAndSaveUserLocation();
+    }
+
+    final permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      await fetchAndSaveUserLocation();
+    } else if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
+      if (currentLatitude.value == null) {
+        await fetchAndSaveUserLocation();
+      }
     }
   }
 
-  Future<void> fetchAndSaveUserLocation() async {
+  Future<void> fetchAndSaveUserLocation({bool showFeedback = false}) async {
     isFetchingLocation.value = true;
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         isFetchingLocation.value = false;
+        if (showFeedback) {
+          Get.snackbar(
+            AppStrings.appName,
+            AppStrings.pleaseEnableLocationService,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: AppColors.error,
+            colorText: AppColors.surface,
+          );
+        }
         return;
       }
 
       final hasPermission =
-          await PermissionHandlerService.handleLocationPermission();
+          await PermissionHandlerService.handleLocationPermission(
+            showFeedback: showFeedback,
+          );
       if (!hasPermission) {
         isFetchingLocation.value = false;
         return;
@@ -97,8 +117,7 @@ class LocationController extends GetxController {
             currentLocationName.value = city;
           }
         }
-        
-        // Save live location as the new current location in local DB
+
         await SharedPrefsHelper.saveLocation(
           position.latitude,
           position.longitude,
@@ -106,6 +125,17 @@ class LocationController extends GetxController {
         );
 
         _notifyControllers(position.latitude, position.longitude);
+
+        if (showFeedback && currentLocationName.value.isNotEmpty) {
+          Get.snackbar(
+            AppStrings.locationUpdated,
+            currentLocationName.value,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: AppColors.primary,
+            colorText: AppColors.surface,
+            duration: const Duration(seconds: 2),
+          );
+        }
       }
     } catch (e) {
       debugPrint('Error fetching user location: $e');

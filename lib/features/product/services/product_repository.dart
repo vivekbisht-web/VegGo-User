@@ -39,6 +39,7 @@ class ProductRepository {
         endpoint,
         queryParameters: queryParams.isNotEmpty ? queryParams : null,
       );
+      debugPrint('Product Details: ${response.data}');
 
       var data = response.data;
       if (data is String) {

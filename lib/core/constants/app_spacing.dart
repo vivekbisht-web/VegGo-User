@@ -60,6 +60,9 @@ class AppSpacing {
   static const EdgeInsets paddingHorizontal4 = EdgeInsets.symmetric(
     horizontal: 4,
   );
+  static const EdgeInsets paddingHorizontal6 = EdgeInsets.symmetric(
+    horizontal: 6,
+  );
   static const EdgeInsets paddingHorizontal8 = EdgeInsets.symmetric(
     horizontal: 8,
   );
@@ -68,6 +71,9 @@ class AppSpacing {
   );
   static const EdgeInsets paddingHorizontal16 = EdgeInsets.symmetric(
     horizontal: 16,
+  );
+  static const EdgeInsets paddingHorizontal20 = EdgeInsets.symmetric(
+    horizontal: 20,
   );
   static const EdgeInsets paddingHorizontal24 = EdgeInsets.symmetric(
     horizontal: 24,
@@ -97,6 +103,7 @@ class AppSpacing {
   static const double radius20 = 20.0;
   static const double radius24 = 24.0;
   static const double radius32 = 32.0;
+  static const double radius40 = 40.0;
 
   static const double bannerHeightMin = 120.0;
   static const double bannerHeightMax = 155.0;

@@ -89,6 +89,7 @@ class ProductDetailsData {
   final String unit;
   final int discountPercent;
   final bool bestSeller;
+  final double rating;
 
   ProductDetailsData({
     required this.id,
@@ -103,6 +104,7 @@ class ProductDetailsData {
     required this.unit,
     required this.discountPercent,
     required this.bestSeller,
+    this.rating = 4.5,
   });
 
   static double _parseDouble(dynamic value) {
@@ -136,13 +138,15 @@ class ProductDetailsData {
   }
 
   factory ProductDetailsData.fromJson(Map<String, dynamic> rawJson) {
-    final Map<String, dynamic> json = (rawJson['product'] is Map<String, dynamic>)
+    final Map<String, dynamic> json =
+        (rawJson['product'] is Map<String, dynamic>)
         ? rawJson['product'] as Map<String, dynamic>
         : ((rawJson['catalogProduct'] is Map<String, dynamic>)
-            ? rawJson['catalogProduct'] as Map<String, dynamic>
-            : rawJson);
+              ? rawJson['catalogProduct'] as Map<String, dynamic>
+              : rawJson);
 
-    final String resolvedId = rawJson['productId']?.toString() ??
+    final String resolvedId =
+        rawJson['productId']?.toString() ??
         rawJson['catalogProductId']?.toString() ??
         json['id']?.toString() ??
         json['_id']?.toString() ??
@@ -153,25 +157,44 @@ class ProductDetailsData {
       id: resolvedId,
       name: json['name']?.toString() ?? rawJson['name']?.toString() ?? '',
       price: _parseDouble(json['price'] ?? rawJson['price']),
-      originalPrice: _parseNullableDouble(json['originalPrice'] ?? rawJson['originalPrice']),
-      description: json['description']?.toString() ?? rawJson['description']?.toString() ?? '',
+      originalPrice: _parseNullableDouble(
+        json['originalPrice'] ?? rawJson['originalPrice'],
+      ),
+      description:
+          json['description']?.toString() ??
+          rawJson['description']?.toString() ??
+          '',
       shopId: json['shopId']?.toString() ?? rawJson['shopId']?.toString() ?? '',
-      shopName: json['shopName']?.toString() ?? rawJson['shopName']?.toString() ?? '',
-      category: json['category']?.toString() ?? rawJson['category']?.toString() ?? '',
-      imageUrl: json['imageUrl']?.toString() ??
+      shopName:
+          json['shopName']?.toString() ?? rawJson['shopName']?.toString() ?? '',
+      category:
+          json['category']?.toString() ?? rawJson['category']?.toString() ?? '',
+      imageUrl:
+          json['imageUrl']?.toString() ??
           json['image']?.toString() ??
           json['iconUrl']?.toString() ??
           rawJson['imageUrl']?.toString() ??
           rawJson['image']?.toString() ??
           '',
-      unit: json['unit']?.toString() ?? rawJson['unit']?.toString() ?? AppStrings.kg1,
+      unit:
+          json['unit']?.toString() ??
+          rawJson['unit']?.toString() ??
+          AppStrings.kg1,
       discountPercent: _parseInt(
-        json['discountPercent'] ?? json['discount'] ?? rawJson['discountPercent'] ?? rawJson['discount'],
+        json['discountPercent'] ??
+            json['discount'] ??
+            rawJson['discountPercent'] ??
+            rawJson['discount'],
       ),
-      bestSeller: json['bestSeller'] as bool? ??
+      bestSeller:
+          json['bestSeller'] as bool? ??
           json['isBestSeller'] as bool? ??
           rawJson['bestSeller'] as bool? ??
           false,
+      rating: () {
+        final parsed = _parseDouble(json['rating'] ?? rawJson['rating']);
+        return parsed > 0.0 ? parsed : 4.5;
+      }(),
     );
   }
 
@@ -190,6 +213,7 @@ class ProductDetailsData {
       'unit': unit,
       'discountPercent': discountPercent,
       'bestSeller': bestSeller,
+      'rating': rating,
     };
   }
 
@@ -210,6 +234,7 @@ class ProductDetailsData {
       'discount': discountPercent > 0 ? '$discountPercent% OFF' : null,
       'bestSeller': bestSeller,
       'isBestSeller': bestSeller,
+      'rating': rating,
     };
   }
 }

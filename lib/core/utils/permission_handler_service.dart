@@ -6,7 +6,7 @@ import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 
 class PermissionHandlerService {
-  static Future<bool> handleLocationPermission() async {
+  static Future<bool> handleLocationPermission({bool showFeedback = true}) async {
     final status = await Permission.location.request();
 
     if (status.isGranted) {
@@ -14,34 +14,38 @@ class PermissionHandlerService {
     }
 
     if (status.isDenied) {
-      Get.snackbar(
-        AppStrings.appName,
-        AppStrings.locationPermissionDenied,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.error,
-        colorText: AppColors.surface,
-      );
+      if (showFeedback) {
+        Get.snackbar(
+          AppStrings.appName,
+          AppStrings.locationPermissionDenied,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.error,
+          colorText: AppColors.surface,
+        );
+      }
       return false;
     }
 
     if (status.isPermanentlyDenied) {
-      Get.snackbar(
-        AppStrings.appName,
-        AppStrings.locationPermissionDeniedForever,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.error,
-        colorText: AppColors.surface,
-        mainButton: TextButton(
-          onPressed: () => openAppSettings(),
-          child: Text(
-            AppStrings.settings,
-            style: Theme.of(Get.context!).textTheme.labelLarge?.copyWith(
-              color: AppColors.surface,
-              fontWeight: FontWeight.bold,
+      if (showFeedback) {
+        Get.snackbar(
+          AppStrings.appName,
+          AppStrings.locationPermissionDeniedForever,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: AppColors.error,
+          colorText: AppColors.surface,
+          mainButton: TextButton(
+            onPressed: () => openAppSettings(),
+            child: Text(
+              AppStrings.settings,
+              style: Theme.of(Get.context!).textTheme.labelLarge?.copyWith(
+                color: AppColors.surface,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-        ),
-      );
+        );
+      }
       return false;
     }
 

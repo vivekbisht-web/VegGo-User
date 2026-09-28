@@ -49,14 +49,16 @@ class CartOrderSummaryCard extends StatelessWidget {
 
           _buildSummaryRow(
             AppStrings.subtotal,
-            '${AppStrings.currencySymbol}${cartController.currentCart.value?.totalAmount.toString()}',
+            '${AppStrings.currencySymbol}${cartController.subtotal.toStringAsFixed(2)}',
             context,
           ),
           AppSpacing.responsiveHeight(0.01),
 
           _buildSummaryRow(
-            AppStrings.deliveryFee,
-            '${AppStrings.currencySymbol}${cartController.currentCart.value?.deliveryFee.toString()}',
+            cartController.hasMultipleCarts
+                ? '${AppStrings.deliveryFee} (${cartController.cartCount} vendors)'
+                : AppStrings.deliveryFee,
+            '${AppStrings.currencySymbol}${cartController.deliveryFee.toStringAsFixed(2)}',
             context,
             trailingWidget: InkWell(
               onTap: () {
@@ -66,7 +68,11 @@ class CartOrderSummaryCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     title: const Text(AppStrings.deliveryFeeInfo),
-                    content: const Text(AppStrings.deliveryFeeDesc),
+                    content: Text(
+                      cartController.hasMultipleCarts
+                          ? 'Your order includes items from ${cartController.cartCount} different vendors, each with its own delivery, so the fee shown is the combined total for all of them.'
+                          : AppStrings.deliveryFeeDesc,
+                    ),
                     actions: [
                       TextButton(
                         onPressed: () => Get.back(),
@@ -99,7 +105,7 @@ class CartOrderSummaryCard extends StatelessWidget {
 
           _buildSummaryRow(
             AppStrings.estimatedTaxes,
-            '${AppStrings.currencySymbol}${cartController.currentCart.value?.estimatedTax.toString()}',
+            '${AppStrings.currencySymbol}${cartController.estimatedTaxes.toStringAsFixed(2)}',
             context,
           ),
 
@@ -201,7 +207,14 @@ class CartOrderSummaryCard extends StatelessWidget {
             text: AppStrings.proceedToCheckout,
             icon: Icons.arrow_forward,
             onPressed: () {
-              Get.to(() => CheckoutScreen());
+              final cartIds = cartController.carts
+                  .map((c) => c.id)
+                  .where((id) => id.isNotEmpty)
+                  .toList();
+              Get.to(
+                () => CheckoutScreen(),
+                arguments: {'cartIds': cartIds},
+              );
             },
           ),
 

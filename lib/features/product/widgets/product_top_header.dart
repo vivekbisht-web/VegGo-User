@@ -6,6 +6,7 @@ import 'package:vegon_user/core/constants/app_images.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
+import 'package:vegon_user/core/widgets/address_selection_bottom_sheet.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/screens/cart_screen.dart';
 import 'package:vegon_user/features/dashboard/screens/notification_screen.dart';
@@ -40,7 +41,7 @@ class ProductTopHeader extends StatelessWidget {
                   height: 36,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.chipBorder, width: 1),
                   ),
@@ -168,7 +169,7 @@ class ProductTopHeader extends StatelessWidget {
                                 '$count',
                                 style: Theme.of(context).textTheme.labelSmall
                                     ?.copyWith(
-                                      color: Colors.white,
+                                      color: AppColors.surface,
                                       fontSize: 8,
                                       fontWeight: FontWeight.bold,
                                       height: 1,
@@ -188,77 +189,78 @@ class ProductTopHeader extends StatelessWidget {
 
         Padding(
           padding: AppSpacing.paddingHorizontal16,
-          child: Container(
-            padding: AppSpacing.paddingSymmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(AppSpacing.radius12),
-              border: Border.all(color: AppColors.chipBorder, width: 1),
-            ),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.location_on_outlined,
-                  color: AppColors.primary,
-                  size: 18,
-                ),
-                AppSpacing.w8,
-
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        AppStrings.deliverTo,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w500,
-                          height: 1,
-                        ),
-                      ),
-                      AppSpacing.h2,
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Obx(() {
-                            final locName =
-                                locationController
-                                    .currentLocationName
-                                    .value
-                                    .isNotEmpty
-                                ? locationController.currentLocationName.value
-                                : AppStrings.useCurrentLocation;
-                            return Flexible(
-                              child: Text(
-                                locName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                      fontSize: 12,
-                                    ),
-                              ),
-                            );
-                          }),
-                          AppSpacing.w2,
-                          const Icon(
-                            Icons.keyboard_arrow_down_rounded,
-                            size: 16,
-                            color: AppColors.textPrimary,
-                          ),
-                        ],
-                      ),
-                    ],
+          child: InkWell(
+            onTap: () => AddressSelectionBottomSheet.show(context),
+            borderRadius: BorderRadius.circular(AppSpacing.radius12),
+            child: Container(
+              padding: AppSpacing.paddingSymmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppSpacing.radius12),
+                border: Border.all(color: AppColors.chipBorder, width: 1),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.location_on_outlined,
+                    color: AppColors.primary,
+                    size: 18,
                   ),
-                ),
+                  AppSpacing.w8,
 
-                InkWell(
-                  onTap: () => locationController.fetchAndSaveUserLocation(),
-                  child: Text(
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          AppStrings.deliverTo,
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: AppColors.textSecondary,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w500,
+                            height: 1,
+                          ),
+                        ),
+                        AppSpacing.h2,
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Obx(() {
+                              final locName =
+                                  locationController
+                                      .currentLocationName
+                                      .value
+                                      .isNotEmpty
+                                  ? locationController.currentLocationName.value
+                                  : AppStrings.useCurrentLocation;
+                              return Flexible(
+                                child: Text(
+                                  locName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textPrimary,
+                                        fontSize: 12,
+                                      ),
+                                ),
+                              );
+                            }),
+                            AppSpacing.w2,
+                            const Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              size: 16,
+                              color: AppColors.textPrimary,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Text(
                     AppStrings.change,
                     style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: AppColors.primary,
@@ -266,8 +268,8 @@ class ProductTopHeader extends StatelessWidget {
                       fontSize: 12,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

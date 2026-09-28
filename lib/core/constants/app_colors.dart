@@ -17,6 +17,7 @@ abstract final class AppColors {
   static const surface = Colors.white;
   static const white = Colors.white;
   static const black = Colors.black;
+  static const black12 = Color(0x1F000000); // ~12% black for shadows
   static const transparent = Colors.transparent;
   static const overlayLight = Color(0x1F000000);
   static const shadowLight = Color(0x42000000); // Colors.black26 equivalent

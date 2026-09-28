@@ -77,7 +77,7 @@ class CheckoutCart {
   });
 
   factory CheckoutCart.fromJson(Map<String, dynamic> json) => CheckoutCart(
-    cartId: json['cartId'] as String?,
+    cartId: (json['cartId'] ?? json['id']) as String?,
     cartLabel: json['cartLabel'] as String?,
     itemCount: json['itemCount'] as int?,
     subtotal: (json['subtotal'] as num?)?.toDouble(),

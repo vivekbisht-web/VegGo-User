@@ -16,6 +16,7 @@ import '../features/dashboard/controllers/dashboard_controller.dart';
 import '../features/dashboard/controllers/notification_controller.dart';
 import '../features/dashboard/screens/notification_screen.dart';
 import '../features/home/screens/home_screen.dart';
+import '../features/home/controllers/location_controller.dart';
 
 import '../features/category/screens/category_screen.dart';
 import '../features/category/controller/category_controller.dart';
@@ -47,6 +48,8 @@ import '../features/profile/controllers/address_controller.dart';
 import '../features/profile/screens/payment_methods_screen.dart';
 import '../features/profile/screens/add_payment_method_screen.dart';
 import '../features/profile/screens/wallet_screen.dart';
+import '../features/profile/screens/dm_points_screen.dart';
+import '../features/profile/screens/refer_earn_screen.dart';
 import '../features/profile/screens/favorites_screen.dart';
 import '../features/profile/screens/language_screen.dart';
 import '../features/profile/screens/notifications_settings_screen.dart';
@@ -83,6 +86,7 @@ class AppPages {
       page: () => DashboardScreen(),
       binding: BindingsBuilder(() {
         Get.put(DashboardController());
+        Get.put(LocationController());
         Get.put(CartController());
         Get.put(WishlistController());
         Get.lazyPut<CategoryController>(() => CategoryController(), fenix: true);
@@ -197,6 +201,9 @@ class AppPages {
       page: () => const NotificationsSettingsScreen(),
     ),
     GetPage(name: AppRoutes.wallet, page: () => const WalletScreen()),
+    GetPage(name: AppRoutes.offers, page: () => const CouponsScreen()),
+    GetPage(name: AppRoutes.dmPoints, page: () => const DmPointsScreen()),
+    GetPage(name: AppRoutes.referEarn, page: () => const ReferEarnScreen()),
     GetPage(name: AppRoutes.helpCenter, page: () => const HelpCenterScreen()),
     GetPage(
       name: AppRoutes.contactSupport,

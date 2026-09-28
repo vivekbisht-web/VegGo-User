@@ -17,6 +17,8 @@ class ApiEndpoints {
   static const String deliverySlots = '/customer/orders/delivery-slots';
   static const String placeOrder = '/customer/orders';
   static const String verifyPayment = '/customer/orders/verify-payment';
+  static const String walletBalance = '/payment/wallet/balance';
+  static const String walletTransactions = '/payment/wallet/transactions';
   static const String orders = '/customer/orders';
   static String orderDetails(String id) => '/customer/orders/$id';
   static String orderTrack(String id) => '/customer/orders/$id/track';

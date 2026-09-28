@@ -7,6 +7,7 @@ class AppStrings {
 
   static const String yourCart = 'Your Cart';
   static const String items = 'Items';
+  static const String item = 'Item';
   static const String cartEmpty = 'Your cart is empty';
   static const String cartEmptyDesc =
       'Explore our market selection and add fresh organic items to your cart.';
@@ -909,4 +910,103 @@ class AppStrings {
   static const String loadMoreProducts = 'Load More Products';
   static const String exploreAllProducts = 'Explore All Products';
   static const String allProductsLoaded = 'All Products Loaded';
+
+  // DM Points
+  static const String availableDmPoints = 'Available DM Points';
+  static const String pointsValueSubtitle = '100 Points = ${currencySymbol}10 Savings';
+  static const String redeemPoints = 'Redeem Points';
+  static const String pointsHistory = 'Points History';
+  static const String howToEarnPoints = 'How to Earn Points';
+  static const String earnPointsShopTitle = 'Shop Fresh & Earn';
+  static const String earnPointsShopDesc =
+      'Earn 1 DM Point for every ${currencySymbol}10 spent on groceries';
+  static const String earnPointsReviewTitle = 'Rate & Review';
+  static const String earnPointsReviewDesc =
+      'Earn 50 bonus points on writing a verified review';
+  static const String earnPointsReferTitle = 'Invite Friends';
+  static const String earnPointsReferDesc =
+      'Earn 100 points when your friend places their first order';
+  static const String pts = 'pts';
+  static const String pointsRedeemSuccess =
+      'Points will be applied automatically at checkout!';
+  static const String orderReward = 'Order Reward #DM-2940110';
+  static const String welcomeBonus = 'Welcome Bonus Points';
+  static const String redeemedOnOrder = 'Redeemed on Order #DM-2918842';
+  static const String bonusCampaign = 'Fresh Harvest Bonus';
+  static const String pointsDate1 = 'Jul 24, 2026';
+  static const String pointsDate2 = 'Jul 20, 2026';
+  static const String pointsDate3 = 'Jul 15, 2026';
+  static const String pointsDate4 = 'Jul 10, 2026';
+  static const String pointsPlus25 = '+25 pts';
+  static const String pointsPlus100 = '+100 pts';
+  static const String pointsMinus50 = '-50 pts';
+  static const String pointsPlus175 = '+175 pts';
+  static const String totalPointsBalance = '250';
+
+  // Refer & Earn
+  static const String referAndEarnTitle = 'Invite Friends & Earn';
+  static const String referAndEarnSubtitle =
+      'Share your referral code with friends. When they place their first order, you get ${currencySymbol}50 in your wallet and they get ${currencySymbol}50 off!';
+  static const String yourReferralCode = 'Your Referral Code';
+  static const String defaultReferralCode = 'VEGGO50';
+  static const String copyCode = 'Copy';
+  static const String codeCopied = 'Referral code copied to clipboard!';
+  static const String shareReferralLink = 'Share Invite Link';
+  static const String howItWorks = 'How It Works';
+  static const String referStep1Title = 'Share Your Code';
+  static const String referStep1Desc =
+      'Send your invite code or link to your friends and family.';
+  static const String referStep2Title = 'Friend Places First Order';
+  static const String referStep2Desc =
+      'Your friend signs up and shops fresh groceries on VegGo.';
+  static const String referStep3Title = 'Both Get Rewarded';
+  static const String referStep3Desc =
+      'You receive ${currencySymbol}50 in your DM Wallet and your friend gets ${currencySymbol}50 off.';
+  static const String yourReferralStats = 'Your Referral Stats';
+  static const String successfulInvites = 'Friends Invited';
+  static const String totalRewardsEarned = 'Total Earned';
+  static const String invitesCount = '5';
+  static const String rewardsEarnedValue = '${currencySymbol}250.00';
+  static const String referralShareText =
+      'Order fresh groceries on VegGo! Use my code VEGGO50 for ${currencySymbol}50 off on your first order. Download VegGo now!';
+  static const String inviteSharedSuccess = 'Invite link copied to clipboard!';
+  static const String step1Number = '1';
+  static const String step2Number = '2';
+  static const String step3Number = '3';
+
+  // Stats Row Values
+  static const String walletStatsValue = '${currencySymbol}450.00';
+  static const String couponsStatsValue = '3';
+  static const String pointsStatsValue = '250';
+  static const String referStatsValue = '${currencySymbol}50';
+
+  // Wallet
+  static const String filterAll = 'ALL';
+  static const String filterCredit = 'CREDIT';
+  static const String filterDebit = 'DEBIT';
+  static const String allFilter = 'All';
+  static const String creditFilter = 'Credit';
+  static const String debitFilter = 'Debit';
+  static const String noTransactionsFound = 'No transactions found';
+  static const String noTransactionsDesc =
+      'Your wallet transaction history will appear here';
+  static const String failedToLoadWallet = 'Failed to load wallet data';
+  static const String failedToLoadTransactions = 'Failed to load transactions';
+  static const String plusSymbol = '+';
+  static const String minusSymbol = '-';
+  static const String referencePrefix = 'Ref: ';
+  static const String suffixThousand = 'k';
+  static const String suffixLakh = 'L';
+  static const String suffixCrore = 'Cr';
+
+  // Location & Address Selection
+  static const String selectDeliveryLocation = 'Select Delivery Location';
+  static const String usingGpsSubtitle = 'Using GPS to detect exact location';
+  static const String savedAddressesTitle = 'Saved Addresses';
+  static const String locationUpdated = 'Location updated';
+  static const String pleaseEnableLocationService =
+      'Please enable location service in device settings';
+  static const String deliveryLocationUpdated = 'Delivery location updated';
+  static const String starSymbol = '★ ';
+  static const String savePrefix = 'Save ';
 }

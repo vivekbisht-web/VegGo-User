@@ -14,11 +14,7 @@ class HomeProductSection extends StatelessWidget {
   final List<dynamic> products;
   final int? maxItems;
 
-  const HomeProductSection({
-    super.key,
-    required this.products,
-    this.maxItems,
-  });
+  const HomeProductSection({super.key, required this.products, this.maxItems});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +47,8 @@ class HomeProductSection extends StatelessWidget {
             ? raw.toMap()
             : (raw is Map<String, dynamic> ? raw : {});
 
-        final String id = productMap['id']?.toString() ??
+        final String id =
+            productMap['id']?.toString() ??
             productMap['_id']?.toString() ??
             productMap['productId']?.toString() ??
             '';
@@ -73,7 +70,7 @@ class HomeProductSection extends StatelessWidget {
             (productMap['image'] ?? productMap['imageUrl']) as String? ?? '';
 
         final textTheme = Theme.of(context).textTheme;
-
+        //  print("Product Data:$productMap");
         return Material(
           color: AppColors.surface,
           borderRadius: cardRadius,
@@ -188,8 +185,7 @@ class HomeProductSection extends StatelessWidget {
                                     customBorder: const CircleBorder(),
                                     onTap: () {
                                       cartController.addToCart(productMap);
-                                      AnimationOverlayHelper
-                                          .showRocketAddToCart(
+                                      AnimationOverlayHelper.showRocketAddToCart(
                                         context,
                                         onComplete: () {},
                                       );
@@ -263,7 +259,9 @@ class HomeProductSection extends StatelessWidget {
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.overlayLight.withValues(alpha: 0.12),
+                                  color: AppColors.overlayLight.withValues(
+                                    alpha: 0.12,
+                                  ),
                                   blurRadius: 4,
                                   offset: const Offset(0, 1),
                                 ),

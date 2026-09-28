@@ -4,6 +4,7 @@ import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/features/orders/controllers/orders_controller.dart';
 import 'package:vegon_user/features/profile/controllers/user_profile_controller.dart';
+import 'package:vegon_user/features/profile/controllers/wallet_controller.dart';
 import 'package:vegon_user/features/profile/widgets/profile_header_card.dart';
 import 'package:vegon_user/features/profile/widgets/profile_menu_list.dart';
 import 'package:vegon_user/features/profile/widgets/profile_orders_section.dart';
@@ -27,6 +28,9 @@ class ProfileScreen extends StatelessWidget {
             await controller.fetchUserProfile(showLoading: false);
             if (Get.isRegistered<OrdersController>()) {
               await Get.find<OrdersController>().fetchOrders(isRefresh: true);
+            }
+            if (Get.isRegistered<WalletController>()) {
+              await Get.find<WalletController>().fetchBalance();
             }
           },
           child: SingleChildScrollView(

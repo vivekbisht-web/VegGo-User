@@ -40,6 +40,9 @@ class AppRoutes {
   static const String notifications = '/notifications';
   static const String notificationSettings = '/notification-settings';
   static const String wallet = '/wallet';
+  static const String offers = '/offers';
+  static const String dmPoints = '/dm-points';
+  static const String referEarn = '/refer-earn';
   static const String helpCenter = '/help-center';
   static const String contactSupport = '/contact-support';
   static const String termsPrivacy = '/terms-privacy';
