@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
-import 'package:vegon_user/core/utils/animation_overlay_helper.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import '../controllers/product_details_controller.dart';
@@ -178,10 +177,6 @@ class ProductRelatedSection extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     cartController.addToCart(item.toMap());
-                    AnimationOverlayHelper.showRocketAddToCart(
-                      context,
-                      onComplete: () {},
-                    );
                   },
                   borderRadius: BorderRadius.circular(AppSpacing.radius4),
                   child: Container(

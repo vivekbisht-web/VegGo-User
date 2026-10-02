@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
-import 'package:vegon_user/core/utils/animation_overlay_helper.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/product/controllers/wishlist_controller.dart';
@@ -216,10 +215,6 @@ class CategoryProductCard extends StatelessWidget {
                         InkWell(
                           onTap: () {
                             cartController.addToCart(productMap);
-                            AnimationOverlayHelper.showRocketAddToCart(
-                              context,
-                              onComplete: () {},
-                            );
                           },
                           borderRadius: BorderRadius.circular(
                             AppSpacing.radius8,

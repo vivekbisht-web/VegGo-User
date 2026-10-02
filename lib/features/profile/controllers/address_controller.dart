@@ -317,4 +317,8 @@ class AddressController extends GetxController {
       debugPrint('Error reverse geocoding: $e');
     }
   }
+
+  Future<List<Map<String, dynamic>>> searchPlaces(String query) async {
+    return await _addressService.searchPlaces(query);
+  }
 }

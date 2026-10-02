@@ -24,6 +24,7 @@ class CheckoutController extends GetxController {
   var selectedDateIndex = 0.obs;
   var selectedTimeIndex = 0.obs;
   var selectedPaymentIndex = 0.obs;
+  var isInstantDelivery = true.obs;
 
   var isProcessingOrder = false.obs;
   var isLoadingSlots = false.obs;

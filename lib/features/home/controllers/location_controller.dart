@@ -9,6 +9,9 @@ import 'package:vegon_user/core/local_storage/shared_prefs_helper.dart';
 import 'package:vegon_user/features/home/controllers/home_controller.dart';
 import 'package:vegon_user/features/profile/services/address_service.dart';
 
+import 'package:vegon_user/features/profile/models/address_models.dart';
+import 'package:vegon_user/features/profile/controllers/address_controller.dart';
+
 class LocationController extends GetxController {
   final RxnDouble currentLatitude = RxnDouble();
   final RxnDouble currentLongitude = RxnDouble();
@@ -56,7 +59,10 @@ class LocationController extends GetxController {
     }
   }
 
-  Future<void> fetchAndSaveUserLocation({bool showFeedback = false}) async {
+  Future<void> fetchAndSaveUserLocation({
+    bool showFeedback = false,
+    bool saveToApi = false,
+  }) async {
     isFetchingLocation.value = true;
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -106,9 +112,17 @@ class LocationController extends GetxController {
           ApiEndpoints.googleMapsApiKey,
         );
 
+        String line1 = '';
+        String city = '';
+        String state = '';
+        String postalCode = '';
+
         if (addressData != null) {
-          final line1 = addressData['addressLine1']?.toString() ?? '';
-          final city = addressData['city']?.toString() ?? '';
+          line1 = addressData['addressLine1']?.toString() ?? '';
+          city = addressData['city']?.toString() ?? '';
+          state = addressData['state']?.toString() ?? '';
+          postalCode = addressData['postalCode']?.toString() ?? '';
+
           if (line1.isNotEmpty && city.isNotEmpty) {
             currentLocationName.value = '$line1, $city';
           } else if (line1.isNotEmpty) {
@@ -118,17 +132,50 @@ class LocationController extends GetxController {
           }
         }
 
+        if (currentLocationName.value.isEmpty) {
+          currentLocationName.value = AppStrings.currentLocationLabel;
+        }
+
         await SharedPrefsHelper.saveLocation(
           position.latitude,
           position.longitude,
           currentLocationName.value,
         );
 
+        if (saveToApi) {
+          final token = SharedPrefsHelper.getToken();
+          if (token != null && token.trim().isNotEmpty) {
+            try {
+              final request = AddAddressRequestModel(
+                addressLine1: line1.isNotEmpty
+                    ? line1
+                    : currentLocationName.value,
+                addressLine2: '',
+                city: city,
+                state: state,
+                postalCode: postalCode,
+                latitude: position.latitude,
+                longitude: position.longitude,
+                isDefault: true,
+                label: AppStrings.home,
+              );
+              final response = await addressService.addAddress(request);
+              if (response.success && Get.isRegistered<AddressController>()) {
+                Get.find<AddressController>().fetchAddresses();
+              }
+            } catch (e) {
+              debugPrint('Error saving address via API: $e');
+            }
+          }
+        }
+
         _notifyControllers(position.latitude, position.longitude);
 
         if (showFeedback && currentLocationName.value.isNotEmpty) {
           Get.snackbar(
-            AppStrings.locationUpdated,
+            saveToApi
+                ? AppStrings.addressSavedAndSet
+                : AppStrings.locationUpdated,
             currentLocationName.value,
             snackPosition: SnackPosition.BOTTOM,
             backgroundColor: AppColors.primary,

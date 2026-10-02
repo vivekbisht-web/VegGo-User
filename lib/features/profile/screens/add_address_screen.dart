@@ -11,6 +11,7 @@ import 'package:vegon_user/core/widgets/custom_icon_button.dart';
 import 'package:vegon_user/core/widgets/custom_text_field.dart';
 import 'package:vegon_user/features/profile/controllers/address_controller.dart';
 import 'package:vegon_user/features/profile/models/address_models.dart';
+import 'package:vegon_user/features/profile/widgets/address_map_picker.dart';
 
 class AddAddressScreen extends StatefulWidget {
   final AddressModel? initialAddress;
@@ -95,29 +96,6 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     });
   }
 
-  void _onMapTapped(latlng.LatLng position) {
-    setState(() {
-      _latitude = position.latitude;
-      _longitude = position.longitude;
-      _isFetchingLocation = true;
-    });
-
-    controller.reverseGeocodeCoordinates(
-      position.latitude,
-      position.longitude,
-      (data) {
-        if (!mounted) return;
-        setState(() {
-          _addressLine1Controller.text = data['addressLine1'] as String? ?? '';
-          _cityController.text = data['city'] as String? ?? '';
-          _stateController.text = data['state'] as String? ?? '';
-          _postalCodeController.text = data['postalCode'] as String? ?? '';
-          _isFetchingLocation = false;
-        });
-      },
-    );
-  }
-
   void _onLabelSelected(String label) {
     setState(() {
       _selectedLabel = label;
@@ -181,58 +159,29 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   }
 
   Widget _buildMapSection() {
-    return Container(
-      height: AppSpacing.screenWidth * 0.48,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.chipBackground,
-        borderRadius: BorderRadius.circular(AppSpacing.radius12),
-        border: Border.all(color: AppColors.chipBorder),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppSpacing.radius12),
-        child: Stack(
-          children: [
-            FlutterMap(
-              mapController: _mapController,
-              options: MapOptions(
-                initialCenter: latlng.LatLng(_latitude, _longitude),
-                initialZoom: 15.0,
-                onTap: (tapPosition, point) => _onMapTapped(point),
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate: AppStrings.mapTileUrl,
-                  userAgentPackageName: AppStrings.mapTileUserAgent,
-                ),
-                MarkerLayer(
-                  markers: [
-                    Marker(
-                      point: latlng.LatLng(_latitude, _longitude),
-                      width: 40,
-                      height: 40,
-                      child: const Icon(
-                        Icons.location_on,
-                        color: AppColors.error,
-                        size: 40,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Positioned(
-              bottom: AppSpacing.radius12,
-              right: AppSpacing.radius12,
-              child: CustomIconButton(
-                icon: Icons.my_location,
-                color: AppColors.primary,
-                onPressed: _fetchLiveLocation,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return AddressMapPicker(
+      mapController: _mapController,
+      initialLatitude: _latitude,
+      initialLongitude: _longitude,
+      onLocationSelected: (data) {
+        if (!mounted) return;
+        setState(() {
+          final lat = (data['latitude'] as num?)?.toDouble() ?? _latitude;
+          final lon = (data['longitude'] as num?)?.toDouble() ?? _longitude;
+          _latitude = lat;
+          _longitude = lon;
+          final line1 = data['addressLine1']?.toString() ?? '';
+          final city = data['city']?.toString() ?? '';
+          final state = data['state']?.toString() ?? '';
+          final postal = data['postalCode']?.toString() ?? '';
+
+          if (line1.isNotEmpty) _addressLine1Controller.text = line1;
+          if (city.isNotEmpty) _cityController.text = city;
+          if (state.isNotEmpty) _stateController.text = state;
+          if (postal.isNotEmpty) _postalCodeController.text = postal;
+        });
+      },
+      onMyLocationTap: _fetchLiveLocation,
     );
   }
 

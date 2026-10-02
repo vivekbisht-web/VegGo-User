@@ -25,7 +25,6 @@ class ProductDetailsController extends GetxController {
     super.onInit();
     resetState();
 
-    // Automatically fetch details if opened via routing with product data
     final args = Get.arguments;
     if (args != null && args is Map<String, dynamic>) {
       final String productId = args['id']?.toString() ?? '';

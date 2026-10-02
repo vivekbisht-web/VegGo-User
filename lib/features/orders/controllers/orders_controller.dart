@@ -21,10 +21,6 @@ class OrdersController extends GetxController {
 
   final RxBool isLoading = false.obs;
 
-  /// True only while fetching an additional page (pagination),
-  /// separate from `isLoading` which is for the very first load /
-  /// pull-to-refresh. UI uses this to show a small bottom loader
-  /// instead of the full-screen spinner.
   final RxBool isLoadingMore = false.obs;
 
   final RxBool isDetailsLoading = false.obs;
@@ -46,9 +42,6 @@ class OrdersController extends GetxController {
     fetchOrders();
   }
 
-  /// Sorts newest orders first. Called after every fetch/merge so the
-  /// list order stays correct regardless of what page data arrived on
-  /// or the backend's own ordering.
   void _sortNewestFirst() {
     orders.sort((a, b) => b.orderDate.compareTo(a.orderDate));
   }
@@ -105,11 +98,6 @@ class OrdersController extends GetxController {
     }
   }
 
-  /// Loads the next page of order history and appends it to the
-  /// existing list (used for pagination / infinite scroll).
-  ///
-  /// Guards against duplicate calls while a fetch is already in
-  /// flight, and stops once the backend reports no more pages.
   Future<void> loadMoreOrders() async {
     if (isLoading.value || isLoadingMore.value) return;
     if (!hasMorePages.value) return;
@@ -131,8 +119,6 @@ class OrdersController extends GetxController {
             .toList();
 
         if (fetchedOrders.isNotEmpty) {
-          // Avoid duplicate entries if the same order somehow comes
-          // back again (e.g. list shifted between calls).
           final existingIds = orders.map((o) => o.id).toSet();
           final newOnes = fetchedOrders
               .where((o) => !existingIds.contains(o.id))
@@ -151,8 +137,6 @@ class OrdersController extends GetxController {
         hasMorePages.value = false;
       }
     } catch (e) {
-      // Don't blow away the existing list on a pagination error —
-      // just surface it and let the user retry by scrolling again.
       errorMessage.value = e.toString();
     } finally {
       isLoadingMore.value = false;
@@ -281,9 +265,8 @@ class OrdersController extends GetxController {
       )
       .toList();
 
-  List<OrderModel> get deliveredOrders => orders
-      .where((o) => o.status == OrderStatus.delivered)
-      .toList();
+  List<OrderModel> get deliveredOrders =>
+      orders.where((o) => o.status == OrderStatus.delivered).toList();
 
   List<OrderModel> get completedOrders => deliveredOrders;
 

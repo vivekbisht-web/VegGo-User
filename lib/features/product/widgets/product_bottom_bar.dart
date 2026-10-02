@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
-import 'package:vegon_user/core/utils/animation_overlay_helper.dart';
 import 'package:vegon_user/core/utils/price_formatter.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/screens/cart_screen.dart';
@@ -208,10 +207,6 @@ class ProductBottomBar extends StatelessWidget {
                         child: InkWell(
                           onTap: () {
                             cartController.addToCart(itemMap, qty: 1);
-                            AnimationOverlayHelper.showRocketAddToCart(
-                              context,
-                              onComplete: () {},
-                            );
                           },
                           borderRadius: BorderRadius.circular(
                             AppSpacing.radius12,
@@ -291,10 +286,6 @@ class ProductBottomBar extends StatelessWidget {
                               child: InkWell(
                                 onTap: () {
                                   cartController.incrementQuantity(resolvedId);
-                                  AnimationOverlayHelper.showRocketAddToCart(
-                                    context,
-                                    onComplete: () {},
-                                  );
                                 },
                                 borderRadius: const BorderRadius.horizontal(
                                   right: Radius.circular(AppSpacing.radius12),

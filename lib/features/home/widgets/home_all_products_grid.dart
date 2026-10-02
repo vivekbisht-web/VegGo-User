@@ -4,7 +4,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
-import 'package:vegon_user/core/utils/animation_overlay_helper.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/home/controllers/home_controller.dart';
@@ -186,11 +185,6 @@ class HomeAllProductsGrid extends StatelessWidget {
                                           customBorder: const CircleBorder(),
                                           onTap: () {
                                             cartController.addToCart(productMap);
-                                            AnimationOverlayHelper
-                                                .showRocketAddToCart(
-                                              context,
-                                              onComplete: () {},
-                                            );
                                           },
                                           child: const SizedBox(
                                             width: AppSpacing.addCircleButtonSize,

@@ -692,6 +692,7 @@ class AppStrings {
   static const String allProducts = 'All Products';
 
   static const String categories = 'Categories';
+  static const String noProductsInCategory = 'No products in this category';
   static const String failedToLoadCategories = 'Failed to load categories';
   static const String orders = 'Orders';
   static const String freshFastTrustedTagline = 'FRESH. FAST. TRUSTED.';
@@ -875,6 +876,10 @@ class AppStrings {
   static const String useLiveLocation = 'Use Live Location';
   static const String today = 'TODAY';
   static const String tomorrow = 'TOMORROW';
+  static const String deliverNow = 'Deliver Now';
+  static const String deliverNowSubtitle = 'Instant delivery (20–40 min)';
+  static const String scheduleForLater = 'Schedule for Later';
+  static const String scheduleForLaterSubtitle = 'Choose a date & time slot';
   static const String basicInfoTitle = 'Complete Your Profile';
   static const String basicInfoSubtitle =
       'Please enter your full name to get started.';
@@ -1009,4 +1014,30 @@ class AppStrings {
   static const String deliveryLocationUpdated = 'Delivery location updated';
   static const String starSymbol = '★ ';
   static const String savePrefix = 'Save ';
+
+  // Voice Search & Microphone
+  static const String microphonePermissionDenied =
+      'Microphone permission is required for voice search';
+  static const String microphonePermissionDeniedForever =
+      'Microphone permission permanently denied. Please enable in settings.';
+  static const String voiceSearch = 'Voice Search';
+  static const String listeningForItems = 'Listening for items...';
+  static const String voiceSearchHint =
+      'Say "Potato", "Tomato", "Mango", or any grocery item';
+  static const String tapMicToStart = 'Tap mic to start speaking';
+  static const String tapMicToPause = 'Tap mic to pause';
+  static const String speechNotAvailable =
+      'Voice search is not available on this device';
+  static const String typeOrVoiceSearchHint =
+      'Type or use voice search to find products...';
+
+  // Map & Location Search
+  static const String searchLocationOrAddress =
+      'Search location or address...';
+  static const String searchingLocations = 'Searching locations...';
+  static const String noLocationsFound = 'No locations found';
+  static const String currentLocationLabel = 'Current Location';
+  static const String addressSavedAndSet = 'Address saved and set as current';
+  static const String zoomIn = 'Zoom In';
+  static const String zoomOut = 'Zoom Out';
 }

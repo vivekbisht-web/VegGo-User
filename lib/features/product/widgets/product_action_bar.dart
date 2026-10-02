@@ -5,7 +5,6 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/custom_button.dart';
-import '../../../core/utils/animation_overlay_helper.dart';
 import '../../cart/controllers/cart_controller.dart';
 import '../controllers/product_details_controller.dart';
 
@@ -94,13 +93,7 @@ class ProductActionBar extends StatelessWidget {
                       qty: controller.quantity.value,
                     );
 
-                    if (await isSuccess) {
-                      AnimationOverlayHelper.showRocketAddToCart(
-                        // ignore: use_build_context_synchronously
-                        context,
-                        onComplete: () {},
-                      );
-                    }
+                    await isSuccess;
                   }
                 : () {},
           ),

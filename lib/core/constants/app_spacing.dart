@@ -91,6 +91,9 @@ class AppSpacing {
     vertical: 24,
   );
 
+  static const EdgeInsets paddingRight4 = EdgeInsets.only(right: 4);
+  static const EdgeInsets paddingRight8 = EdgeInsets.only(right: 8);
+
   static const double radius2 = 2.0;
   static const double radius4 = 4.0;
   static const double radius6 = 6.0;

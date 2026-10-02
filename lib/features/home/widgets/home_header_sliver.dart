@@ -8,8 +8,7 @@ import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/core/widgets/custom_text_field.dart';
 import 'package:vegon_user/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:vegon_user/features/dashboard/controllers/notification_controller.dart';
-import 'package:vegon_user/features/profile/controllers/user_profile_controller.dart';
-import 'package:vegon_user/features/profile/screens/profile_screen.dart';
+import 'package:vegon_user/features/profile/controllers/wallet_controller.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/screens/cart_screen.dart';
 import 'package:vegon_user/routes/app_routes.dart';
@@ -68,10 +67,10 @@ class HomeHeader extends StatelessWidget {
         Get.isRegistered<HomeSearchController>()
         ? Get.find<HomeSearchController>()
         : Get.put(HomeSearchController());
-    final UserProfileController profileController =
-        Get.isRegistered<UserProfileController>()
-            ? Get.find<UserProfileController>()
-            : Get.put(UserProfileController());
+    final WalletController walletController =
+        Get.isRegistered<WalletController>()
+            ? Get.find<WalletController>()
+            : Get.put(WalletController());
 
     return SizedBox(
       height: heroHeight + 46,
@@ -175,33 +174,14 @@ class HomeHeader extends StatelessWidget {
                     }),
                     AppSpacing.w12,
                     Obx(() {
-                      final avatarUrl = profileController.avatar;
-                      return GestureDetector(
-                        onTap: () => Get.to(() => const ProfileScreen()),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: const BoxDecoration(
-                            color: AppColors.surface,
-                            shape: BoxShape.circle,
-                          ),
-                          child: ClipOval(
-                            child: avatarUrl.isNotEmpty
-                                ? CustomImageView(
-                                    imageUrl: avatarUrl,
-                                    fit: BoxFit.cover,
-                                    width: 32,
-                                    height: 32,
-                                  )
-                                : const Center(
-                                    child: Icon(
-                                      Icons.person_outline_rounded,
-                                      color: AppColors.darkHeaderStart,
-                                      size: 20,
-                                    ),
-                                  ),
-                          ),
-                        ),
+                      final bal = walletController.balance.value;
+                      final label = bal > 0
+                          ? '${AppStrings.currencySymbol}${bal.toStringAsFixed(bal % 1 == 0 ? 0 : 1)}'
+                          : null;
+                      return _HeaderIconButton(
+                        icon: Icons.account_balance_wallet_outlined,
+                        badge: label,
+                        onTap: () => Get.toNamed(AppRoutes.wallet),
                       );
                     }),
                   ],
@@ -283,7 +263,7 @@ class HomeHeader extends StatelessWidget {
                                               ?.copyWith(
                                                 color: AppColors.textPrimary,
                                                 fontWeight: FontWeight.w700,
-                                                fontSize: 12,
+                                                fontSize: 10,
                                                 height: 1,
                                               ),
                                         ),
@@ -320,8 +300,10 @@ class HomeHeader extends StatelessWidget {
                         borderRadius: BorderRadius.circular(
                           AppSpacing.radius16,
                         ),
-                        onTap: () => locationController
-                            .fetchAndSaveUserLocation(showFeedback: true),
+                        onTap: () => locationController.fetchAndSaveUserLocation(
+                          showFeedback: true,
+                          saveToApi: true,
+                        ),
                         child: Padding(
                           padding: AppSpacing.paddingAll6,
                           child: Obx(
