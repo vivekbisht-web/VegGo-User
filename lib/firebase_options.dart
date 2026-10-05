@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '726384647343',
     projectId: 'veggo-fresh-865c2',
     storageBucket: 'veggo-fresh-865c2.firebasestorage.app',
-    iosBundleId: 'com.example.vegonUser',
+    iosBundleId: 'com.veggofresh.customer',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '726384647343',
     projectId: 'veggo-fresh-865c2',
     storageBucket: 'veggo-fresh-865c2.firebasestorage.app',
-    iosBundleId: 'com.example.vegonUser',
+    iosBundleId: 'com.veggofresh.customer',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

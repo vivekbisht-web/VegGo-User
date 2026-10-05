@@ -33,8 +33,12 @@ dependencies:
   firebase_core: ^4.14.0
   firebase_auth: ^6.6.1
   firebase_messaging: ^16.7.0
-  flutter_local_notifications: ^18.0.1
-  image_picker: ^1.2.3
+  flutter_local_notifications: ^21.0.0
+
+
+  speech_to_text: ^7.3.0
+  image_picker: ^1.1.2
+
 
 dev_dependencies:
   flutter_test:

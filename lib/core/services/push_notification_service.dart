@@ -47,7 +47,7 @@ class PushNotificationService {
       const initSettings = InitializationSettings(android: androidInit, iOS: iosInit);
 
       await _localNotifications.initialize(
-        initSettings,
+        settings: initSettings,
         onDidReceiveNotificationResponse: (NotificationResponse details) {
           _handleNotificationPayload(details.payload);
         },
@@ -113,10 +113,10 @@ class PushNotificationService {
 
     if (notification != null) {
       _localNotifications.show(
-        notification.hashCode,
-        notification.title,
-        notification.body,
-        NotificationDetails(
+        id: notification.hashCode,
+        title: notification.title,
+        body: notification.body,
+        notificationDetails: NotificationDetails(
           android: AndroidNotificationDetails(
             _androidChannel.id,
             _androidChannel.name,
