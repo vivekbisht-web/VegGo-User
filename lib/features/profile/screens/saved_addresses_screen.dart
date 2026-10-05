@@ -146,7 +146,7 @@ class SavedAddressesScreen extends StatelessWidget {
                 Icon(icon, color: AppColors.primary),
                 AppSpacing.w8,
                 Text(
-                  "title",
+                  title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -254,7 +254,7 @@ class SavedAddressesScreen extends StatelessWidget {
           TextButton(
             onPressed: () => Get.back(),
             child: Text(
-              'Cancel',
+              AppStrings.cancel,
               style: Theme.of(
                 context,
               ).textTheme.labelLarge?.copyWith(color: AppColors.textSecondary),
