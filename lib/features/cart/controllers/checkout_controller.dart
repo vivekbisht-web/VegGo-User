@@ -10,6 +10,7 @@ import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/models/checkout_summary_model.dart';
 import 'package:vegon_user/features/cart/models/place_order_response_model.dart';
 import 'package:vegon_user/features/cart/services/cart_repository.dart';
+import 'package:vegon_user/features/orders/services/orders_repository.dart';
 import 'package:vegon_user/features/home/controllers/location_controller.dart';
 import 'package:vegon_user/features/profile/controllers/address_controller.dart';
 import 'package:vegon_user/features/profile/controllers/user_profile_controller.dart';
@@ -18,6 +19,7 @@ import 'package:vegon_user/features/profile/screens/saved_addresses_screen.dart'
 
 class CheckoutController extends GetxController {
   final CartRepository _cartRepo = CartRepository();
+  final OrdersRepository _ordersRepo = OrdersRepository();
   final RazorpayService _razorpayService = RazorpayService();
   void Function(PlaceOrderResponseModel response)? _onOrderPlacedSuccess;
 
@@ -398,15 +400,63 @@ class CheckoutController extends GetxController {
       backgroundColor: AppColors.error,
       colorText: AppColors.surface,
     );
+
+    _cancelPendingOrders();
     _onOrderPlacedSuccess = null;
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
+    // External wallet payment is still in progress — do not cancel the order.
+    // The user will complete payment via their wallet app and the backend
+    // will update the order status via webhook.
     isProcessingOrder.value = false;
-    if (_onOrderPlacedSuccess != null && placedOrderResult.value != null) {
-      final callback = _onOrderPlacedSuccess!;
-      _onOrderPlacedSuccess = null;
-      callback(placedOrderResult.value!);
+    _onOrderPlacedSuccess = null;
+    Get.snackbar(
+      AppStrings.paymentFailed,
+      AppStrings.externalWalletRedirect,
+      backgroundColor: AppColors.warning,
+      colorText: AppColors.surface,
+      duration: const Duration(seconds: 4),
+    );
+  }
+
+  /// Silently cancels all orders that were created by the last [placeOrder] call.
+  /// Called when Razorpay payment fails or is cancelled by the user.
+  void _cancelPendingOrders() {
+    final result = placedOrderResult.value;
+    placedOrderResult.value = null;
+
+    if (result == null) return;
+
+    final orderIds = <String>[];
+
+    // Prefer allocations list (one entry per vendor order)
+    final allocations = result.data?.paymentHold?.allocations;
+    if (allocations != null && allocations.isNotEmpty) {
+      for (final alloc in allocations) {
+        final id = alloc.orderId;
+        if (id != null && id.isNotEmpty) orderIds.add(id);
+      }
+    }
+
+    // Fallback: top-level orders list
+    if (orderIds.isEmpty) {
+      final orders = result.data?.orders;
+      if (orders != null) {
+        for (final o in orders) {
+          final id = o.id;
+          if (id != null && id.isNotEmpty) orderIds.add(id);
+        }
+      }
+    }
+
+    if (orderIds.isEmpty) return;
+
+    for (final id in orderIds) {
+      _ordersRepo.cancelOrder(id).catchError((e) {
+        debugPrint('Failed to auto-cancel order $id after payment failure: $e');
+        return null;
+      });
     }
   }
 

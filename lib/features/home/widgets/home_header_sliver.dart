@@ -8,7 +8,6 @@ import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/core/widgets/custom_text_field.dart';
 import 'package:vegon_user/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:vegon_user/features/dashboard/controllers/notification_controller.dart';
-import 'package:vegon_user/features/profile/controllers/wallet_controller.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/screens/cart_screen.dart';
 import 'package:vegon_user/routes/app_routes.dart';
@@ -67,10 +66,6 @@ class HomeHeader extends StatelessWidget {
         Get.isRegistered<HomeSearchController>()
         ? Get.find<HomeSearchController>()
         : Get.put(HomeSearchController());
-    final WalletController walletController =
-        Get.isRegistered<WalletController>()
-            ? Get.find<WalletController>()
-            : Get.put(WalletController());
 
     return SizedBox(
       height: heroHeight + 46,
@@ -121,7 +116,9 @@ class HomeHeader extends StatelessWidget {
                         height: 38,
                         decoration: BoxDecoration(
                           color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(AppSpacing.radius12),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.radius12,
+                          ),
                           border: Border.all(
                             color: AppColors.chipBorder.withValues(alpha: 0.8),
                             width: 1,
@@ -173,17 +170,10 @@ class HomeHeader extends StatelessWidget {
                       );
                     }),
                     AppSpacing.w12,
-                    Obx(() {
-                      final bal = walletController.balance.value;
-                      final label = bal > 0
-                          ? '${AppStrings.currencySymbol}${bal.toStringAsFixed(bal % 1 == 0 ? 0 : 1)}'
-                          : null;
-                      return _HeaderIconButton(
-                        icon: Icons.account_balance_wallet_outlined,
-                        badge: label,
-                        onTap: () => Get.toNamed(AppRoutes.wallet),
-                      );
-                    }),
+                    _HeaderIconButton(
+                      icon: Icons.account_balance_wallet_outlined,
+                      onTap: () => Get.toNamed(AppRoutes.wallet),
+                    ),
                   ],
                 ),
               ],
@@ -243,10 +233,9 @@ class HomeHeader extends StatelessWidget {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Obx(() {
-                                      final locName =
-                                          locationController
-                                              .currentLocationName
-                                              .value;
+                                      final locName = locationController
+                                          .currentLocationName
+                                          .value;
                                       return ConstrainedBox(
                                         constraints: BoxConstraints(
                                           maxWidth: media.width * 0.36,
@@ -300,10 +289,11 @@ class HomeHeader extends StatelessWidget {
                         borderRadius: BorderRadius.circular(
                           AppSpacing.radius16,
                         ),
-                        onTap: () => locationController.fetchAndSaveUserLocation(
-                          showFeedback: true,
-                          saveToApi: true,
-                        ),
+                        onTap: () =>
+                            locationController.fetchAndSaveUserLocation(
+                              showFeedback: true,
+                              saveToApi: true,
+                            ),
                         child: Padding(
                           padding: AppSpacing.paddingAll6,
                           child: Obx(

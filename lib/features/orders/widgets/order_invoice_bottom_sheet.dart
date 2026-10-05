@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_spacing.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../core/services/invoice_pdf_service.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../models/order_invoice_response_model.dart';
 
-class OrderInvoiceBottomSheet extends StatelessWidget {
+class OrderInvoiceBottomSheet extends StatefulWidget {
   final OrderInvoiceData invoice;
 
   const OrderInvoiceBottomSheet({
@@ -21,6 +22,20 @@ class OrderInvoiceBottomSheet extends StatelessWidget {
       backgroundColor: AppColors.transparent,
       builder: (_) => OrderInvoiceBottomSheet(invoice: invoice),
     );
+  }
+
+  @override
+  State<OrderInvoiceBottomSheet> createState() =>
+      _OrderInvoiceBottomSheetState();
+}
+
+class _OrderInvoiceBottomSheetState extends State<OrderInvoiceBottomSheet> {
+  bool _isDownloading = false;
+
+  Future<void> _onDownload() async {
+    setState(() => _isDownloading = true);
+    await InvoicePdfService.downloadAndShare(widget.invoice);
+    if (mounted) setState(() => _isDownloading = false);
   }
 
   @override
@@ -76,7 +91,7 @@ class OrderInvoiceBottomSheet extends StatelessWidget {
                 children: [
                   _buildHeaderInfo(context),
                   AppSpacing.responsiveHeight(0.02),
-                  if (invoice.items != null && invoice.items!.isNotEmpty) ...[
+                  if (widget.invoice.items != null && widget.invoice.items!.isNotEmpty) ...[
                     Text(
                       AppStrings.items,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -85,7 +100,7 @@ class OrderInvoiceBottomSheet extends StatelessWidget {
                           ),
                     ),
                     AppSpacing.responsiveHeight(0.01),
-                    ...invoice.items!.map((item) => _buildItemRow(context, item)),
+                    ...widget.invoice.items!.map((item) => _buildItemRow(context, item)),
                     AppSpacing.responsiveHeight(0.02),
                   ],
                   _buildSummarySection(context),
@@ -94,11 +109,26 @@ class OrderInvoiceBottomSheet extends StatelessWidget {
               ),
             ),
           ),
-          AppSpacing.responsiveHeight(0.01),
-          CustomButton(
-            text: AppStrings.close,
-            isOutlined: true,
-            onPressed: () => Navigator.of(context).pop(),
+          AppSpacing.responsiveHeight(0.015),
+          Row(
+            children: [
+              Expanded(
+                child: CustomButton(
+                  text: AppStrings.close,
+                  isOutlined: true,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+              AppSpacing.w12,
+              Expanded(
+                child: CustomButton(
+                  text: AppStrings.downloadInvoice,
+                  isLoading: _isDownloading,
+                  onPressed: _isDownloading ? () {} : _onDownload,
+                  icon: Icons.download_rounded,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -106,6 +136,7 @@ class OrderInvoiceBottomSheet extends StatelessWidget {
   }
 
   Widget _buildHeaderInfo(BuildContext context) {
+    final invoice = widget.invoice;
     return Container(
       padding: AppSpacing.paddingResponsiveAll(0.03),
       decoration: BoxDecoration(
@@ -181,6 +212,7 @@ class OrderInvoiceBottomSheet extends StatelessWidget {
   }
 
   Widget _buildSummarySection(BuildContext context) {
+    final invoice = widget.invoice;
     return Container(
       padding: AppSpacing.paddingResponsiveAll(0.03),
       decoration: BoxDecoration(
