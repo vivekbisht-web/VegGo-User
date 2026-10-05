@@ -498,6 +498,9 @@ class AppStrings {
   static const String invoiceDetails = 'Invoice Details';
   static const String invoiceUnavailable = 'Invoice is currently unavailable';
   static const String invoiceNumber = 'Invoice #';
+  static const String generatingInvoice = 'Generating your invoice PDF...';
+  static const String invoiceDownloadFailed =
+      'Failed to generate invoice. Please try again.';
   static const String billedTo = 'Billed To';
   static const String date = 'Date';
   static const String close = 'Close';
@@ -849,6 +852,8 @@ class AppStrings {
       'An error occurred during payment. Please try again.';
   static const String razorpayFailedToOpen =
       'Failed to open payment gateway. Please try again.';
+  static const String externalWalletRedirect =
+      'Redirected to external wallet. Your order will be confirmed once payment is received.';
   static const String noDeliverySlots = 'No delivery slots available.';
   static const String defaultText = 'Default';
   static const String cartEmptyWarning =
@@ -1040,4 +1045,19 @@ class AppStrings {
   static const String addressSavedAndSet = 'Address saved and set as current';
   static const String zoomIn = 'Zoom In';
   static const String zoomOut = 'Zoom Out';
+
+  // Location Permission & Device Settings Sheet
+  static const String deviceLocationOff = 'Device location is off';
+  static const String enableLocationTitle = 'Enable your location';
+  static const String enableLocationSubtitle =
+      'Turn on device location to see nearby stores, accurate delivery estimates, and available fresh products.';
+  static const String enableDeviceLocationButton = 'Enable Device Location';
+  static const String grantLocationPermissionButton =
+      'Grant Location Permission';
+  static const String selectLocationManually = 'Select Location Manually';
+  static const String locationBenefit1 =
+      'Discover stores delivering fresh produce in your area';
+  static const String locationBenefit2 =
+      'Accurate delivery time and live stock availability';
 }
+
