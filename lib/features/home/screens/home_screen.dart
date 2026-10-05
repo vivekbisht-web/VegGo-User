@@ -9,6 +9,7 @@ import 'package:vegon_user/features/dashboard/controllers/dashboard_controller.d
 import 'package:vegon_user/features/dashboard/widgets/app_drawer.dart';
 import 'package:vegon_user/features/home/controllers/home_controller.dart';
 import 'package:vegon_user/features/home/controllers/home_search_controller.dart';
+import 'package:vegon_user/features/home/controllers/location_controller.dart';
 import 'package:vegon_user/features/home/widgets/home_all_products_grid.dart';
 import 'package:vegon_user/features/home/widgets/home_banner.dart';
 import 'package:vegon_user/features/home/widgets/home_best_deals.dart';
@@ -32,6 +33,12 @@ class HomeScreen extends StatelessWidget {
         : Get.put(HomeSearchController());
 
     Future<void> onRefresh() async {
+      if (Get.isRegistered<LocationController>()) {
+        final locCtrl = Get.find<LocationController>();
+        if (!locCtrl.hasValidLocation) {
+          locCtrl.checkAndPromptLocation();
+        }
+      }
       await homeController.refreshHome();
       if (Get.isRegistered<CartController>()) {
         await Get.find<CartController>().fetchCartBadgeCount();

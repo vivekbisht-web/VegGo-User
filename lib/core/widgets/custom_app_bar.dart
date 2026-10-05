@@ -16,6 +16,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showCenterLogo;
   final bool showActions;
   final bool showCartButton;
+  final bool showSearchButton;
   final VoidCallback? onBackTap;
   final VoidCallback? onSearchTap;
   final VoidCallback? onSettingsTap;
@@ -29,6 +30,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showCenterLogo = true,
     this.showActions = true,
     this.showCartButton = true,
+    this.showSearchButton = false,
     this.onBackTap,
     this.onSearchTap,
     this.onSettingsTap,
@@ -46,14 +48,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         : Get.put(CartController());
 
     return Container(
-      color: Colors.white,
+      color: AppColors.surface,
       child: SafeArea(
         bottom: false,
         child: Container(
           height: 68.0,
           padding: AppSpacing.paddingHorizontal16,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.surface,
             border: Border(
               bottom: BorderSide(
                 color: AppColors.chipBorder.withValues(alpha: 0.5),
@@ -99,25 +101,27 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              InkWell(
-                onTap: () {
-                  if (onSearchTap != null) {
-                    onSearchTap!();
-                  } else if (Get.isRegistered<DashboardController>()) {
-                    Get.find<DashboardController>().changeTabIndex(1);
-                  }
-                },
-                borderRadius: BorderRadius.circular(AppSpacing.radius20),
-                child: const Padding(
-                  padding: AppSpacing.paddingAll4,
-                  child: Icon(
-                    Icons.search_rounded,
-                    size: 24,
-                    color: AppColors.textPrimary,
+              if (showSearchButton) ...[
+                InkWell(
+                  onTap: () {
+                    if (onSearchTap != null) {
+                      onSearchTap!();
+                    } else if (Get.isRegistered<DashboardController>()) {
+                      Get.find<DashboardController>().changeTabIndex(1);
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(AppSpacing.radius20),
+                  child: const Padding(
+                    padding: AppSpacing.paddingAll4,
+                    child: Icon(
+                      Icons.search_rounded,
+                      size: 24,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-              AppSpacing.w8,
+                AppSpacing.w8,
+              ],
 
               _buildNotificationButton(context),
 
@@ -204,7 +208,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(AppSpacing.radius12),
           border: Border.all(
             color: AppColors.chipBorder.withValues(alpha: 0.8),
@@ -212,7 +216,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
+              color: AppColors.black.withValues(alpha: 0.04),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
