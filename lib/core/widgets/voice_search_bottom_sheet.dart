@@ -30,6 +30,7 @@ class _VoiceSearchBottomSheetState extends State<VoiceSearchBottomSheet>
     with SingleTickerProviderStateMixin {
   late stt.SpeechToText _speech;
   bool _isListening = false;
+  bool _resultSubmitted = false;
   String _recognizedText = '';
   String _statusMessage = '';
   late AnimationController _pulseController;
@@ -54,6 +55,10 @@ class _VoiceSearchBottomSheetState extends State<VoiceSearchBottomSheet>
 
   Future<void> _startListening() async {
     try {
+      _recognizedText = '';
+      _resultSubmitted = false;
+      if (mounted) setState(() {});
+
       final hasPermission =
           await PermissionHandlerService.handleMicrophonePermission(
             showFeedback: true,
@@ -81,12 +86,7 @@ class _VoiceSearchBottomSheetState extends State<VoiceSearchBottomSheet>
         onStatus: (val) {
           if (val == 'done' || val == 'notListening') {
             if (mounted) setState(() => _isListening = false);
-            if (_recognizedText.trim().isNotEmpty) {
-              widget.onResult(_recognizedText.trim());
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              }
-            }
+            _submitResult(_recognizedText);
           }
         },
       );
@@ -106,10 +106,7 @@ class _VoiceSearchBottomSheetState extends State<VoiceSearchBottomSheet>
               });
             }
             if (val.finalResult && val.recognizedWords.trim().isNotEmpty) {
-              widget.onResult(val.recognizedWords.trim());
-              if (Navigator.canPop(context)) {
-                Navigator.pop(context);
-              }
+              _submitResult(val.recognizedWords);
             }
           },
         );
@@ -129,6 +126,17 @@ class _VoiceSearchBottomSheetState extends State<VoiceSearchBottomSheet>
           _statusMessage = AppStrings.speechNotAvailable;
         });
       }
+    }
+  }
+
+  void _submitResult(String text) {
+    final result = text.trim();
+    if (_resultSubmitted || result.isEmpty) return;
+
+    _resultSubmitted = true;
+    widget.onResult(result);
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context);
     }
   }
 
