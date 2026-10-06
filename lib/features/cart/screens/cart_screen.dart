@@ -73,7 +73,7 @@ class CartScreen extends StatelessWidget {
                 ),
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
-                    const CartPairsWellSection(),
+                    //  const CartPairsWellSection(),
                     AppSpacing.responsiveHeight(0.03),
                     CartOrderSummaryCard(),
                     AppSpacing.responsiveHeight(0.05),

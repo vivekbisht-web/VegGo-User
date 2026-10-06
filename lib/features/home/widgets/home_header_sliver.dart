@@ -15,6 +15,7 @@ import 'package:vegon_user/routes/app_routes.dart';
 import 'package:vegon_user/features/home/controllers/location_controller.dart';
 import 'package:vegon_user/features/home/controllers/home_search_controller.dart';
 import 'package:vegon_user/core/widgets/address_selection_bottom_sheet.dart';
+import 'package:vegon_user/core/widgets/voice_search_bottom_sheet.dart';
 
 class HomeHeaderSliver extends StatelessWidget {
   final bool showBackButton;
@@ -399,6 +400,34 @@ class HomeHeader extends StatelessWidget {
                       }
                       return const SizedBox.shrink();
                     }),
+                    InkWell(
+                      onTap: () {
+                        FocusScope.of(context).unfocus();
+                        searchController.clearSearch();
+                        VoiceSearchBottomSheet.show(
+                          context,
+                          onResult: (spokenText) {
+                            searchController.searchTextController.value =
+                                TextEditingValue(
+                              text: spokenText,
+                              selection: TextSelection.collapsed(
+                                offset: spokenText.length,
+                              ),
+                            );
+                            searchController.onSearchQueryChanged(spokenText);
+                          },
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(AppSpacing.radius20),
+                      child: const Padding(
+                        padding: AppSpacing.paddingAll6,
+                        child: Icon(
+                          Icons.mic_rounded,
+                          color: AppColors.primary,
+                          size: 20,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

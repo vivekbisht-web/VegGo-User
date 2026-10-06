@@ -26,6 +26,14 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   final RxBool isSearchOpen = false.obs;
+  final TextEditingController _categorySearchTextController =
+      TextEditingController();
+
+  @override
+  void dispose() {
+    _categorySearchTextController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -283,6 +291,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         InkWell(
           onTap: () {
             searchController.clearSearch();
+            _categorySearchTextController.clear();
             isSearchOpen.value = false;
           },
           borderRadius: BorderRadius.circular(AppSpacing.radius20),
@@ -301,7 +310,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           child: SizedBox(
             height: 42,
             child: TextField(
-              controller: searchController.searchTextController,
+              controller: _categorySearchTextController,
               autofocus: true,
               onChanged: searchController.onSearchQueryChanged,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -330,7 +339,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         return const SizedBox.shrink();
                       }
                       return InkWell(
-                        onTap: searchController.clearSearch,
+                        onTap: () {
+                          searchController.clearSearch();
+                          _categorySearchTextController.clear();
+                        },
                         child: const Padding(
                           padding: AppSpacing.paddingHorizontal8,
                           child: Icon(
@@ -343,11 +355,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     }),
                     InkWell(
                       onTap: () {
+                        _categorySearchTextController.clear();
+                        searchController.clearSearch();
                         VoiceSearchBottomSheet.show(
                           context,
                           onResult: (spokenText) {
-                            searchController.searchTextController.text =
-                                spokenText;
+                            _categorySearchTextController.value =
+                                TextEditingValue(
+                              text: spokenText,
+                              selection: TextSelection.collapsed(
+                                offset: spokenText.length,
+                              ),
+                            );
                             searchController.onSearchQueryChanged(spokenText);
                           },
                         );
