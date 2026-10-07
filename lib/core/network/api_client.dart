@@ -7,6 +7,18 @@ import 'package:get/get.dart' hide Response, MultipartFile, FormData;
 import '../../features/auth/controllers/auth_controller.dart';
 import '../local_storage/shared_prefs_helper.dart';
 import '../constants/api_endpoints.dart';
+import '../constants/app_strings.dart';
+
+class ApiException implements Exception {
+  final String message;
+  final int? statusCode;
+  final String? errorCode;
+
+  const ApiException({required this.message, this.statusCode, this.errorCode});
+
+  @override
+  String toString() => 'Exception: $message';
+}
 
 class ApiClient {
   late final Dio _dio;
@@ -42,6 +54,12 @@ class ApiClient {
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+          if (kDebugMode) {
+            debugPrint(
+              '[API] ${options.method} ${options.uri} Authorization: '
+              '${options.headers['Authorization'] ?? 'No access token'}',
+            );
+          }
           final lat = SharedPrefsHelper.getLatitude();
           final lng = SharedPrefsHelper.getLongitude();
           if (lat != null && lat != 0.0 && lng != null && lng != 0.0) {
@@ -57,10 +75,10 @@ class ApiClient {
       _dio.interceptors.add(
         LogInterceptor(
           request: true,
-          requestHeader: true,
-          requestBody: true,
+          requestHeader: false,
+          requestBody: false,
           responseHeader: true,
-          responseBody: true,
+          responseBody: false,
           error: true,
         ),
       );
@@ -220,45 +238,53 @@ class ApiClient {
     }
   }
 
-  Exception _handleDioError(DioException error) {
+  ApiException _handleDioError(DioException error) {
+    final responseData = error.response?.data;
+    final errorCode = responseData is Map
+        ? responseData['errorCode']?.toString()
+        : null;
+    var message = AppStrings.unexpectedError;
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
-        return Exception(
-          "Connection Timeout. Please check your internet connection.",
-        );
+        message = AppStrings.networkError;
+        break;
       case DioExceptionType.badResponse:
         final statusCode = error.response?.statusCode;
-        String errorMessage =
-            "Server Error: $statusCode - ${error.response?.statusMessage}";
-
-        final responseData = error.response?.data;
+        message =
+            'Server Error: $statusCode - ${error.response?.statusMessage}';
         if (responseData is Map) {
           final nestedData = responseData['data'];
-          final message =
+          final responseMessage =
               responseData['message'] ??
               responseData['error'] ??
               (nestedData is Map ? nestedData['message'] : null) ??
               (nestedData is Map ? nestedData['error'] : null);
-          if (message != null && message.toString().isNotEmpty) {
-            errorMessage = message.toString();
+          if (responseMessage != null &&
+              responseMessage.toString().isNotEmpty) {
+            message = responseMessage.toString();
           }
         } else if (responseData is String && responseData.isNotEmpty) {
-          errorMessage = responseData;
+          message = responseData;
         }
-
-        return Exception(errorMessage);
+        break;
       case DioExceptionType.cancel:
-        return Exception("Request to API server was cancelled");
+        message = AppStrings.networkError;
+        break;
       case DioExceptionType.connectionError:
-        return Exception(
-          "No Internet Connection. Please connect to a network.",
-        );
+        message = AppStrings.networkError;
+        break;
       case DioExceptionType.unknown:
-        return Exception("An unknown error occurred");
+        message = AppStrings.unexpectedError;
+        break;
       default:
-        return Exception("Something went wrong");
+        message = AppStrings.unexpectedError;
     }
+    return ApiException(
+      message: message,
+      statusCode: error.response?.statusCode,
+      errorCode: errorCode,
+    );
   }
 }

@@ -11,7 +11,6 @@ import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/models/cart_models.dart';
 import 'package:vegon_user/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:vegon_user/features/cart/widgets/cart_item_card.dart';
-import 'package:vegon_user/features/cart/widgets/cart_pairs_well_section.dart';
 import 'package:vegon_user/features/cart/widgets/cart_order_summary_card.dart';
 
 class CartScreen extends StatelessWidget {

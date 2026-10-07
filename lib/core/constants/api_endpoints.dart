@@ -36,6 +36,8 @@ class ApiEndpoints {
   static const String banners = '/customer/banners';
   static const String products = '/customer/products';
   static const String productDeals = '/customer/products/deals';
+  static const String customerChat = '/customer/chat';
+  static const String customerChatRating = '/customer/chat/rating';
 
   static String productDetails(String id) => '/customer/products/$id';
   static String relatedProducts(String id) => '/customer/products/$id/related';
@@ -44,8 +46,10 @@ class ApiEndpoints {
       '/customer/categories/$categoryId/subcategories';
   static const String googleMapsGeocodeApi =
       'https://maps.googleapis.com/maps/api/geocode/json';
-  static const String googleMapsApiKey =
-      String.fromEnvironment('MAPS_API_KEY', defaultValue: '');
+  static const String googleMapsApiKey = String.fromEnvironment(
+    'MAPS_API_KEY',
+    defaultValue: '',
+  );
 
   // Razorpay API
   static const String razorpayKey = 'rzp_test_TTUpC17cOLtNl8';

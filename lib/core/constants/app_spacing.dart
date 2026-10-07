@@ -48,7 +48,9 @@ class AppSpacing {
   static const EdgeInsets paddingAll4 = EdgeInsets.all(4);
   static const EdgeInsets paddingAll6 = EdgeInsets.all(6);
   static const EdgeInsets paddingAll3 = EdgeInsets.all(3);
-  static const EdgeInsets paddingHorizontal2_5 = EdgeInsets.symmetric(horizontal: 2.5);
+  static const EdgeInsets paddingHorizontal2_5 = EdgeInsets.symmetric(
+    horizontal: 2.5,
+  );
   static const EdgeInsets paddingAll8 = EdgeInsets.all(8);
   static const EdgeInsets paddingAll10 = EdgeInsets.all(10);
   static const EdgeInsets paddingAll12 = EdgeInsets.all(12);
@@ -122,8 +124,23 @@ class AppSpacing {
   static const double bannerFontSizeSubtitle = 13.5;
   static const double bannerFontSizeInfo = 9.5;
   static const double bannerFontSizeButton = 10.5;
-  static const EdgeInsets bannerPadding = EdgeInsets.fromLTRB(14.0, 8.0, 10.0, 10.0);
-  static const EdgeInsets bannerBadgePadding = EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0);
+  static const double chatBubbleWidthRatio = 0.82;
+  static const EdgeInsets chatComposerPadding = EdgeInsets.fromLTRB(
+    12,
+    8,
+    12,
+    12,
+  );
+  static const EdgeInsets bannerPadding = EdgeInsets.fromLTRB(
+    14.0,
+    8.0,
+    10.0,
+    10.0,
+  );
+  static const EdgeInsets bannerBadgePadding = EdgeInsets.symmetric(
+    horizontal: 6.0,
+    vertical: 2.0,
+  );
 
   static const double categoryCardRadius = 16.0;
   static const double categoryCardAspectRatio = 0.88;
@@ -135,7 +152,12 @@ class AppSpacing {
   static const double categoryMoreSquareRadius = 3.5;
   static const double categoryMoreSpacing = 3.5;
   static const double moreIconRotationAngle = 0.785398;
-  static const EdgeInsets categoryCardPadding = EdgeInsets.fromLTRB(4.0, 4.0, 4.0, 4.0);
+  static const EdgeInsets categoryCardPadding = EdgeInsets.fromLTRB(
+    4.0,
+    4.0,
+    4.0,
+    4.0,
+  );
 
   static const double sectionHeaderTitleSize = 16.0;
   static const double sectionHeaderActionSize = 12.0;

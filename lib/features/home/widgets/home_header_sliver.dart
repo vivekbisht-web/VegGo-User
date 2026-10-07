@@ -14,8 +14,10 @@ import 'package:vegon_user/routes/app_routes.dart';
 
 import 'package:vegon_user/features/home/controllers/location_controller.dart';
 import 'package:vegon_user/features/home/controllers/home_search_controller.dart';
+import 'package:vegon_user/features/profile/controllers/address_controller.dart';
 import 'package:vegon_user/core/widgets/address_selection_bottom_sheet.dart';
 import 'package:vegon_user/core/widgets/voice_search_bottom_sheet.dart';
+import 'package:vegon_user/features/profile/screens/add_address_screen.dart';
 
 class HomeHeaderSliver extends StatelessWidget {
   final bool showBackButton;
@@ -67,6 +69,10 @@ class HomeHeader extends StatelessWidget {
         Get.isRegistered<HomeSearchController>()
         ? Get.find<HomeSearchController>()
         : Get.put(HomeSearchController());
+    final AddressController addressController =
+        Get.isRegistered<AddressController>()
+        ? Get.find<AddressController>()
+        : Get.put(AddressController());
 
     return SizedBox(
       height: heroHeight + 46,
@@ -198,81 +204,134 @@ class HomeHeader extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Address Selection Button
-                    InkWell(
-                      borderRadius: BorderRadius.circular(AppSpacing.radius12),
-                      onTap: () => AddressSelectionBottomSheet.show(context),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4,
-                          vertical: 6,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.location_on_outlined,
-                              color: AppColors.primary,
-                              size: 20,
+                    // Address Selection Button — shows saved address or "Add Address" prompt
+                    Obx(() {
+                      final hasAddress = addressController.addresses.isNotEmpty;
+                      final locName =
+                          locationController.currentLocationName.value;
+
+                      if (!hasAddress) {
+                        // No DB address: show "Add Address" prompt
+                        return InkWell(
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.radius12,
+                          ),
+                          onTap: () => Get.to(() => const AddAddressScreen()),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 6,
                             ),
-                            AppSpacing.w6,
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(
-                                  AppStrings.deliverTo,
-                                  style: Theme.of(context).textTheme.labelSmall
-                                      ?.copyWith(
-                                        color: AppColors.textSecondary,
-                                        fontSize: 9,
-                                        height: 1,
-                                      ),
+                                const Icon(
+                                  Icons.add_location_alt_outlined,
+                                  color: AppColors.primary,
+                                  size: 20,
                                 ),
-                                AppSpacing.h4,
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Obx(() {
-                                      final locName = locationController
-                                          .currentLocationName
-                                          .value;
-                                      return ConstrainedBox(
+                                AppSpacing.w6,
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(
+                                    maxWidth: media.width * 0.38,
+                                  ),
+                                  child: Text(
+                                    AppStrings.addAddressButton,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.w700,
+                                          fontSize: 10,
+                                          height: 1,
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      // Has DB address: show address picker
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radius12,
+                        ),
+                        onTap: () => AddressSelectionBottomSheet.show(context),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 6,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.location_on_outlined,
+                                color: AppColors.primary,
+                                size: 20,
+                              ),
+                              AppSpacing.w6,
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    AppStrings.deliverTo,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.labelSmall?.copyWith(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 9,
+                                      height: 1,
+                                    ),
+                                  ),
+                                  AppSpacing.h4,
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      ConstrainedBox(
                                         constraints: BoxConstraints(
                                           maxWidth: media.width * 0.36,
                                         ),
                                         child: Text(
                                           locName.isNotEmpty
                                               ? locName
-                                              : AppStrings.useCurrentLocation,
+                                              : addressController
+                                                    .addresses
+                                                    .first
+                                                    .address,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.copyWith(
-                                                color: AppColors.textPrimary,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 10,
-                                                height: 1,
-                                              ),
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium?.copyWith(
+                                            color: AppColors.textPrimary,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 10,
+                                            height: 1,
+                                          ),
                                         ),
-                                      );
-                                    }),
-                                    AppSpacing.w2,
-                                    const Icon(
-                                      Icons.keyboard_arrow_down_rounded,
-                                      size: 16,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+                                      ),
+                                      AppSpacing.w2,
+                                      const Icon(
+                                        Icons.keyboard_arrow_down_rounded,
+                                        size: 16,
+                                        color: AppColors.textSecondary,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    }),
 
                     // Vertical Divider
                     Container(
