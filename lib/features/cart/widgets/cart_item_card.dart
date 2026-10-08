@@ -91,34 +91,34 @@ class CartItemCard extends StatelessWidget {
                   color: AppColors.primary,
                 ),
               ),
-              AppSpacing.responsiveHeight(0.025),
-              Material(
-                color: AppColors.error.withValues(alpha: 0.08),
-                shape: const CircleBorder(),
-                child: InkWell(
-                  onTap: () {
-                    AppDialogs.showConfirmationDialog(
-                      context,
-                      title: AppStrings.removeItem,
-                      message:
-                          '${AppStrings.removeItemDescPrefix}${item.name}${AppStrings.removeItemDescSuffix}',
-                      confirmText: AppStrings.remove,
-                      icon: Icons.delete_outline_rounded,
-                      isDestructive: true,
-                      onConfirm: () => cartController.removeItem(item.cartKey),
-                    );
-                  },
-                  customBorder: const CircleBorder(),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.delete_outline_rounded,
-                      color: AppColors.error,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ),
+              // AppSpacing.responsiveHeight(0.025),
+              // Material(
+              //   color: AppColors.error.withValues(alpha: 0.08),
+              //   shape: const CircleBorder(),
+              //   child: InkWell(
+              //     onTap: () {
+              //       AppDialogs.showConfirmationDialog(
+              //         context,
+              //         title: AppStrings.removeItem,
+              //         message:
+              //             '${AppStrings.removeItemDescPrefix}${item.name}${AppStrings.removeItemDescSuffix}',
+              //         confirmText: AppStrings.remove,
+              //         icon: Icons.delete_outline_rounded,
+              //         isDestructive: true,
+              //         onConfirm: () => cartController.removeItem(item.cartKey),
+              //       );
+              //     },
+              //     customBorder: const CircleBorder(),
+              //     child: const Padding(
+              //       padding: EdgeInsets.all(8.0),
+              //       child: Icon(
+              //         Icons.delete_outline_rounded,
+              //         color: AppColors.error,
+              //         size: 20,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],

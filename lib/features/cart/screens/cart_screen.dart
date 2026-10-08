@@ -264,31 +264,31 @@ class _VendorCartGroup extends StatelessWidget {
               ],
             ),
           ),
-          Material(
-            color: AppColors.transparent,
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: () {
-                AppDialogs.showConfirmationDialog(
-                  context,
-                  title: AppStrings.removeItem,
-                  message: 'Remove all items from "${liveCart.cartLabel}"?',
-                  confirmText: AppStrings.remove,
-                  icon: Icons.delete_outline_rounded,
-                  isDestructive: true,
-                  onConfirm: () => cartController.removeCartGroup(liveCart.id),
-                );
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(6),
-                child: Icon(
-                  Icons.delete_outline_rounded,
-                  color: AppColors.error,
-                  size: 18,
-                ),
-              ),
-            ),
-          ),
+          // Material(
+          //   color: AppColors.transparent,
+          //   child: InkWell(
+          //     customBorder: const CircleBorder(),
+          //     onTap: () {
+          //       AppDialogs.showConfirmationDialog(
+          //         context,
+          //         title: AppStrings.removeItem,
+          //         message: 'Remove all items from "${liveCart.cartLabel}"?',
+          //         confirmText: AppStrings.remove,
+          //         icon: Icons.delete_outline_rounded,
+          //         isDestructive: true,
+          //         onConfirm: () => cartController.removeCartGroup(liveCart.id),
+          //       );
+          //     },
+          //     child: const Padding(
+          //       padding: EdgeInsets.all(6),
+          //       child: Icon(
+          //         Icons.delete_outline_rounded,
+          //         color: AppColors.error,
+          //         size: 18,
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Icon(
             expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
             color: AppColors.textSecondary,
