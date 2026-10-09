@@ -108,23 +108,29 @@ class _CategoryCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: AppSpacing.categoryCardImageHeight,
-              height: AppSpacing.categoryCardImageHeight,
-              decoration: BoxDecoration(
-                borderRadius: imageRadius,
-                color: AppColors.chipBackground,
+            ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppSpacing.categoryCardImageHeight,
               ),
-              child: ClipRRect(
-                borderRadius: imageRadius,
-                child: isMore
-                    ? const _MoreCategoryIcon()
-                    : CustomImageView(
-                        imageUrl: imageUrl,
-                        width: AppSpacing.categoryCardImageHeight,
-                        height: AppSpacing.categoryCardImageHeight,
-                        fit: BoxFit.cover,
-                      ),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: imageRadius,
+                    color: AppColors.chipBackground,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: imageRadius,
+                    child: isMore
+                        ? const _MoreCategoryIcon()
+                        : CustomImageView(
+                            imageUrl: imageUrl,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
+                ),
               ),
             ),
             AppSpacing.h6,
