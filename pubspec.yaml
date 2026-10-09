@@ -29,7 +29,7 @@ dependencies:
   google_maps_flutter: ^2.18.0
   flutter_map: ^8.3.1
   latlong2: ^0.10.1
-  razorpay_flutter: ^1.4.6
+  razorpay_flutter: ^1.4.7
   firebase_core: ^4.14.0
   firebase_auth: ^6.6.1
   firebase_messaging: ^16.7.0
