@@ -1,4 +1,4 @@
-//
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app_routes.dart';
 
@@ -63,6 +63,15 @@ class AppPages {
   AppPages._();
 
   static const String initial = AppRoutes.splash;
+
+  static final GetPage unknownRoute = GetPage(
+    name: AppRoutes.notFound,
+    page: () => const Scaffold(
+      body: Center(
+        child: SizedBox.shrink(),
+      ),
+    ),
+  );
 
   static final List<GetPage> pages = [
     GetPage(

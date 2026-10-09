@@ -2,9 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
-import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
-import 'package:vegon_user/core/widgets/app_dialogs.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/models/cart_item.dart';

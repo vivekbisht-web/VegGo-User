@@ -5,7 +5,6 @@ import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/widgets/custom_app_bar.dart';
 import 'package:vegon_user/core/widgets/empty_state_widget.dart';
-import 'package:vegon_user/core/widgets/app_dialogs.dart';
 import 'package:vegon_user/core/utils/price_formatter.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/models/cart_models.dart';

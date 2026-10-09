@@ -374,7 +374,7 @@ class HomeHeader extends StatelessWidget {
                     },
                     borderRadius: BorderRadius.circular(AppSpacing.radius20),
                     child: const Padding(
-                      padding: const EdgeInsets.all(8),
+                      padding: AppSpacing.paddingAll8,
                       child: Icon(
                         Icons.mic_rounded,
                         color: AppColors.primary,

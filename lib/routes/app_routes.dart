@@ -47,4 +47,5 @@ class AppRoutes {
   static const String helpCenter = '/help-center';
   static const String contactSupport = '/contact-support';
   static const String termsPrivacy = '/terms-privacy';
+  static const String notFound = '/not-found';
 }
