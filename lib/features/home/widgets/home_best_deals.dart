@@ -58,12 +58,13 @@ class HomeBestDeals extends StatelessWidget {
           final original = (item.originalPrice ?? (item.price * 1.25)).toInt();
           final name = item.name;
           final unit = item.unit;
-          final calculatedDiscount = (item.originalPrice != null &&
+          final calculatedDiscount =
+              (item.originalPrice != null &&
                   item.originalPrice! > item.price &&
                   item.originalPrice! > 0)
               ? (((item.originalPrice! - item.price) / item.originalPrice!) *
-                      100)
-                  .round()
+                        100)
+                    .round()
               : 0;
           final effectivePercent = item.discountPercent > 0
               ? item.discountPercent
@@ -160,8 +161,8 @@ class HomeBestDeals extends StatelessWidget {
                                             '${AppStrings.rupeeSymbol}$original',
                                             style: textTheme.bodySmall
                                                 ?.copyWith(
-                                                  color: AppColors
-                                                      .strikethrough,
+                                                  color:
+                                                      AppColors.strikethrough,
                                                   decoration: TextDecoration
                                                       .lineThrough,
                                                   fontSize: 10.5,
@@ -247,7 +248,9 @@ class HomeBestDeals extends StatelessWidget {
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.overlayLight.withValues(alpha: 0.12),
+                                  color: AppColors.overlayLight.withValues(
+                                    alpha: 0.12,
+                                  ),
                                   blurRadius: 4,
                                   offset: const Offset(0, 1),
                                 ),

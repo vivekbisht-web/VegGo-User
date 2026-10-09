@@ -224,9 +224,6 @@ class AuthController extends GetxController {
 
   Future<String?> getIdToken({bool forceRefresh = false}) async {
     final token = await _firebaseAuth.currentUser?.getIdToken(forceRefresh);
-    if (token != null) {
-      debugPrint('🔥 [FirebaseAuthService.getIdToken]: $token');
-    }
     return token;
   }
 

@@ -12,6 +12,7 @@ class CustomTextField extends StatefulWidget {
   final TextEditingController? controller;
   final IconData? prefixIcon;
   final bool isPassword;
+  final bool enabled;
   final String? Function(String?)? validator;
   final TextInputType keyboardType;
   final String? rightActionText;
@@ -36,6 +37,7 @@ class CustomTextField extends StatefulWidget {
     this.controller,
     this.prefixIcon,
     this.isPassword = false,
+    this.enabled = true,
     this.validator,
     this.keyboardType = TextInputType.text,
     this.rightActionText,
@@ -71,6 +73,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     Widget field = TextFormField(
       controller: widget.controller,
       obscureText: _obscureText,
+      enabled: widget.enabled,
       validator: widget.validator,
       keyboardType: widget.keyboardType,
       onChanged: widget.onChanged,
@@ -83,24 +86,28 @@ class _CustomTextFieldState extends State<CustomTextField> {
       inputFormatters: widget.inputFormatters,
       focusNode: widget.focusNode,
       textAlign: widget.textAlign,
-      decoration: widget.decoration ?? InputDecoration(
-        counterText: widget.maxLength != null ? '' : null,
-        hintText: widget.hintText,
-        prefixIcon: widget.prefixIcon != null
-            ? Icon(widget.prefixIcon, color: AppColors.textSecondary)
-            : null,
-        suffixIcon: widget.isPassword
-            ? CustomIconButton(
-                icon: _obscureText ? Icons.visibility_off : Icons.visibility,
-                color: AppColors.textSecondary,
-                onPressed: () {
-                  setState(() {
-                    _obscureText = !_obscureText;
-                  });
-                },
-              )
-            : widget.customSuffix,
-      ),
+      decoration:
+          widget.decoration ??
+          InputDecoration(
+            counterText: widget.maxLength != null ? '' : null,
+            hintText: widget.hintText,
+            prefixIcon: widget.prefixIcon != null
+                ? Icon(widget.prefixIcon, color: AppColors.textSecondary)
+                : null,
+            suffixIcon: widget.isPassword
+                ? CustomIconButton(
+                    icon: _obscureText
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: AppColors.textSecondary,
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                  )
+                : widget.customSuffix,
+          ),
     );
 
     if (widget.label != null) {

@@ -41,21 +41,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBFbTvsDNFT2yKBszF-Po2C31TRgREjeUU',
-    appId: '1:726384647343:web:f68f55f2beffba6b02885a',
-    messagingSenderId: '726384647343',
-    projectId: 'veggo-fresh-865c2',
-    authDomain: 'veggo-fresh-865c2.firebaseapp.com',
-    storageBucket: 'veggo-fresh-865c2.firebasestorage.app',
-    measurementId: 'G-NZP9FMH95N',
+    apiKey: 'AIzaSyCOadtqoJ-d6wpysM95h5kQsfBV1YistJY',
+    appId: '1:929528357809:web:36fb352b69e22bc4229390',
+    messagingSenderId: '929528357809',
+    projectId: 'vegg0fresh-update',
+    authDomain: 'vegg0fresh-update.firebaseapp.com',
+    storageBucket: 'vegg0fresh-update.firebasestorage.app',
+    measurementId: 'G-G3YX8RXG7F',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDsjiV7UDbVmmbJA6kLMMDEu2rMQNvhVug',
-    appId: '1:726384647343:android:f7172ed40323c38f02885a',
-    messagingSenderId: '726384647343',
-    projectId: 'veggo-fresh-865c2',
-    storageBucket: 'veggo-fresh-865c2.firebasestorage.app',
+    apiKey: 'AIzaSyCmML2VGc9i-dK3bwpB0wmpjVC7uRMJtDA',
+    appId: '1:929528357809:android:d470081f518e8fc0229390',
+    messagingSenderId: '929528357809',
+    projectId: 'vegg0fresh-update',
+    storageBucket: 'vegg0fresh-update.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -69,20 +69,20 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCaSSIhoLFuM409xJ3gJlKmSenHzTTGbxI',
-    appId: '1:929528357809:ios:162f40ce4f877b84229390',
+    appId: '1:929528357809:ios:b5507725a340ea81229390',
     messagingSenderId: '929528357809',
     projectId: 'vegg0fresh-update',
     storageBucket: 'vegg0fresh-update.firebasestorage.app',
-    iosBundleId: 'com.veggofresh.customer',
+    iosBundleId: 'com.example.vegonUser',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBFbTvsDNFT2yKBszF-Po2C31TRgREjeUU',
-    appId: '1:726384647343:web:7ea0dbf2563368cc02885a',
-    messagingSenderId: '726384647343',
-    projectId: 'veggo-fresh-865c2',
-    authDomain: 'veggo-fresh-865c2.firebaseapp.com',
-    storageBucket: 'veggo-fresh-865c2.firebasestorage.app',
-    measurementId: 'G-QVQPNBKPKB',
+    apiKey: 'AIzaSyCOadtqoJ-d6wpysM95h5kQsfBV1YistJY',
+    appId: '1:929528357809:web:6890e8f89e540f04229390',
+    messagingSenderId: '929528357809',
+    projectId: 'vegg0fresh-update',
+    authDomain: 'vegg0fresh-update.firebaseapp.com',
+    storageBucket: 'vegg0fresh-update.firebasestorage.app',
+    measurementId: 'G-X33P5KQK27',
   );
 }

@@ -30,7 +30,12 @@ class HomeCategories extends StatelessWidget {
         return const Center(child: CircularProgressIndicator());
       }
 
-      final int maxCategories = (fetchedCategories.length <= 4) ? 3 : 7;
+      final int columns = MediaQuery.sizeOf(context).width >= 600 ? 6 : 4;
+      final int maxCategories = columns == 6
+          ? 11
+          : (fetchedCategories.length <= 4)
+          ? 3
+          : 7;
       final int categoryCount = fetchedCategories.length.clamp(
         0,
         maxCategories,
@@ -42,8 +47,8 @@ class HomeCategories extends StatelessWidget {
         padding: AppSpacing.paddingZero,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: totalCount,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: columns,
           crossAxisSpacing: AppSpacing.categoryGridCrossAxisSpacing,
           mainAxisSpacing: AppSpacing.categoryGridMainAxisSpacing,
           childAspectRatio: AppSpacing.categoryCardAspectRatio,
@@ -56,6 +61,7 @@ class HomeCategories extends StatelessWidget {
               name: AppStrings.more,
               imageUrl: '',
               isMore: true,
+              tint: _tints[index % _tints.length],
               onTap: () {
                 dashboardController.changeTabIndex(1);
               },
@@ -70,6 +76,7 @@ class HomeCategories extends StatelessWidget {
             name: name,
             imageUrl: imageUrl,
             isMore: false,
+            tint: _tints[index % _tints.length],
             onTap: () {
               categoryController.selectCategoryById(category.id);
               dashboardController.changeTabIndex(1);
@@ -81,16 +88,29 @@ class HomeCategories extends StatelessWidget {
   }
 }
 
+const List<Color> _tints = [
+  Color(0xFFE8F5E9),
+  Color(0xFFF1F8E4),
+  Color(0xFFE6F2FB),
+  Color(0xFFFFF1DB),
+  Color(0xFFF3F6EC),
+  Color(0xFFFFF3E0),
+  Color(0xFFFFF6D9),
+  Color(0xFFFCE8EC),
+];
+
 class _CategoryCard extends StatelessWidget {
   final String name;
   final String imageUrl;
   final bool isMore;
+  final Color tint;
   final VoidCallback onTap;
 
   const _CategoryCard({
     required this.name,
     required this.imageUrl,
     required this.isMore,
+    required this.tint,
     required this.onTap,
   });
 
@@ -117,17 +137,20 @@ class _CategoryCard extends StatelessWidget {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     borderRadius: imageRadius,
-                    color: AppColors.chipBackground,
+                    color: tint,
                   ),
                   child: ClipRRect(
                     borderRadius: imageRadius,
                     child: isMore
                         ? const _MoreCategoryIcon()
-                        : CustomImageView(
-                            imageUrl: imageUrl,
-                            width: double.infinity,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
+                        : Padding(
+                            padding: const EdgeInsets.all(6),
+                            child: CustomImageView(
+                              imageUrl: imageUrl,
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.contain,
+                            ),
                           ),
                   ),
                 ),
@@ -141,6 +164,7 @@ class _CategoryCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w600,
+                height: 1.1,
                 color: AppColors.textPrimary,
                 fontSize: AppSpacing.categoryFontSize,
               ),

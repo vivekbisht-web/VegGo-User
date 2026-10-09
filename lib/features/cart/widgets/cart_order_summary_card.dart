@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
@@ -6,8 +5,11 @@ import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/widgets/custom_button.dart';
 import 'package:vegon_user/core/widgets/custom_text_field.dart';
+import 'package:vegon_user/core/utils/snackbar_helper.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/screens/checkout_screen.dart';
+import 'package:vegon_user/features/profile/controllers/address_controller.dart';
+import 'package:vegon_user/features/profile/screens/add_address_screen.dart';
 
 class CartOrderSummaryCard extends StatelessWidget {
   CartOrderSummaryCard({super.key});
@@ -54,59 +56,33 @@ class CartOrderSummaryCard extends StatelessWidget {
           ),
           AppSpacing.responsiveHeight(0.01),
 
-          _buildSummaryRow(
-            cartController.hasMultipleCarts
-                ? '${AppStrings.deliveryFee} (${cartController.cartCount} vendors)'
-                : AppStrings.deliveryFee,
-            '${AppStrings.currencySymbol}${cartController.deliveryFee.toStringAsFixed(2)}',
-            context,
-            trailingWidget: InkWell(
-              onTap: () {
-                Get.dialog(
-                  AlertDialog(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    title: const Text(AppStrings.deliveryFeeInfo),
-                    content: Text(
-                      cartController.hasMultipleCarts
-                          ? 'Your order includes items from ${cartController.cartCount} different vendors, each with its own delivery, so the fee shown is the combined total for all of them.'
-                          : AppStrings.deliveryFeeDesc,
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Get.back(),
-                        child: Text(
-                          AppStrings.gotIt,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-              child: Padding(
-                padding: AppSpacing.paddingOnly(
-                  left: AppSpacing.screenWidth * 0.01,
-                ),
-                child: Icon(
-                  Icons.help_outline,
-                  size: AppSpacing.screenWidth * 0.04,
-                  color: AppColors.textSecondary,
-                ),
+          // Delivery fee and estimated taxes are calculated by the backend at
+          // checkout based on the delivery address and vendor policies.
+          // Showing them here (with static local logic) caused mismatches.
+          // _buildSummaryRow(
+          //   cartController.hasMultipleCarts
+          //       ? '${AppStrings.deliveryFee} (${cartController.cartCount} vendors)'
+          //       : AppStrings.deliveryFee,
+          //   '${AppStrings.currencySymbol}${cartController.deliveryFee.toStringAsFixed(2)}',
+          //   context,
+          // ),
+          // AppSpacing.responsiveHeight(0.01),
+          // _buildSummaryRow(
+          //   AppStrings.estimatedTaxes,
+          //   '${AppStrings.currencySymbol}${cartController.estimatedTaxes.toStringAsFixed(2)}',
+          //   context,
+          // ),
+
+          // Note: final tax + delivery fee shown at checkout
+          Padding(
+            padding: EdgeInsets.only(top: AppSpacing.screenHeight * 0.005),
+            child: Text(
+              AppStrings.taxesAndFeesAtCheckout,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: AppColors.textSecondary,
+                fontStyle: FontStyle.italic,
               ),
             ),
-          ),
-          AppSpacing.responsiveHeight(0.01),
-
-          _buildSummaryRow(
-            AppStrings.estimatedTaxes,
-            '${AppStrings.currencySymbol}${cartController.estimatedTaxes.toStringAsFixed(2)}',
-            context,
           ),
 
           if (cartController.appliedPromo.isNotEmpty) ...[
@@ -192,13 +168,18 @@ class CartOrderSummaryCard extends StatelessWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
-              Text(
-                '${AppStrings.currencySymbol}${cartController.total.toStringAsFixed(2)}',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
+              Obx(() {
+                final double cartSubtotalAfterDiscount =
+                    (cartController.subtotal - cartController.discountAmount.value)
+                        .clamp(0.0, double.infinity);
+                return Text(
+                  '${AppStrings.currencySymbol}${cartSubtotalAfterDiscount.toStringAsFixed(2)}',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                );
+              }),
             ],
           ),
           AppSpacing.responsiveHeight(0.03),
@@ -207,6 +188,14 @@ class CartOrderSummaryCard extends StatelessWidget {
             text: AppStrings.proceedToCheckout,
             icon: Icons.arrow_forward,
             onPressed: () {
+              final addressCtrl = Get.isRegistered<AddressController>()
+                  ? Get.find<AddressController>()
+                  : Get.put(AddressController());
+              if (addressCtrl.addresses.isEmpty) {
+                SnackbarHelper.showGetError(AppStrings.addAddressSubtitle);
+                Get.to(() => const AddAddressScreen());
+                return;
+              }
               final cartIds = cartController.carts
                   .map((c) => c.id)
                   .where((id) => id.isNotEmpty)

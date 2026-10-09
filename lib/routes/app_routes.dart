@@ -11,6 +11,7 @@ class AppRoutes {
   static const String basicInfo = '/basic-info';
 
   static const String dashboard = '/dashboard';
+  static const String chat = '/chat';
   static const String home = '/home';
   static const String category = '/category';
 
