@@ -58,7 +58,8 @@ class LocationController extends GetxController with WidgetsBindingObserver {
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       final permission = await Geolocator.checkPermission();
-      final bool hasPermission = permission == LocationPermission.always ||
+      final bool hasPermission =
+          permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse;
 
       if (serviceEnabled && hasPermission) {
@@ -112,9 +113,8 @@ class LocationController extends GetxController with WidgetsBindingObserver {
   }
 
   void _syncLocationFromSavedAddress(AddressController addressCtrl) {
-    final defaultAddr = addressCtrl.addresses.firstWhereOrNull(
-          (a) => a.isDefault,
-        ) ??
+    final defaultAddr =
+        addressCtrl.addresses.firstWhereOrNull((a) => a.isDefault) ??
         addressCtrl.addresses.firstOrNull;
     if (defaultAddr == null) return;
 
@@ -133,11 +133,13 @@ class LocationController extends GetxController with WidgetsBindingObserver {
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       final permission = await Geolocator.checkPermission();
-      final bool hasPermission = permission == LocationPermission.always ||
+      final bool hasPermission =
+          permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse;
 
       if (serviceEnabled && hasPermission) {
-        if (currentLatitude.value == null || currentLocationName.value.isEmpty) {
+        if (currentLatitude.value == null ||
+            currentLocationName.value.isEmpty) {
           await fetchAndSaveUserLocation(saveToApi: true);
         }
         return;
@@ -305,7 +307,9 @@ class LocationController extends GetxController with WidgetsBindingObserver {
               savedAddresses,
               latitude: position.latitude,
               longitude: position.longitude,
-              addressLine1: line1.isNotEmpty ? line1 : currentLocationName.value,
+              addressLine1: line1.isNotEmpty
+                  ? line1
+                  : currentLocationName.value,
               city: city,
               postalCode: postalCode,
             );
@@ -321,9 +325,9 @@ class LocationController extends GetxController with WidgetsBindingObserver {
 
               String matchedDisplayName = matchingAddress.addressLine1;
               if (matchingAddress.city.isNotEmpty &&
-                  !matchedDisplayName
-                      .toLowerCase()
-                      .contains(matchingAddress.city.toLowerCase())) {
+                  !matchedDisplayName.toLowerCase().contains(
+                    matchingAddress.city.toLowerCase(),
+                  )) {
                 matchedDisplayName =
                     '$matchedDisplayName, ${matchingAddress.city}';
               }

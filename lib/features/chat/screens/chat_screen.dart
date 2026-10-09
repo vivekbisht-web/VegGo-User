@@ -487,6 +487,7 @@ class _BotAvatar extends StatelessWidget {
 
   const _BotAvatar({
     required this.size,
+    // ignore: unused_element_parameter
     this.light = false,
     this.showOnline = false,
   });

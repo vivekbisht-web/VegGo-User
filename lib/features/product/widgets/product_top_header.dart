@@ -221,7 +221,8 @@ class ProductTopHeader extends StatelessWidget {
                       Expanded(
                         child: Text(
                           AppStrings.addAddressButton,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
                                 fontSize: 12,
@@ -250,8 +251,10 @@ class ProductTopHeader extends StatelessWidget {
           );
           final displayAddress = matchedAddr != null
               ? (locName.isNotEmpty ? locName : matchedAddr.address)
-              : (addressController.addresses.firstWhereOrNull((a) => a.isDefault)?.address ??
-                  addressController.addresses.first.address);
+              : (addressController.addresses
+                        .firstWhereOrNull((a) => a.isDefault)
+                        ?.address ??
+                    addressController.addresses.first.address);
 
           return Padding(
             padding: AppSpacing.paddingHorizontal16,
@@ -283,12 +286,13 @@ class ProductTopHeader extends StatelessWidget {
                         children: [
                           Text(
                             AppStrings.deliverTo,
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: AppColors.textSecondary,
-                              fontSize: 9,
-                              fontWeight: FontWeight.w500,
-                              height: 1,
-                            ),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w500,
+                                  height: 1,
+                                ),
                           ),
                           AppSpacing.h2,
                           Row(
@@ -299,11 +303,12 @@ class ProductTopHeader extends StatelessWidget {
                                   displayAddress,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.textPrimary,
-                                    fontSize: 12,
-                                  ),
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.textPrimary,
+                                        fontSize: 12,
+                                      ),
                                 ),
                               ),
                               AppSpacing.w2,

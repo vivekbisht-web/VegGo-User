@@ -45,3 +45,5 @@ To ensure the code looks natural and blends seamlessly with human-written code, 
 - **Minimal, Meaningful Comments**: Write comments ONLY for complex, non-obvious logic. Do NOT over-document or add verbose, generic documentation.
 - **Incremental Progress**: Approach changes incrementally (e.g., feature → fix → refactor). Do not attempt to add massive, thousands-of-lines changes at once.
 - **Manual Debugging**: Emulate manual debugging and refactoring practices, making changes based on genuine understanding rather than applying blanket formatting or error-handling templates everywhere.
+
+
