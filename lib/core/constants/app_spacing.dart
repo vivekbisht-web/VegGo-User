@@ -110,20 +110,21 @@ class AppSpacing {
   static const double radius32 = 32.0;
   static const double radius40 = 40.0;
 
-  static const double bannerHeightMin = 120.0;
-  static const double bannerHeightMax = 155.0;
-  static const double bannerHeightRatio = 0.165;
-  static const double bannerImageWidthRatio = 0.48;
-  static const double bannerDotHeight = 3.5;
-  static const double bannerDotActiveWidth = 12.0;
-  static const double bannerDotInactiveWidth = 5.0;
-  static const double bannerButtonHeight = 28.0;
-  static const double bannerButtonWidth = 86.0;
-  static const double bannerFontSizeBadge = 9.0;
-  static const double bannerFontSizeTitle = 11.5;
-  static const double bannerFontSizeSubtitle = 13.5;
+  // Banner (updated to match new design)
+  static const double bannerHeightMin = 135.0;
+  static const double bannerHeightMax = 165.0;
+  static const double bannerHeightRatio = 0.18;
+  static const double bannerImageWidthRatio = 0.58;
+  static const double bannerDotHeight = 8.0;
+  static const double bannerDotActiveWidth = 8.0;
+  static const double bannerDotInactiveWidth = 8.0;
+  static const double bannerButtonHeight = 34.0;
+  static const double bannerButtonWidth = 104.0;
+  static const double bannerFontSizeBadge = 10.0;
+  static const double bannerFontSizeTitle = 24.0;
+  static const double bannerFontSizeSubtitle = 11.5;
   static const double bannerFontSizeInfo = 9.5;
-  static const double bannerFontSizeButton = 10.5;
+  static const double bannerFontSizeButton = 12.5;
   static const double chatBubbleWidthRatio = 0.82;
   static const EdgeInsets chatComposerPadding = EdgeInsets.fromLTRB(
     12,
@@ -133,13 +134,30 @@ class AppSpacing {
   );
   static const EdgeInsets bannerPadding = EdgeInsets.fromLTRB(
     14.0,
-    8.0,
     10.0,
     10.0,
+    18.0,
   );
   static const EdgeInsets bannerBadgePadding = EdgeInsets.symmetric(
-    horizontal: 6.0,
-    vertical: 2.0,
+    horizontal: 10.0,
+    vertical: 3.0,
+  );
+
+  // Product Image Slider
+  static const double sliderDotHeight = 5.0;
+  static const double sliderDotActiveWidth = 16.0;
+  static const double sliderDotInactiveWidth = 6.0;
+  static const double sliderDotRadius = 3.0;
+  static const double sliderDotSpacing = 3.0;
+  static const EdgeInsets productImagePadding = EdgeInsets.fromLTRB(
+    14.0,
+    28.0,
+    14.0,
+    28.0,
+  );
+  static const EdgeInsets sliderBadgePadding = EdgeInsets.symmetric(
+    horizontal: 7.0,
+    vertical: 3.0,
   );
 
   static const double categoryCardRadius = 16.0;

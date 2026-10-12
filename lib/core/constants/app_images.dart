@@ -3,6 +3,9 @@ class AppImages {
   static const String logo = 'assets/logo.png';
   static const String homeHeaderBg = 'assets/home_header_bg.jpg';
   static const String icon = 'assets/icon.png';
+  static const String bannerImage = 'assets/banner_fresh_deals.png';
+  static const String bannerFreshDeals = 'assets/banner_fresh_deals.png';
+  static const String basketVegetables = 'assets/basket_vegetables.png';
 
   // Animations
   static const String animRocket = 'assets/animations/rocket.gif';
