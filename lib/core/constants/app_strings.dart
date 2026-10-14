@@ -1101,4 +1101,14 @@ class AppStrings {
       'Discover stores delivering fresh produce in your area';
   static const String locationBenefit2 =
       'Accurate delivery time and live stock availability';
+
+  //Banner
+  static const String freshDealsBadge = 'FRESH DEALS';
+  static const String bannerHeadlineFallback = 'Up to 20% OFF';
+  static const String bannerSubtitleFallback =
+      'Fresh vegetables delivered today\nto your doorstep';
+
+  static const String freshBadgePercent = '100%';
+  static const String freshBadgeWord = 'Fresh';
+  static const String slash = '/';
 }

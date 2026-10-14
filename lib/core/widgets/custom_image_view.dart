@@ -10,6 +10,7 @@ class CustomImageView extends StatelessWidget {
   final double height;
   final double width;
   final BoxFit fit;
+  final Alignment alignment;
   final bool isAsset;
 
   const CustomImageView({
@@ -19,6 +20,7 @@ class CustomImageView extends StatelessWidget {
     this.height = 100,
     this.width = 100,
     this.fit = BoxFit.cover,
+    this.alignment = Alignment.center,
     this.isAsset = false,
   });
 
@@ -30,8 +32,9 @@ class CustomImageView extends StatelessWidget {
         height: height,
         width: width,
         fit: fit,
+        alignment: alignment,
         errorBuilder: (context, error, stackTrace) => Image.asset(
-          AppImages.logo,
+          AppImages.bannerImage,
           height: height,
           width: width,
           fit: BoxFit.contain,
@@ -44,8 +47,9 @@ class CustomImageView extends StatelessWidget {
         height: height,
         width: width,
         fit: fit,
+        alignment: alignment,
         errorBuilder: (context, error, stackTrace) => Image.asset(
-          AppImages.logo,
+          AppImages.bannerImage,
           height: height,
           width: width,
           fit: BoxFit.contain,
@@ -57,10 +61,11 @@ class CustomImageView extends StatelessWidget {
     if (cleanUrl.isEmpty ||
         (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://'))) {
       return Image.asset(
-        AppImages.logo,
+        AppImages.bannerImage,
         height: height,
         width: width,
-        fit: BoxFit.contain,
+        fit: fit,
+        alignment: alignment,
       );
     }
 
@@ -77,6 +82,7 @@ class CustomImageView extends StatelessWidget {
       height: height,
       width: width,
       fit: fit,
+      alignment: alignment,
       memCacheWidth: cacheWidth,
       memCacheHeight: cacheHeight,
 

@@ -86,6 +86,7 @@ class ProductDetailsData {
   final String shopName;
   final String category;
   final String imageUrl;
+  final List<String> imageUrls;
   final String unit;
   final int discountPercent;
   final bool bestSeller;
@@ -101,6 +102,7 @@ class ProductDetailsData {
     required this.shopName,
     required this.category,
     required this.imageUrl,
+    this.imageUrls = const [],
     required this.unit,
     required this.discountPercent,
     required this.bestSeller,
@@ -125,6 +127,21 @@ class ProductDetailsData {
       return double.tryParse(clean);
     }
     return null;
+  }
+
+  static String cleanUrl(dynamic raw) {
+    if (raw == null) return '';
+    final str = raw.toString().trim();
+    if (str.isEmpty) return '';
+    final mdMatch = RegExp(r'\[.*?\]\((https?://[^\)]+)\)').firstMatch(str);
+    if (mdMatch != null) {
+      return mdMatch.group(1)?.trim() ?? '';
+    }
+    final urlMatch = RegExp(r'''(https?://[^\s)\]"']+)''').firstMatch(str);
+    if (urlMatch != null) {
+      return urlMatch.group(1)?.trim() ?? '';
+    }
+    return str.replaceAll(RegExp(r'[\[\]\(\)]'), '').trim();
   }
 
   static int _parseInt(dynamic value) {
@@ -169,13 +186,45 @@ class ProductDetailsData {
           json['shopName']?.toString() ?? rawJson['shopName']?.toString() ?? '',
       category:
           json['category']?.toString() ?? rawJson['category']?.toString() ?? '',
-      imageUrl:
-          json['imageUrl']?.toString() ??
-          json['image']?.toString() ??
-          json['iconUrl']?.toString() ??
-          rawJson['imageUrl']?.toString() ??
-          rawJson['image']?.toString() ??
-          '',
+      imageUrl: () {
+        final single = cleanUrl(
+          json['imageUrl'] ??
+              json['image'] ??
+              json['iconUrl'] ??
+              rawJson['imageUrl'] ??
+              rawJson['image'],
+        );
+        if (single.isNotEmpty) return single;
+        final rawUrls = json['imageUrls'] ?? rawJson['imageUrls'];
+        if (rawUrls is List && rawUrls.isNotEmpty) {
+          final first = cleanUrl(rawUrls.first);
+          if (first.isNotEmpty) return first;
+        }
+        return '';
+      }(),
+      imageUrls: () {
+        final rawUrls = json['imageUrls'] ?? rawJson['imageUrls'];
+        final List<String> list = [];
+        if (rawUrls is List) {
+          for (final item in rawUrls) {
+            final cleaned = cleanUrl(item);
+            if (cleaned.isNotEmpty && !list.contains(cleaned)) {
+              list.add(cleaned);
+            }
+          }
+        }
+        final single = cleanUrl(
+          json['imageUrl'] ??
+              json['image'] ??
+              json['iconUrl'] ??
+              rawJson['imageUrl'] ??
+              rawJson['image'],
+        );
+        if (single.isNotEmpty && !list.contains(single)) {
+          list.insert(0, single);
+        }
+        return list;
+      }(),
       unit:
           json['unit']?.toString() ??
           rawJson['unit']?.toString() ??
@@ -210,6 +259,7 @@ class ProductDetailsData {
       'category': category,
       'imageUrl': imageUrl,
       'image': imageUrl,
+      'imageUrls': imageUrls,
       'unit': unit,
       'discountPercent': discountPercent,
       'bestSeller': bestSeller,
@@ -229,6 +279,7 @@ class ProductDetailsData {
       'category': category,
       'image': imageUrl,
       'imageUrl': imageUrl,
+      'imageUrls': imageUrls,
       'unit': unit,
       'discountPercent': discountPercent,
       'discount': discountPercent > 0 ? '$discountPercent% OFF' : null,

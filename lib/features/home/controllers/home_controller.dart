@@ -134,14 +134,18 @@ class HomeController extends GetxController {
         longitude: lng,
       );
       final realDeals = deals
-          .where((p) =>
-              p.discountPercent > 0 ||
-              (p.originalPrice != null && p.originalPrice! > p.price) ||
-              p.bestSeller)
+          .where(
+            (p) =>
+                p.discountPercent > 0 ||
+                (p.originalPrice != null && p.originalPrice! > p.price) ||
+                p.bestSeller,
+          )
           .toList();
 
       if (realDeals.isNotEmpty) {
-        realDeals.sort((a, b) => b.discountPercent.compareTo(a.discountPercent));
+        realDeals.sort(
+          (a, b) => b.discountPercent.compareTo(a.discountPercent),
+        );
         bestDeals.assignAll(realDeals.take(6));
       } else {
         _populateDealsFromProducts(allProducts);
@@ -160,10 +164,12 @@ class HomeController extends GetxController {
       return;
     }
     final withDiscount = products
-        .where((p) =>
-            p.discountPercent > 0 ||
-            (p.originalPrice != null && p.originalPrice! > p.price) ||
-            p.bestSeller)
+        .where(
+          (p) =>
+              p.discountPercent > 0 ||
+              (p.originalPrice != null && p.originalPrice! > p.price) ||
+              p.bestSeller,
+        )
         .toList();
 
     withDiscount.sort((a, b) => b.discountPercent.compareTo(a.discountPercent));
@@ -218,11 +224,37 @@ class HomeController extends GetxController {
       }
 
       const commonVegWords = [
-        'potato', 'onion', 'tomato', 'carrot', 'cabbage', 'cauliflower',
-        'spinach', 'broccoli', 'cucumber', 'capsicum', 'pepper', 'peas',
-        'beans', 'garlic', 'ginger', 'chilli', 'chili', 'radish', 'beetroot',
-        'gourd', 'brinjal', 'eggplant', 'lady finger', 'okra', 'coriander',
-        'palak', 'methi', 'pudina', 'mushroom', 'corn', 'lettuce'
+        'potato',
+        'onion',
+        'tomato',
+        'carrot',
+        'cabbage',
+        'cauliflower',
+        'spinach',
+        'broccoli',
+        'cucumber',
+        'capsicum',
+        'pepper',
+        'peas',
+        'beans',
+        'garlic',
+        'ginger',
+        'chilli',
+        'chili',
+        'radish',
+        'beetroot',
+        'gourd',
+        'brinjal',
+        'eggplant',
+        'lady finger',
+        'okra',
+        'coriander',
+        'palak',
+        'methi',
+        'pudina',
+        'mushroom',
+        'corn',
+        'lettuce',
       ];
       for (final word in commonVegWords) {
         if (pName.contains(word)) return true;
@@ -235,8 +267,9 @@ class HomeController extends GetxController {
       freshProduce.assignAll(filtered.take(4));
     } else {
       final dealIds = bestDeals.map((d) => d.id).toSet();
-      final nonDealProducts =
-          products.where((p) => !dealIds.contains(p.id)).toList();
+      final nonDealProducts = products
+          .where((p) => !dealIds.contains(p.id))
+          .toList();
       freshProduce.assignAll(
         (nonDealProducts.isNotEmpty ? nonDealProducts : products).take(4),
       );
