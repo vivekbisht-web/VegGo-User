@@ -28,6 +28,9 @@ class CustomTextField extends StatefulWidget {
   final TextStyle? style;
   final InputDecoration? decoration;
   final TapRegionCallback? onTapOutside;
+  final Iterable<String>? autofillHints;
+  final bool autofocus;
+  final bool? showCursor;
 
   const CustomTextField({
     super.key,
@@ -53,6 +56,9 @@ class CustomTextField extends StatefulWidget {
     this.style,
     this.decoration,
     this.onTapOutside,
+    this.autofillHints,
+    this.autofocus = false,
+    this.showCursor,
   });
 
   @override
@@ -86,6 +92,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
       inputFormatters: widget.inputFormatters,
       focusNode: widget.focusNode,
       textAlign: widget.textAlign,
+      autofillHints: widget.autofillHints,
+      autofocus: widget.autofocus,
+      showCursor: widget.showCursor,
       decoration:
           widget.decoration ??
           InputDecoration(

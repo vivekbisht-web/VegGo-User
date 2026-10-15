@@ -32,9 +32,7 @@ class WalletScreen extends StatelessWidget {
               AppSpacing.responsiveHeight(0.03),
               _buildHeaderAndFilters(context, controller),
               AppSpacing.responsiveHeight(0.015),
-              Expanded(
-                child: _buildTransactionList(context, controller),
-              ),
+              Expanded(child: _buildTransactionList(context, controller)),
             ],
           ),
         ),
@@ -52,18 +50,16 @@ class WalletScreen extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(
-          AppSpacing.screenWidth * 0.04,
-        ),
+        borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.04),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             AppStrings.walletBalance,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.surface,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppColors.surface),
           ),
           AppSpacing.h8,
           Obx(() {
@@ -86,35 +82,37 @@ class WalletScreen extends StatelessWidget {
             return Text(
               '${AppStrings.currencySymbol}${controller.balance.value.toStringAsFixed(2)}',
               style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                    color: AppColors.surface,
-                    fontWeight: FontWeight.bold,
-                  ),
+                color: AppColors.surface,
+                fontWeight: FontWeight.bold,
+              ),
             );
           }),
           AppSpacing.responsiveHeight(0.02),
-          CustomButton(
-            text: AppStrings.addMoney,
-            icon: Icons.add,
-            backgroundColor: AppColors.surface,
-            textColor: AppColors.primary,
-            onPressed: () {},
-          ),
+          // CustomButton(
+          //   text: AppStrings.addMoney,
+          //   icon: Icons.add,
+          //   backgroundColor: AppColors.surface,
+          //   textColor: AppColors.primary,
+          //   onPressed: () {},
+          // ),
         ],
       ),
     );
   }
 
   Widget _buildHeaderAndFilters(
-      BuildContext context, WalletController controller) {
+    BuildContext context,
+    WalletController controller,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           AppStrings.recentTransactions,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
         ),
         AppSpacing.h12,
         Obx(
@@ -179,16 +177,18 @@ class WalletScreen extends StatelessWidget {
         child: Text(
           label,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: isSelected ? AppColors.surface : AppColors.textSecondary,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+            color: isSelected ? AppColors.surface : AppColors.textSecondary,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
       ),
     );
   }
 
   Widget _buildTransactionList(
-      BuildContext context, WalletController controller) {
+    BuildContext context,
+    WalletController controller,
+  ) {
     return Obx(() {
       if (controller.isTransactionsLoading.value &&
           controller.transactions.isEmpty) {
@@ -206,8 +206,8 @@ class WalletScreen extends StatelessWidget {
               Text(
                 AppStrings.failedToLoadTransactions,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                  color: AppColors.textSecondary,
+                ),
               ),
               AppSpacing.h12,
               CustomButton(
@@ -233,16 +233,16 @@ class WalletScreen extends StatelessWidget {
               Text(
                 AppStrings.noTransactionsFound,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textPrimary,
+                ),
               ),
               AppSpacing.h6,
               Text(
                 AppStrings.noTransactionsDesc,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -253,7 +253,8 @@ class WalletScreen extends StatelessWidget {
       return ListView.builder(
         controller: controller.scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: controller.transactions.length +
+        itemCount:
+            controller.transactions.length +
             (controller.isLoadingMore.value ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == controller.transactions.length) {
@@ -279,7 +280,9 @@ class WalletScreen extends StatelessWidget {
   }
 
   Widget _buildTransactionTile(
-      BuildContext context, WalletTransactionItem item) {
+    BuildContext context,
+    WalletTransactionItem item,
+  ) {
     return Container(
       margin: AppSpacing.paddingOnly(bottom: AppSpacing.screenWidth * 0.025),
       padding: AppSpacing.paddingResponsiveAll(0.04),
@@ -315,19 +318,20 @@ class WalletScreen extends StatelessWidget {
                 Text(
                   item.displayTitle,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.textPrimary,
+                  ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (item.referenceId != null && item.referenceId!.isNotEmpty) ...[
+                if (item.referenceId != null &&
+                    item.referenceId!.isNotEmpty) ...[
                   AppSpacing.h4,
                   Text(
                     '${AppStrings.referencePrefix}${item.referenceId}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -336,8 +340,8 @@ class WalletScreen extends StatelessWidget {
                 Text(
                   item.formattedDate,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -349,18 +353,17 @@ class WalletScreen extends StatelessWidget {
               Text(
                 '${item.isCredit ? AppStrings.plusSymbol : AppStrings.minusSymbol}${AppStrings.currencySymbol}${item.amount.toStringAsFixed(2)}',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color:
-                          item.isCredit ? AppColors.primary : AppColors.error,
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: item.isCredit ? AppColors.primary : AppColors.error,
+                ),
               ),
               if (item.balanceAfter != null) ...[
                 AppSpacing.h4,
                 Text(
                   '${AppStrings.currencySymbol}${item.balanceAfter!.toStringAsFixed(2)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
             ],
