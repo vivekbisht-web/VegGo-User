@@ -34,7 +34,7 @@ class CustomImageView extends StatelessWidget {
         fit: fit,
         alignment: alignment,
         errorBuilder: (context, error, stackTrace) => Image.asset(
-          AppImages.bannerImage,
+          AppImages.logo,
           height: height,
           width: width,
           fit: BoxFit.contain,
@@ -49,7 +49,7 @@ class CustomImageView extends StatelessWidget {
         fit: fit,
         alignment: alignment,
         errorBuilder: (context, error, stackTrace) => Image.asset(
-          AppImages.bannerImage,
+          AppImages.logo,
           height: height,
           width: width,
           fit: BoxFit.contain,
@@ -61,11 +61,10 @@ class CustomImageView extends StatelessWidget {
     if (cleanUrl.isEmpty ||
         (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://'))) {
       return Image.asset(
-        AppImages.bannerImage,
+        AppImages.logo,
         height: height,
         width: width,
-        fit: fit,
-        alignment: alignment,
+        fit: BoxFit.contain,
       );
     }
 

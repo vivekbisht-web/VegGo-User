@@ -495,6 +495,13 @@ class AppStrings {
   static const String verifyCode = 'Verify & Proceed';
   static const String didntReceiveCode = "Didn't receive code? ";
   static const String resendCode = 'Resend';
+  static const String pressBackToChangeNumber =
+      'Press back again to change mobile number';
+  static const String changePhoneNumber = 'Change phone number';
+  static const String changeNumber = 'Change number';
+  static const String pasteCode = 'Paste Code';
+  static const String codePasted = 'Code pasted';
+  static const String autoFillingOtp = 'Auto-filling OTP...';
   static const String resetPassword = 'Reset Password';
   static const String createNewPassword =
       'Create a new, strong password for your account.';
@@ -635,6 +642,8 @@ class AppStrings {
   static const String viewPointsAction = 'View Points →';
   static const String referEarn = 'Refer & Earn';
   static const String referNowAction = 'Refer Now →';
+  static const String manageAddressesAction = 'Manage →';
+  static const String viewSavedItemsAction = 'View All →';
   static const String viewAllOrders = 'View All Orders';
   static const String viewAllOrdersAction = 'View All Orders >';
   static const String toPay = 'To Pay';
@@ -653,7 +662,7 @@ class AppStrings {
   static const String savedItemsDesc = 'View your favorite products';
   static const String paymentMethods = 'Payment Methods';
   static const String paymentMethodsDesc = 'Cards, UPI & other payment options';
-  static const String walletTransactions = 'Daily Market Wallet Transactions';
+  static const String walletTransactions = 'Transactions History';
   static const String walletTransactionsDesc =
       'View wallet history and transactions';
   static const String notificationsDesc =

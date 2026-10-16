@@ -68,13 +68,16 @@ class HelpCenterScreen extends StatelessWidget {
   }
 
   Widget _buildFaqItem(BuildContext context, String question, String answer) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderLight.withValues(alpha: 0.3)),
+    return Material(
+      color: AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSpacing.radius12),
+        side: BorderSide(color: AppColors.borderLight.withValues(alpha: 0.3)),
       ),
+      clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
+        shape: const Border(),
+        collapsedShape: const Border(),
         title: Text(
           question,
           style: Theme.of(

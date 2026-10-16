@@ -25,6 +25,7 @@ class AuthController extends GetxController {
   Timer? _resendTimer;
   String? _verificationId;
   int? _resendToken;
+  void Function(PhoneAuthCredential credential)? onAutoVerifiedCallback;
 
   @override
   void onClose() {
@@ -258,7 +259,11 @@ class AuthController extends GetxController {
         verificationCompleted: (PhoneAuthCredential credential) async {
           if (isClosed) return;
 
-          onAutoVerified?.call(credential);
+          if (onAutoVerifiedCallback != null) {
+            onAutoVerifiedCallback!(credential);
+          } else {
+            onAutoVerified?.call(credential);
+          }
         },
 
         verificationFailed: (FirebaseAuthException e) {
@@ -314,7 +319,18 @@ class AuthController extends GetxController {
         },
       );
 
-      return await completer.future;
+      return await completer.future.timeout(
+        const Duration(seconds: 45),
+        onTimeout: () {
+          if (!isClosed) {
+            isLoading.value = false;
+            if (showSnackbar) {
+              _showSnackbar(AppStrings.otpRequestFailed, isError: true);
+            }
+          }
+          return false;
+        },
+      );
     } catch (_) {
       if (!isClosed) {
         isLoading.value = false;
@@ -349,14 +365,23 @@ class AuthController extends GetxController {
       return false;
     }
 
+    final credential = PhoneAuthProvider.credential(
+      verificationId: _verificationId!,
+      smsCode: otp.trim(),
+    );
+
+    return verifyPhoneAuthCredential(credential, showSnackbar: showSnackbar);
+  }
+
+  Future<bool> verifyPhoneAuthCredential(
+    PhoneAuthCredential credential, {
+    bool showSnackbar = true,
+  }) async {
+    if (isLoading.value) return false;
+
     isLoading.value = true;
 
     try {
-      final credential = PhoneAuthProvider.credential(
-        verificationId: _verificationId!,
-        smsCode: otp.trim(),
-      );
-
       final userCredential = await _firebaseAuth.signInWithCredential(
         credential,
       );

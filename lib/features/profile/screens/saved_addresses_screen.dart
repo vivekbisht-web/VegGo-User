@@ -231,50 +231,98 @@ class SavedAddressesScreen extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context, int index) {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radius16),
-        ),
-        title: Text(
-          AppStrings.delete,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        content: Text(
-          AppStrings.deleteAddressConfirmation,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              AppStrings.cancel,
-              style: Theme.of(
-                context,
-              ).textTheme.labelLarge?.copyWith(color: AppColors.textSecondary),
+    if (index < 0 || index >= controller.addresses.length) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        final RxBool isDeleting = false.obs;
+
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) return;
+            if (!isDeleting.value && dialogContext.mounted) {
+              Navigator.of(dialogContext).pop();
+            }
+          },
+          child: AlertDialog(
+            backgroundColor: AppColors.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppSpacing.radius16),
             ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              controller.deleteAddress(index);
-            },
-            child: Text(
+            title: Text(
               AppStrings.delete,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppColors.error,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
               ),
             ),
+            content: Text(
+              AppStrings.deleteAddressConfirmation,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+            ),
+            actions: [
+              Obx(
+                () => TextButton(
+                  onPressed: isDeleting.value
+                      ? null
+                      : () {
+                          if (dialogContext.mounted) {
+                            Navigator.of(dialogContext).pop();
+                          }
+                        },
+                  child: Text(
+                    AppStrings.cancel,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: isDeleting.value
+                          ? AppColors.border
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ),
+              Obx(() {
+                if (isDeleting.value) {
+                  return const Padding(
+                    padding: AppSpacing.paddingHorizontal16,
+                    child: SizedBox(
+                      width: AppSpacing.radius16,
+                      height: AppSpacing.radius16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: AppSpacing.radius2,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  );
+                }
+                return TextButton(
+                  onPressed: () async {
+                    isDeleting.value = true;
+                    try {
+                      await controller.deleteAddress(index);
+                    } finally {
+                      if (dialogContext.mounted) {
+                        Navigator.of(dialogContext).pop();
+                      }
+                    }
+                  },
+                  child: Text(
+                    AppStrings.delete,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: AppColors.error,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              }),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
