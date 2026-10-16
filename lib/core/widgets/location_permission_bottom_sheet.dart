@@ -168,7 +168,8 @@ class LocationPermissionBottomSheet extends StatelessWidget {
               icon: Icons.near_me_rounded,
               isLoading: isFetching,
               onPressed: () async {
-                final success = await locCtrl.handleLocationPromptAction();
+                final success =
+                    await locCtrl.handleLocationPromptAction();
                 if (success && context.mounted) {
                   Navigator.of(context).pop();
                 }

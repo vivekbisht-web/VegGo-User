@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import '../models/address_models.dart';
 import '../services/address_service.dart';
 import 'package:vegon_user/core/utils/permission_handler_service.dart';
+import 'package:vegon_user/core/utils/snackbar_helper.dart';
 
 class AddressController extends GetxController {
   var addresses = <AddressModel>[].obs;
@@ -78,13 +79,11 @@ class AddressController extends GetxController {
   }
 
   void _showSnackbar(String message, {bool isError = true}) {
-    Get.snackbar(
-      AppStrings.appName,
-      message,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: isError ? AppColors.error : AppColors.success,
-      colorText: AppColors.surface,
-    );
+    if (isError) {
+      SnackbarHelper.showGetError(message);
+    } else {
+      SnackbarHelper.showGetSuccess(message);
+    }
   }
 
   Future<void> addAddress({
@@ -186,35 +185,51 @@ class AddressController extends GetxController {
     }
   }
 
-  Future<void> deleteAddress(int index) async {
-    if (index < 0 || index >= addresses.length) return;
+  Future<bool> deleteAddress(int index) async {
+    if (index < 0 || index >= addresses.length) return false;
     final addressItem = addresses[index];
     final String addressId = addressItem.id;
 
     if (addressId.isNotEmpty) {
       isLoading.value = true;
-      final response = await _addressService.deleteAddress(addressId);
-      if (isClosed) return;
-      isLoading.value = false;
+      try {
+        final response = await _addressService.deleteAddress(addressId);
+        if (isClosed) return false;
 
-      if (response.success) {
-        addresses.removeAt(index);
-        if (addressItem.isDefault) {
-          fetchAddresses();
+        if (response.success) {
+          addresses.removeWhere((a) => a.id == addressId);
+          if (addressItem.isDefault) {
+            await fetchAddresses();
+          } else {
+            addresses.refresh();
+          }
+          _showSnackbar(
+            AppStrings.deleteAddressSuccess,
+            isError: false,
+          );
+          return true;
         } else {
-          addresses.refresh();
+          _showSnackbar(
+            response.message.isNotEmpty
+                ? response.message
+                : AppStrings.deleteAddressFailed,
+          );
+          return false;
         }
-        _showSnackbar(AppStrings.deleteAddressSuccess, isError: false);
-      } else {
-        _showSnackbar(
-          response.message.isNotEmpty
-              ? response.message
-              : AppStrings.deleteAddressFailed,
-        );
+      } catch (e) {
+        _showSnackbar(e.toString());
+        return false;
+      } finally {
+        isLoading.value = false;
       }
     } else {
       addresses.removeAt(index);
       addresses.refresh();
+      _showSnackbar(
+        AppStrings.deleteAddressSuccess,
+        isError: false,
+      );
+      return true;
     }
   }
 

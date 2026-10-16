@@ -1,4 +1,4 @@
-// 
+//
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
@@ -71,29 +71,34 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       _isFetchingLocation = true;
     });
 
-    controller.fetchLiveLocationAndAddress((data) {
-      if (!mounted) return;
-      final double lat = (data['latitude'] as num?)?.toDouble() ?? _latitude;
-      final double lng = (data['longitude'] as num?)?.toDouble() ?? _longitude;
+    controller
+        .fetchLiveLocationAndAddress((data) {
+          if (!mounted) return;
+          final double lat =
+              (data['latitude'] as num?)?.toDouble() ?? _latitude;
+          final double lng =
+              (data['longitude'] as num?)?.toDouble() ?? _longitude;
 
-      setState(() {
-        _latitude = lat;
-        _longitude = lng;
-        _addressLine1Controller.text = data['addressLine1'] as String? ?? '';
-        _cityController.text = data['city'] as String? ?? '';
-        _stateController.text = data['state'] as String? ?? '';
-        _postalCodeController.text = data['postalCode'] as String? ?? '';
-        _isFetchingLocation = false;
-      });
+          setState(() {
+            _latitude = lat;
+            _longitude = lng;
+            _addressLine1Controller.text =
+                data['addressLine1'] as String? ?? '';
+            _cityController.text = data['city'] as String? ?? '';
+            _stateController.text = data['state'] as String? ?? '';
+            _postalCodeController.text = data['postalCode'] as String? ?? '';
+            _isFetchingLocation = false;
+          });
 
-      _mapController.move(latlng.LatLng(lat, lng), 15.0);
-    }).whenComplete(() {
-      if (mounted) {
-        setState(() {
-          _isFetchingLocation = false;
+          _mapController.move(latlng.LatLng(lat, lng), 15.0);
+        })
+        .whenComplete(() {
+          if (mounted) {
+            setState(() {
+              _isFetchingLocation = false;
+            });
+          }
         });
-      }
-    });
   }
 
   void _onLabelSelected(String label) {
@@ -121,6 +126,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   }
 
   Future<void> _saveAddress() async {
+    if (controller.isLoading.value) return;
     if (_formKey.currentState!.validate()) {
       final initial = widget.initialAddress;
       final String addressId = (initial?.id.isNotEmpty == true)
@@ -210,8 +216,9 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                     color: isSelected
                         ? AppColors.surface
                         : AppColors.textPrimary,
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ),
                 selected: isSelected,
@@ -303,8 +310,9 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                 rightActionText: _isFetchingLocation
                     ? null
                     : AppStrings.useCurrentLocation,
-                onRightActionTap:
-                    _isFetchingLocation ? null : _fetchLiveLocation,
+                onRightActionTap: _isFetchingLocation
+                    ? null
+                    : _fetchLiveLocation,
                 prefixIcon: Icons.location_on_outlined,
                 customSuffix: CustomIconButton(
                   icon: Icons.my_location,
