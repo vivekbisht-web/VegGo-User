@@ -53,3 +53,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android Gradle build output (large compiled files - never commit these)
+android/app/build/
+android/.gradle/
+.gradle/

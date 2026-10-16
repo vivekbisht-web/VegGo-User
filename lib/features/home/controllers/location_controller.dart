@@ -21,6 +21,8 @@ class LocationController extends GetxController with WidgetsBindingObserver {
   final RxString currentLocationName = ''.obs;
   final RxBool isFetchingLocation = false.obs;
   final RxBool isLocationPromptVisible = false.obs;
+  bool _isHandlingPromptAction = false;
+  bool _isSavingAddressToApi = false;
 
   double? get latitude {
     final val = currentLatitude.value ?? SharedPrefsHelper.getLatitude();
@@ -56,9 +58,12 @@ class LocationController extends GetxController with WidgetsBindingObserver {
 
   Future<void> _checkLocationOnResume() async {
     try {
+      if (_isHandlingPromptAction || isFetchingLocation.value) return;
+
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       final permission = await Geolocator.checkPermission();
-      final bool hasPermission = permission == LocationPermission.always ||
+      final bool hasPermission =
+          permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse;
 
       if (serviceEnabled && hasPermission) {
@@ -85,21 +90,61 @@ class LocationController extends GetxController with WidgetsBindingObserver {
       _notifyControllers(lat, lng);
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // If user has saved addresses in DB, skip GPS prompt —
+      // the address card in the header handles the "Add Address" flow.
+      final token = SharedPrefsHelper.getToken();
+      final isLoggedIn = token != null && token.trim().isNotEmpty;
+      if (isLoggedIn) {
+        final addressCtrl = Get.isRegistered<AddressController>()
+            ? Get.find<AddressController>()
+            : Get.put(AddressController());
+        if (addressCtrl.addresses.isEmpty) {
+          await addressCtrl.fetchAddresses();
+        }
+        if (addressCtrl.addresses.isNotEmpty) {
+          // User has saved addresses — set location from default address
+          _syncLocationFromSavedAddress(addressCtrl);
+          return;
+        } else {
+          // No addresses in DB: ensure currentLocationName is cleared
+          // so no unconfirmed location is displayed in the address card
+          currentLocationName.value = '';
+        }
+      }
       checkAndPromptLocation();
     });
+  }
+
+  void _syncLocationFromSavedAddress(AddressController addressCtrl) {
+    final defaultAddr =
+        addressCtrl.addresses.firstWhereOrNull((a) => a.isDefault) ??
+        addressCtrl.addresses.firstOrNull;
+    if (defaultAddr == null) return;
+
+    final lat = defaultAddr.rawAddressData?.latitude;
+    final lng = defaultAddr.rawAddressData?.longitude;
+    if (lat != null && lng != null && lat != 0.0 && lng != 0.0) {
+      currentLatitude.value = lat;
+      currentLongitude.value = lng;
+      currentLocationName.value = defaultAddr.address;
+      SharedPrefsHelper.saveLocation(lat, lng, defaultAddr.address);
+      _notifyControllers(lat, lng);
+    }
   }
 
   Future<void> checkAndPromptLocation() async {
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       final permission = await Geolocator.checkPermission();
-      final bool hasPermission = permission == LocationPermission.always ||
+      final bool hasPermission =
+          permission == LocationPermission.always ||
           permission == LocationPermission.whileInUse;
 
       if (serviceEnabled && hasPermission) {
-        if (currentLatitude.value == null) {
-          await fetchAndSaveUserLocation();
+        if (currentLatitude.value == null ||
+            currentLocationName.value.isEmpty) {
+          await fetchAndSaveUserLocation(saveToApi: true);
         }
         return;
       }
@@ -120,9 +165,12 @@ class LocationController extends GetxController with WidgetsBindingObserver {
   }
 
   Future<bool> handleLocationPromptAction() async {
+    if (_isHandlingPromptAction || isFetchingLocation.value) return false;
+    _isHandlingPromptAction = true;
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
+        _isHandlingPromptAction = false;
         await Geolocator.openLocationSettings();
         return false;
       }
@@ -132,31 +180,36 @@ class LocationController extends GetxController with WidgetsBindingObserver {
         final reqStatus = await Geolocator.requestPermission();
         if (reqStatus == LocationPermission.always ||
             reqStatus == LocationPermission.whileInUse) {
-          await fetchAndSaveUserLocation(showFeedback: true);
+          await fetchAndSaveUserLocation(showFeedback: true, saveToApi: true);
           return true;
         } else if (reqStatus == LocationPermission.deniedForever) {
+          _isHandlingPromptAction = false;
           await Geolocator.openAppSettings();
         }
         return false;
       }
 
       if (permission == LocationPermission.deniedForever) {
+        _isHandlingPromptAction = false;
         await Geolocator.openAppSettings();
         return false;
       }
 
-      await fetchAndSaveUserLocation(showFeedback: true);
+      await fetchAndSaveUserLocation(showFeedback: true, saveToApi: true);
       return true;
     } catch (e) {
       debugPrint('Error handling location prompt action: $e');
       return false;
+    } finally {
+      _isHandlingPromptAction = false;
     }
   }
 
   Future<void> fetchAndSaveUserLocation({
     bool showFeedback = false,
-    bool saveToApi = false,
+    bool saveToApi = true,
   }) async {
+    if (isFetchingLocation.value) return;
     isFetchingLocation.value = true;
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -266,7 +319,9 @@ class LocationController extends GetxController with WidgetsBindingObserver {
               savedAddresses,
               latitude: position.latitude,
               longitude: position.longitude,
-              addressLine1: line1.isNotEmpty ? line1 : currentLocationName.value,
+              addressLine1: line1.isNotEmpty
+                  ? line1
+                  : currentLocationName.value,
               city: city,
               postalCode: postalCode,
             );
@@ -282,9 +337,9 @@ class LocationController extends GetxController with WidgetsBindingObserver {
 
               String matchedDisplayName = matchingAddress.addressLine1;
               if (matchingAddress.city.isNotEmpty &&
-                  !matchedDisplayName
-                      .toLowerCase()
-                      .contains(matchingAddress.city.toLowerCase())) {
+                  !matchedDisplayName.toLowerCase().contains(
+                    matchingAddress.city.toLowerCase(),
+                  )) {
                 matchedDisplayName =
                     '$matchedDisplayName, ${matchingAddress.city}';
               }
@@ -336,23 +391,46 @@ class LocationController extends GetxController with WidgetsBindingObserver {
                   Get.find<CheckoutController>().selectAddress(matchingModel);
                 }
               }
-            } else if (saveToApi) {
-              final request = AddAddressRequestModel(
-                addressLine1: line1.isNotEmpty
-                    ? line1
-                    : currentLocationName.value,
-                addressLine2: '',
-                city: city,
-                state: state,
-                postalCode: postalCode,
-                latitude: position.latitude,
-                longitude: position.longitude,
-                isDefault: true,
-                label: AppStrings.home,
-              );
-              final response = await addressService.addAddress(request);
-              if (response.success) {
-                addressController.fetchAddresses();
+            } else if (saveToApi && !_isSavingAddressToApi) {
+              _isSavingAddressToApi = true;
+              try {
+                await addressController.fetchAddresses();
+                final freshSavedAddresses = addressController.addresses
+                    .map((a) => a.rawAddressData)
+                    .whereType<AddressDataModel>()
+                    .toList();
+                final secondCheck = _findMatchingAddress(
+                  freshSavedAddresses,
+                  latitude: position.latitude,
+                  longitude: position.longitude,
+                  addressLine1: line1.isNotEmpty
+                      ? line1
+                      : currentLocationName.value,
+                  city: city,
+                  postalCode: postalCode,
+                );
+
+                if (secondCheck == null) {
+                  final request = AddAddressRequestModel(
+                    addressLine1: line1.isNotEmpty
+                        ? line1
+                        : currentLocationName.value,
+                    addressLine2: '',
+                    city: city,
+                    state: state,
+                    postalCode: postalCode,
+                    latitude: position.latitude,
+                    longitude: position.longitude,
+                    isDefault: true,
+                    label: AppStrings.home,
+                  );
+                  final response = await addressService.addAddress(request);
+                  if (response.success) {
+                    await addressController.fetchAddresses();
+                  }
+                }
+              } finally {
+                _isSavingAddressToApi = false;
               }
             }
           } catch (e) {

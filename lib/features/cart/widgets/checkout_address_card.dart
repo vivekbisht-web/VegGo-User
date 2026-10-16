@@ -4,8 +4,10 @@ import 'package:vegon_user/core/constants/api_endpoints.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
+import 'package:vegon_user/core/widgets/custom_button.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/cart/controllers/checkout_controller.dart';
+import 'package:vegon_user/features/profile/screens/add_address_screen.dart';
 
 class CheckoutAddressCard extends StatelessWidget {
   const CheckoutAddressCard({super.key});
@@ -31,31 +33,53 @@ class CheckoutAddressCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCardHeader(
-            AppStrings.deliveryAddress,
-            Icons.location_on_outlined,
-            context,
-            trailing: InkWell(
-              onTap: () => checkoutController.showChangeAddressDialog(context),
-              child: Text(
-                AppStrings.change,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w600,
+          Obx(() {
+            final address = checkoutController.selectedAddress.value;
+            final bool hasAddress = address != null;
+
+            return _buildCardHeader(
+              AppStrings.deliveryAddress,
+              Icons.location_on_outlined,
+              context,
+              trailing: InkWell(
+                onTap: () {
+                  if (hasAddress) {
+                    checkoutController.showChangeAddressDialog(context);
+                  } else {
+                    Get.to(() => const AddAddressScreen());
+                  }
+                },
+                child: Text(
+                  hasAddress ? AppStrings.change : AppStrings.add,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          }),
           AppSpacing.responsiveHeight(0.02),
 
           Obx(() {
             final address = checkoutController.selectedAddress.value;
             if (address == null) {
-              return Text(
-                "No address selected.",
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppStrings.noAddressesSaved,
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  AppSpacing.h12,
+                  CustomButton(
+                    text: AppStrings.addAddressButton,
+                    icon: Icons.add_location_alt_outlined,
+                    onPressed: () => Get.to(() => const AddAddressScreen()),
+                  ),
+                ],
               );
             }
             return Column(
@@ -76,35 +100,31 @@ class CheckoutAddressCard extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
+                AppSpacing.responsiveHeight(0.02),
+                ClipRRect(
+                  borderRadius:
+                      BorderRadius.circular(AppSpacing.screenWidth * 0.03),
+                  child: Container(
+                    height: AppSpacing.screenHeight * 0.16,
+                    width: double.infinity,
+                    color: AppColors.borderLight.withValues(alpha: 0.1),
+                    child: Builder(builder: (_) {
+                      final lat = address.rawAddressData?.latitude ?? 28.6139;
+                      final lng = address.rawAddressData?.longitude ?? 77.2090;
+                      final apiKey = ApiEndpoints.googleMapsApiKey;
+                      return CustomImageView(
+                        imageUrl:
+                            'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=15&size=400x200&key=$apiKey',
+                        fit: BoxFit.cover,
+                        width: AppSpacing.screenWidth,
+                        height: AppSpacing.screenHeight * 0.16,
+                      );
+                    }),
+                  ),
+                ),
               ],
             );
           }),
-          AppSpacing.responsiveHeight(0.02),
-
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.03),
-            child: Container(
-              height: AppSpacing.screenHeight * 0.16,
-              width: double.infinity,
-              color: AppColors.borderLight.withValues(alpha: 0.1),
-              child: Obx(() {
-                  final address = checkoutController.selectedAddress.value;
-                  if (address != null) {
-                    final lat = address.rawAddressData?.latitude ?? 28.6139;
-                    final lng = address.rawAddressData?.longitude ?? 77.2090;
-                    final apiKey = ApiEndpoints.googleMapsApiKey;
-                    return CustomImageView(
-                      imageUrl:
-                          'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=15&size=400x200&key=$apiKey',
-                      fit: BoxFit.cover,
-                      width: AppSpacing.screenWidth,
-                      height: AppSpacing.screenHeight * 0.16,
-                    );
-                  }
-                  return const SizedBox();
-              })
-            ),
-          ),
         ],
       ),
     );

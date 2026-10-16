@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/features/orders/controllers/orders_controller.dart';
+import 'package:vegon_user/features/product/controllers/wishlist_controller.dart';
+import 'package:vegon_user/features/profile/controllers/address_controller.dart';
 import 'package:vegon_user/features/profile/controllers/user_profile_controller.dart';
 import 'package:vegon_user/features/profile/controllers/wallet_controller.dart';
 import 'package:vegon_user/features/profile/widgets/profile_header_card.dart';
@@ -32,6 +34,10 @@ class ProfileScreen extends StatelessWidget {
             if (Get.isRegistered<WalletController>()) {
               await Get.find<WalletController>().fetchBalance();
             }
+            if (Get.isRegistered<AddressController>()) {
+              await Get.find<AddressController>().fetchAddresses();
+            }
+            await WishlistController.to.fetchWishlist();
           },
           child: SingleChildScrollView(
             physics: const ClampingScrollPhysics(

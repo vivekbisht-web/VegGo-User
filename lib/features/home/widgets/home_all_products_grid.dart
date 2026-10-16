@@ -58,8 +58,8 @@ class HomeAllProductsGrid extends StatelessWidget {
               final item = products[index];
               final productMap = item.toMap();
               final price = item.price.toInt();
-              final original =
-                  (item.originalPrice ?? (item.price * 1.25)).toInt();
+              final original = (item.originalPrice ?? (item.price * 1.25))
+                  .toInt();
               final name = item.name;
               final unit = item.unit;
               final discount = item.discountPercent > 0
@@ -79,8 +79,10 @@ class HomeAllProductsGrid extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: cardRadius,
-                      border:
-                          Border.all(color: AppColors.chipBorder, width: 0.8),
+                      border: Border.all(
+                        color: AppColors.chipBorder,
+                        width: 0.8,
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: AppColors.overlayLight.withValues(alpha: 0.04),
@@ -104,7 +106,12 @@ class HomeAllProductsGrid extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: AppSpacing.paddingFromLTRB(10, 8, 10, 10),
+                              padding: AppSpacing.paddingFromLTRB(
+                                10,
+                                8,
+                                10,
+                                10,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -159,22 +166,25 @@ class HomeAllProductsGrid extends StatelessWidget {
                                         children: [
                                           Text(
                                             '${AppStrings.rupeeSymbol}$price',
-                                            style:
-                                                textTheme.titleMedium?.copyWith(
-                                              color: AppColors.bannerDarkGreen,
-                                              fontWeight: FontWeight.w800,
-                                              fontSize: 14,
-                                            ),
+                                            style: textTheme.titleMedium
+                                                ?.copyWith(
+                                                  color:
+                                                      AppColors.bannerDarkGreen,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 14,
+                                                ),
                                           ),
                                           AppSpacing.w4,
                                           Text(
                                             '${AppStrings.rupeeSymbol}$original',
-                                            style: textTheme.bodySmall?.copyWith(
-                                              color: AppColors.strikethrough,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
-                                              fontSize: 11,
-                                            ),
+                                            style: textTheme.bodySmall
+                                                ?.copyWith(
+                                                  color:
+                                                      AppColors.strikethrough,
+                                                  decoration: TextDecoration
+                                                      .lineThrough,
+                                                  fontSize: 11,
+                                                ),
                                           ),
                                         ],
                                       ),
@@ -184,10 +194,13 @@ class HomeAllProductsGrid extends StatelessWidget {
                                         child: InkWell(
                                           customBorder: const CircleBorder(),
                                           onTap: () {
-                                            cartController.addToCart(productMap);
+                                            cartController.addToCart(
+                                              productMap,
+                                            );
                                           },
                                           child: const SizedBox(
-                                            width: AppSpacing.addCircleButtonSize,
+                                            width:
+                                                AppSpacing.addCircleButtonSize,
                                             height:
                                                 AppSpacing.addCircleButtonSize,
                                             child: Icon(
@@ -236,8 +249,9 @@ class HomeAllProductsGrid extends StatelessWidget {
                           top: AppSpacing.radius6,
                           right: AppSpacing.radius6,
                           child: Obx(() {
-                            final isFav =
-                                wishlistController.isWishlisted(item.id);
+                            final isFav = wishlistController.isWishlisted(
+                              item.id,
+                            );
                             return InkWell(
                               onTap: () => wishlistController.toggleWishlist(
                                 item.id,
@@ -374,10 +388,7 @@ class HomeAllProductsGrid extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.chipBackground,
               borderRadius: BorderRadius.circular(AppSpacing.radius24),
-              border: Border.all(
-                color: AppColors.chipBorder,
-                width: 1,
-              ),
+              border: Border.all(color: AppColors.chipBorder, width: 1),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,

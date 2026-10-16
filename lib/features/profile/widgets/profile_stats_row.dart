@@ -4,9 +4,13 @@ import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/features/cart/screens/coupons_screen.dart';
+import 'package:vegon_user/features/product/controllers/wishlist_controller.dart';
+import 'package:vegon_user/features/profile/controllers/address_controller.dart';
 import 'package:vegon_user/features/profile/controllers/wallet_controller.dart';
-import 'package:vegon_user/features/profile/screens/dm_points_screen.dart';
-import 'package:vegon_user/features/profile/screens/refer_earn_screen.dart';
+// import 'package:vegon_user/features/profile/screens/dm_points_screen.dart';
+import 'package:vegon_user/features/profile/screens/favorites_screen.dart';
+// import 'package:vegon_user/features/profile/screens/refer_earn_screen.dart';
+import 'package:vegon_user/features/profile/screens/saved_addresses_screen.dart';
 import 'package:vegon_user/features/profile/screens/wallet_screen.dart';
 
 class ProfileStatsRow extends StatelessWidget {
@@ -17,6 +21,10 @@ class ProfileStatsRow extends StatelessWidget {
     final walletController = Get.isRegistered<WalletController>()
         ? Get.find<WalletController>()
         : Get.put(WalletController());
+    final addressController = Get.isRegistered<AddressController>()
+        ? Get.find<AddressController>()
+        : Get.put(AddressController());
+    final wishlistController = WishlistController.to;
 
     return Container(
       width: double.infinity,
@@ -62,6 +70,7 @@ class ProfileStatsRow extends StatelessWidget {
               onTap: () => Get.to(() => const CouponsScreen()),
             ),
           ),
+          /*
           _buildDivider(),
           Expanded(
             child: _buildStatItem(
@@ -82,6 +91,33 @@ class ProfileStatsRow extends StatelessWidget {
               value: AppStrings.referStatsValue,
               actionLabel: AppStrings.referNowAction,
               onTap: () => Get.to(() => const ReferEarnScreen()),
+            ),
+          ),
+          */
+          _buildDivider(),
+          Expanded(
+            child: Obx(
+              () => _buildStatItem(
+                context,
+                icon: Icons.location_on_outlined,
+                title: AppStrings.addresses,
+                value: addressController.addresses.length.toString(),
+                actionLabel: AppStrings.manageAddressesAction,
+                onTap: () => Get.to(() => SavedAddressesScreen()),
+              ),
+            ),
+          ),
+          _buildDivider(),
+          Expanded(
+            child: Obx(
+              () => _buildStatItem(
+                context,
+                icon: Icons.favorite_border,
+                title: AppStrings.savedItems,
+                value: wishlistController.wishlistProducts.length.toString(),
+                actionLabel: AppStrings.viewSavedItemsAction,
+                onTap: () => Get.to(() => const FavoritesScreen()),
+              ),
             ),
           ),
         ],

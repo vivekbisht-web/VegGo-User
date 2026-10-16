@@ -2,9 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
-import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
-import 'package:vegon_user/core/widgets/app_dialogs.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/models/cart_item.dart';
@@ -91,34 +89,34 @@ class CartItemCard extends StatelessWidget {
                   color: AppColors.primary,
                 ),
               ),
-              AppSpacing.responsiveHeight(0.025),
-              Material(
-                color: AppColors.error.withValues(alpha: 0.08),
-                shape: const CircleBorder(),
-                child: InkWell(
-                  onTap: () {
-                    AppDialogs.showConfirmationDialog(
-                      context,
-                      title: AppStrings.removeItem,
-                      message:
-                          '${AppStrings.removeItemDescPrefix}${item.name}${AppStrings.removeItemDescSuffix}',
-                      confirmText: AppStrings.remove,
-                      icon: Icons.delete_outline_rounded,
-                      isDestructive: true,
-                      onConfirm: () => cartController.removeItem(item.cartKey),
-                    );
-                  },
-                  customBorder: const CircleBorder(),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(
-                      Icons.delete_outline_rounded,
-                      color: AppColors.error,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ),
+              // AppSpacing.responsiveHeight(0.025),
+              // Material(
+              //   color: AppColors.error.withValues(alpha: 0.08),
+              //   shape: const CircleBorder(),
+              //   child: InkWell(
+              //     onTap: () {
+              //       AppDialogs.showConfirmationDialog(
+              //         context,
+              //         title: AppStrings.removeItem,
+              //         message:
+              //             '${AppStrings.removeItemDescPrefix}${item.name}${AppStrings.removeItemDescSuffix}',
+              //         confirmText: AppStrings.remove,
+              //         icon: Icons.delete_outline_rounded,
+              //         isDestructive: true,
+              //         onConfirm: () => cartController.removeItem(item.cartKey),
+              //       );
+              //     },
+              //     customBorder: const CircleBorder(),
+              //     child: const Padding(
+              //       padding: EdgeInsets.all(8.0),
+              //       child: Icon(
+              //         Icons.delete_outline_rounded,
+              //         color: AppColors.error,
+              //         size: 20,
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],

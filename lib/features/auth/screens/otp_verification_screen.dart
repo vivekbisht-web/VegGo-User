@@ -1,4 +1,5 @@
 //
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/constants/app_colors.dart';
@@ -18,11 +19,9 @@ class OTPVerificationScreen extends StatefulWidget {
 }
 
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
-  final List<TextEditingController> _controllers = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
+  final TextEditingController _otpController = TextEditingController();
+  final FocusNode _otpFocusNode = FocusNode();
+
   AuthController get _authController => Get.isRegistered<AuthController>()
       ? Get.find<AuthController>()
       : Get.put(AuthController());
@@ -40,41 +39,51 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     if (_authController.resendCooldown.value == 0) {
       _authController.startResendCooldown();
     }
+    _authController.onAutoVerifiedCallback = _handleAutoVerified;
   }
 
   @override
   void dispose() {
-    for (var c in _controllers) {
-      c.dispose();
+    if (_authController.onAutoVerifiedCallback == _handleAutoVerified) {
+      _authController.onAutoVerifiedCallback = null;
     }
-    for (var f in _focusNodes) {
-      f.dispose();
-    }
+    _otpController.dispose();
+    _otpFocusNode.dispose();
     super.dispose();
   }
 
-  void _onOtpDigitChanged(int index, String value) {
-    if (value.isNotEmpty && index < 5) {
-      _focusNodes[index + 1].requestFocus();
-    } else if (value.isEmpty && index > 0) {
-      _focusNodes[index - 1].requestFocus();
+  void _handleAutoVerified(PhoneAuthCredential credential) {
+    if (credential.smsCode != null && credential.smsCode!.isNotEmpty) {
+      _otpController.text = credential.smsCode!;
     }
-
-    final fullOtp = _controllers.map((c) => c.text).join();
-    if (fullOtp.length == 6) {
-      _onVerifyPressed();
-    }
+    _authController.verifyPhoneAuthCredential(credential);
   }
 
   void _onVerifyPressed() {
-    final otpCode = _controllers.map((c) => c.text).join();
-    _authController.verifyOtp(otpCode);
+    final otpCode = _otpController.text.trim();
+    if (otpCode.length == 6) {
+      _authController.verifyOtp(otpCode);
+    }
   }
 
   void _onResendPressed() {
     if (_authController.resendCooldown.value == 0 && _targetPhone.isNotEmpty) {
-      _authController.requestOtp("", onCodeSent: () {});
+      _otpController.clear();
+      _authController.requestOtp(
+        _targetPhone,
+        isResend: true,
+        onCodeSent: () {},
+        onAutoVerified: _handleAutoVerified,
+      );
     }
+  }
+
+  void _onChangePhoneNumberPressed() {
+    _authController.resetLoading();
+    if (_authController.onAutoVerifiedCallback == _handleAutoVerified) {
+      _authController.onAutoVerifiedCallback = null;
+    }
+    Get.back();
   }
 
   bool _handleDoubleBackPress() {
@@ -84,7 +93,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       _lastBackPressTime = now;
       Get.snackbar(
         AppStrings.appName,
-        'Press back again to change mobile number',
+        AppStrings.pressBackToChangeNumber,
         snackPosition: SnackPosition.BOTTOM,
         duration: const Duration(seconds: 2),
         backgroundColor: AppColors.textPrimary,
@@ -123,70 +132,120 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
         body: SafeArea(
           child: Padding(
             padding: AppSpacing.paddingResponsiveAll(0.06),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  AppStrings.otpVerification,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppStrings.otpVerification,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
                   ),
-                ),
-                AppSpacing.h8,
-                Text(
-                  '${AppStrings.enterOtpSentTo}$_targetPhone',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-                AppSpacing.responsiveHeight(0.05),
-                OtpInputRow(
-                  controllers: _controllers,
-                  focusNodes: _focusNodes,
-                  onChanged: _onOtpDigitChanged,
-                ),
-                AppSpacing.responsiveHeight(0.04),
-                Obx(
-                  () => CustomButton(
-                    text: AppStrings.verifyCode,
-                    isLoading: _authController.isLoading.value,
-                    onPressed: _onVerifyPressed,
-                  ),
-                ),
-                AppSpacing.responsiveHeight(0.03),
-                Center(
-                  child: Obx(() {
-                    final cooldown = _authController.resendCooldown.value;
-                    final isCooldownActive = cooldown > 0;
-
-                    return TextButton(
-                      onPressed: isCooldownActive ? null : _onResendPressed,
-                      child: RichText(
-                        text: TextSpan(
-                          text: AppStrings.didntReceiveCode,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(color: AppColors.textSecondary),
-                          children: [
-                            TextSpan(
-                              text: isCooldownActive
-                                  ? '${AppStrings.resendCodeIn}$cooldown${AppStrings.resendCodeInSuffix}'
-                                  : AppStrings.resendCode,
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    color: isCooldownActive
-                                        ? AppColors.textSecondary
-                                        : AppColors.primary,
-                                    fontWeight: FontWeight.bold,
+                  AppSpacing.h8,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${AppStrings.enterOtpSentTo}$_targetPhone',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.textSecondary,
                                   ),
-                            ),
-                          ],
                         ),
                       ),
-                    );
-                  }),
-                ),
-              ],
+                      TextButton(
+                        onPressed: _onChangePhoneNumberPressed,
+                        style: TextButton.styleFrom(
+                          padding: AppSpacing.paddingHorizontal8,
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: Text(
+                          AppStrings.changeNumber,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  AppSpacing.responsiveHeight(0.05),
+                  OtpInputRow(
+                    controller: _otpController,
+                    focusNode: _otpFocusNode,
+                    length: 6,
+                    autoFocus: true,
+                    onCompleted: (_) => _onVerifyPressed(),
+                  ),
+                  AppSpacing.responsiveHeight(0.04),
+                  Obx(
+                    () => CustomButton(
+                      text: AppStrings.verifyCode,
+                      isLoading: _authController.isLoading.value,
+                      onPressed: _onVerifyPressed,
+                    ),
+                  ),
+                  AppSpacing.responsiveHeight(0.03),
+                  Center(
+                    child: Obx(() {
+                      final cooldown = _authController.resendCooldown.value;
+                      final isCooldownActive = cooldown > 0;
+
+                      return TextButton(
+                        onPressed: isCooldownActive ? null : _onResendPressed,
+                        child: RichText(
+                          text: TextSpan(
+                            text: AppStrings.didntReceiveCode,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(color: AppColors.textSecondary),
+                            children: [
+                              TextSpan(
+                                text: isCooldownActive
+                                    ? '${AppStrings.resendCodeIn}$cooldown${AppStrings.resendCodeInSuffix}'
+                                    : AppStrings.resendCode,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: isCooldownActive
+                                          ? AppColors.textSecondary
+                                          : AppColors.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ),
+                  AppSpacing.h12,
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: _onChangePhoneNumberPressed,
+                      icon: const Icon(
+                        Icons.edit_outlined,
+                        size: 16,
+                        color: AppColors.primary,
+                      ),
+                      label: Text(
+                        AppStrings.changePhoneNumber,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

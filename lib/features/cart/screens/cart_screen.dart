@@ -5,7 +5,6 @@ import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/widgets/custom_app_bar.dart';
 import 'package:vegon_user/core/widgets/empty_state_widget.dart';
-import 'package:vegon_user/core/widgets/app_dialogs.dart';
 import 'package:vegon_user/core/utils/price_formatter.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/models/cart_models.dart';
@@ -264,31 +263,31 @@ class _VendorCartGroup extends StatelessWidget {
               ],
             ),
           ),
-          Material(
-            color: AppColors.transparent,
-            child: InkWell(
-              customBorder: const CircleBorder(),
-              onTap: () {
-                AppDialogs.showConfirmationDialog(
-                  context,
-                  title: AppStrings.removeItem,
-                  message: 'Remove all items from "${liveCart.cartLabel}"?',
-                  confirmText: AppStrings.remove,
-                  icon: Icons.delete_outline_rounded,
-                  isDestructive: true,
-                  onConfirm: () => cartController.removeCartGroup(liveCart.id),
-                );
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(6),
-                child: Icon(
-                  Icons.delete_outline_rounded,
-                  color: AppColors.error,
-                  size: 18,
-                ),
-              ),
-            ),
-          ),
+          // Material(
+          //   color: AppColors.transparent,
+          //   child: InkWell(
+          //     customBorder: const CircleBorder(),
+          //     onTap: () {
+          //       AppDialogs.showConfirmationDialog(
+          //         context,
+          //         title: AppStrings.removeItem,
+          //         message: 'Remove all items from "${liveCart.cartLabel}"?',
+          //         confirmText: AppStrings.remove,
+          //         icon: Icons.delete_outline_rounded,
+          //         isDestructive: true,
+          //         onConfirm: () => cartController.removeCartGroup(liveCart.id),
+          //       );
+          //     },
+          //     child: const Padding(
+          //       padding: EdgeInsets.all(6),
+          //       child: Icon(
+          //         Icons.delete_outline_rounded,
+          //         color: AppColors.error,
+          //         size: 18,
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Icon(
             expanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
             color: AppColors.textSecondary,

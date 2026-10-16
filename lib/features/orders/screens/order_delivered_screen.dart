@@ -169,7 +169,9 @@ class _OrderDeliveredScreenState extends State<OrderDeliveredScreen> {
         ),
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: AppColors.transparent),
-          child: ExpansionTile(
+          child: Material(
+            color: AppColors.transparent,
+            child: ExpansionTile(
             tilePadding: EdgeInsets.zero,
             title: Text(
               AppStrings.orderSummary,
@@ -216,7 +218,8 @@ class _OrderDeliveredScreenState extends State<OrderDeliveredScreen> {
             ],
           ),
         ),
-      );
+      ),
+    );
     });
   }
 }

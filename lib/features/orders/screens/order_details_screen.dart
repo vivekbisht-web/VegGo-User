@@ -6,6 +6,8 @@ import '../../../core/constants/app_strings.dart';
 import '../../../core/widgets/custom_app_bar.dart';
 import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_image_view.dart';
+import '../../chat/utils/chat_access_state.dart';
+import '../../../routes/app_routes.dart';
 import '../controllers/orders_controller.dart';
 import '../widgets/order_invoice_bottom_sheet.dart';
 
@@ -23,7 +25,9 @@ class OrderDetailsScreen extends StatelessWidget {
         color: AppColors.primary,
         onRefresh: () async {
           if (controller.selectedOrder.value != null) {
-            await controller.fetchOrderDetails(controller.selectedOrder.value!.id);
+            await controller.fetchOrderDetails(
+              controller.selectedOrder.value!.id,
+            );
           } else {
             await controller.fetchOrders(isRefresh: true);
           }
@@ -94,10 +98,11 @@ class OrderDetailsScreen extends StatelessWidget {
                         ),
                         child: Text(
                           order.statusText.toUpperCase(),
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppColors.primary,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                       ),
                     ],
@@ -106,7 +111,8 @@ class OrderDetailsScreen extends StatelessWidget {
                 AppSpacing.responsiveHeight(0.015),
 
                 // ── Delivery Address & Payment Method ──
-                if (order.deliveryAddress.isNotEmpty || order.paymentMethod.isNotEmpty)
+                if (order.deliveryAddress.isNotEmpty ||
+                    order.paymentMethod.isNotEmpty)
                   Container(
                     width: double.infinity,
                     padding: AppSpacing.paddingResponsiveAll(0.04),
@@ -130,7 +136,8 @@ class OrderDetailsScreen extends StatelessWidget {
                               AppSpacing.w8,
                               Text(
                                 AppStrings.deliveryAddress,
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                style: Theme.of(context).textTheme.titleSmall
+                                    ?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.textPrimary,
                                     ),
@@ -142,14 +149,17 @@ class OrderDetailsScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(left: 28),
                             child: Text(
                               order.deliveryAddress,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppColors.textSecondary,
-                                  ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: AppColors.textSecondary),
                             ),
                           ),
                         ],
-                        if (order.deliveryAddress.isNotEmpty && order.paymentMethod.isNotEmpty)
-                          const Divider(color: AppColors.borderLight, height: 20),
+                        if (order.deliveryAddress.isNotEmpty &&
+                            order.paymentMethod.isNotEmpty)
+                          const Divider(
+                            color: AppColors.borderLight,
+                            height: 20,
+                          ),
                         if (order.paymentMethod.isNotEmpty) ...[
                           Row(
                             children: [
@@ -161,7 +171,8 @@ class OrderDetailsScreen extends StatelessWidget {
                               AppSpacing.w8,
                               Text(
                                 AppStrings.paymentMethod,
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                style: Theme.of(context).textTheme.titleSmall
+                                    ?.copyWith(
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.textPrimary,
                                     ),
@@ -173,16 +184,16 @@ class OrderDetailsScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(left: 28),
                             child: Text(
                               order.paymentMethod,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: AppColors.textSecondary,
-                                  ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: AppColors.textSecondary),
                             ),
                           ),
                         ],
                       ],
                     ),
                   ),
-                if (order.deliveryAddress.isNotEmpty || order.paymentMethod.isNotEmpty)
+                if (order.deliveryAddress.isNotEmpty ||
+                    order.paymentMethod.isNotEmpty)
                   AppSpacing.responsiveHeight(0.015),
 
                 // ── Item Summary ──
@@ -199,10 +210,11 @@ class OrderDetailsScreen extends StatelessWidget {
                     children: [
                       Text(
                         AppStrings.itemSummary,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
                       ),
                       AppSpacing.h8,
                       ...order.items.map(
@@ -211,7 +223,9 @@ class OrderDetailsScreen extends StatelessWidget {
                           child: Row(
                             children: [
                               ClipRRect(
-                                borderRadius: BorderRadius.circular(AppSpacing.radius8),
+                                borderRadius: BorderRadius.circular(
+                                  AppSpacing.radius8,
+                                ),
                                 child: CustomImageView(
                                   imageUrl: item.imagePath,
                                   width: 45,
@@ -229,11 +243,15 @@ class OrderDetailsScreen extends StatelessWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium
-                                          ?.copyWith(fontWeight: FontWeight.w600),
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                     ),
                                     Text(
                                       '${item.weight} x ${item.quantity}',
-                                      style: Theme.of(context).textTheme.bodySmall
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall
                                           ?.copyWith(
                                             color: AppColors.textSecondary,
                                           ),
@@ -313,6 +331,24 @@ class OrderDetailsScreen extends StatelessWidget {
                   ),
                 ),
                 AppSpacing.responsiveHeight(0.025),
+                if (order.id.isNotEmpty && ChatAccessState.isCustomer)
+                  Column(
+                    children: [
+                      CustomButton(
+                        text: AppStrings.chatOrderHelp,
+                        icon: Icons.chat_bubble_outline,
+                        isOutlined: true,
+                        onPressed: () => Get.toNamed(
+                          AppRoutes.chat,
+                          arguments: {
+                            'orderId': order.id,
+                            'orderNumber': order.displayOrderNumber,
+                          },
+                        ),
+                      ),
+                      AppSpacing.h8,
+                    ],
+                  ),
 
                 // ── Action Buttons ──
                 if (order.canReorder) ...[
@@ -366,9 +402,9 @@ class OrderDetailsScreen extends StatelessWidget {
               ],
             ),
           );
-      }),
-    ),
-  );
+        }),
+      ),
+    );
   }
 
   Widget _buildRow(

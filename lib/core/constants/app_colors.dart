@@ -121,6 +121,10 @@ abstract final class AppColors {
   static const bannerPastelGreen = Color(0xFFECF8EE);
   static const bannerDarkGreen = Color(0xFF0E5C23);
   static const badgeDarkGreen = Color(0xFF135A22);
+  static const bannerTitleGreen = Color(0xFF0C4A1D);
+  static const bannerSubtitleGreen = Color(0xFF3F624A);
+  static const bannerDotInactive = Color(0xFFBCE3C8);
+  static const bannerWarmTint = Color(0xFFFAF6EE);
 
   // ─────────────────────────────────────────────
   // Misc Feature Colors

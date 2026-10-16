@@ -11,6 +11,7 @@ class AppRoutes {
   static const String basicInfo = '/basic-info';
 
   static const String dashboard = '/dashboard';
+  static const String chat = '/chat';
   static const String home = '/home';
   static const String category = '/category';
 
@@ -46,4 +47,5 @@ class AppRoutes {
   static const String helpCenter = '/help-center';
   static const String contactSupport = '/contact-support';
   static const String termsPrivacy = '/terms-privacy';
+  static const String notFound = '/not-found';
 }

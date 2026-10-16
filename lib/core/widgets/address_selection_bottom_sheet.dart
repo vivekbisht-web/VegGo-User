@@ -122,8 +122,12 @@ class AddressSelectionBottomSheet extends StatelessWidget {
   ) {
     return InkWell(
       onTap: () async {
+        if (locationController.isFetchingLocation.value) return;
         final nav = Navigator.of(context);
-        await locationController.fetchAndSaveUserLocation(showFeedback: true);
+        await locationController.fetchAndSaveUserLocation(
+          showFeedback: true,
+          saveToApi: true,
+        );
         if (nav.mounted && nav.canPop()) {
           nav.pop();
         }

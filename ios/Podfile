@@ -41,8 +41,6 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       config.build_settings['SWIFT_VERSION'] = '5.0'
-      config.build_settings['SWIFT_ENABLE_EXPLICIT_MODULES'] = 'NO'
-      config.build_settings['DEFINES_MODULE'] = 'YES'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
         'PERMISSION_MICROPHONE=1',
@@ -50,5 +48,43 @@ post_install do |installer|
         'PERMISSION_NOTIFICATIONS=1',
       ]
     end
+  end
+
+  # ── Copy Razorpay dSYMs into the archive so App Store Connect is happy ──
+  # RazorpayStandard.xcframework already ships dSYMs inside its slices,
+  # but Xcode doesn't copy them into the archive's dSYMs folder automatically.
+  main_project = installer.aggregate_targets.first.user_project
+  runner_target = main_project.targets.find { |t| t.name == 'Runner' }
+
+  phase_name = '[Razorpay] Copy dSYMs'
+  unless runner_target.shell_script_build_phases.any? { |p| p.name == phase_name }
+    phase = runner_target.new_shell_script_build_phase(phase_name)
+    phase.shell_script = <<~SCRIPT
+      # Copy Razorpay dSYMs into the archive's dSYMs folder
+      if [ "${ACTION}" = "install" ] && [ -d "${DWARF_DSYM_FOLDER_PATH}" ]; then
+        # Razorpay core (UUID: EADA0557-2F58-3949-8E33-023E668C2CF9)
+        RAZORPAY_CORE_DSYM="${PODS_ROOT}/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64/dSYMs"
+        if [ -d "${RAZORPAY_CORE_DSYM}" ]; then
+          echo "[Razorpay dSYM] Copying core dSYMs from ${RAZORPAY_CORE_DSYM}"
+          cp -R "${RAZORPAY_CORE_DSYM}/"*.dSYM "${DWARF_DSYM_FOLDER_PATH}/" 2>/dev/null || true
+        fi
+        # RazorpayStandard
+        RAZORPAY_STD_DSYM="${PODS_ROOT}/razorpay-pod/Pod/RazorpayStandard.xcframework/ios-arm64/dSYMs"
+        if [ -d "${RAZORPAY_STD_DSYM}" ]; then
+          echo "[Razorpay dSYM] Copying standard dSYMs from ${RAZORPAY_STD_DSYM}"
+          cp -R "${RAZORPAY_STD_DSYM}/"*.dSYM "${DWARF_DSYM_FOLDER_PATH}/" 2>/dev/null || true
+        fi
+      fi
+    SCRIPT
+    phase.input_paths = [
+      '$(PODS_ROOT)/razorpay-core-pod/Pod/core/Razorpay.xcframework/ios-arm64/dSYMs/',
+      '$(PODS_ROOT)/razorpay-pod/Pod/RazorpayStandard.xcframework/ios-arm64/dSYMs/',
+    ]
+    phase.output_paths = [
+      '$(DWARF_DSYM_FOLDER_PATH)/Razorpay.framework.dSYM',
+      '$(DWARF_DSYM_FOLDER_PATH)/RazorpayStandard.framework.dSYM',
+    ]
+    main_project.save
+    puts "[Razorpay dSYM] Added '#{phase_name}' build phase to Runner target."
   end
 end

@@ -5,10 +5,11 @@ import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
 import 'package:vegon_user/core/utils/price_formatter.dart';
-import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import '../controllers/product_details_controller.dart';
 import '../controllers/wishlist_controller.dart';
+import '../models/product_details_model.dart';
 import 'product_hero_features_box.dart';
+import 'product_image_slider.dart';
 
 class ProductHeroSection extends StatelessWidget {
   final Map<String, dynamic> productData;
@@ -42,6 +43,24 @@ class ProductHeroSection extends StatelessWidget {
           : (productData['image'] as String? ??
                 productData['imageUrl'] as String? ??
                 '');
+      final List<String> imageUrls = () {
+        if (details != null && details.imageUrls.isNotEmpty) {
+          return details.imageUrls;
+        }
+        final rawUrls = productData['imageUrls'];
+        if (rawUrls is List && rawUrls.isNotEmpty) {
+          final list = <String>[];
+          for (final item in rawUrls) {
+            final cleaned = ProductDetailsData.cleanUrl(item);
+            if (cleaned.isNotEmpty && !list.contains(cleaned)) {
+              list.add(cleaned);
+            }
+          }
+          if (list.isNotEmpty) return list;
+        }
+        if (imageUrl.isNotEmpty) return [imageUrl];
+        return <String>[];
+      }();
       final double price =
           details?.price ??
           ((productData['price'] is num)
@@ -98,19 +117,13 @@ class ProductHeroSection extends StatelessWidget {
                 ),
                 child: Stack(
                   children: [
-                    // Product image – hero-sized display
+                    // Product image – hero-sized slider display
                     Positioned.fill(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                          AppSpacing.radius20,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(14, 28, 14, 28),
-                          child: CustomImageView(
-                            imageUrl: imageUrl,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
+                      child: ProductImageSlider(
+                        imageUrls: imageUrls,
+                        onPageChanged: (index) {
+                          controller.selectedImageIndex.value = index;
+                        },
                       ),
                     ),
 

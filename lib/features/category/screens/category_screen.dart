@@ -42,15 +42,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
         : Get.put(CategoryController());
     final HomeSearchController searchController =
         Get.isRegistered<HomeSearchController>()
-            ? Get.find<HomeSearchController>()
-            : Get.put(HomeSearchController());
+        ? Get.find<HomeSearchController>()
+        : Get.put(HomeSearchController());
     final CartController cartController = Get.isRegistered<CartController>()
         ? Get.find<CartController>()
         : Get.put(CartController());
     final NotificationController notificationController =
         Get.isRegistered<NotificationController>()
-            ? Get.find<NotificationController>()
-            : Get.put(NotificationController());
+        ? Get.find<NotificationController>()
+        : Get.put(NotificationController());
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -86,12 +86,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               padding: AppSpacing.paddingAll16,
                               child: Text(
                                 AppStrings.typeOrVoiceSearchHint,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: AppColors.textSecondary,
-                                    ),
+                                style: Theme.of(context).textTheme.bodyMedium
+                                    ?.copyWith(color: AppColors.textSecondary),
                               ),
                             ),
                         ],
@@ -174,10 +170,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
           child: Text(
             AppStrings.categories,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                  fontSize: 19,
-                ),
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
+              fontSize: 19,
+            ),
           ),
         ),
 
@@ -224,10 +220,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     child: Text(
                       '$unread',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppColors.surface,
-                            fontSize: 8,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        color: AppColors.surface,
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -241,7 +237,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           children: [
             IconButton(
               icon: const Icon(
-                Icons.shopping_bag_outlined,
+                Icons.shopping_cart_outlined,
                 color: AppColors.textPrimary,
                 size: 22,
               ),
@@ -267,10 +263,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     child: Text(
                       '$count',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppColors.surface,
-                            fontSize: 9,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        color: AppColors.surface,
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -313,9 +309,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
               controller: _categorySearchTextController,
               autofocus: true,
               onChanged: searchController.onSearchQueryChanged,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textPrimary,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.textPrimary),
               decoration: InputDecoration(
                 isDense: true,
                 filled: true,
@@ -323,9 +319,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 contentPadding: AppSpacing.paddingVertical8,
                 hintText: AppStrings.searchVegPlaceholder,
                 hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                      fontSize: 13,
-                    ),
+                  color: AppColors.textSecondary,
+                  fontSize: 13,
+                ),
                 prefixIcon: const Icon(
                   Icons.search_rounded,
                   color: AppColors.textSecondary,
@@ -362,17 +358,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           onResult: (spokenText) {
                             _categorySearchTextController.value =
                                 TextEditingValue(
-                              text: spokenText,
-                              selection: TextSelection.collapsed(
-                                offset: spokenText.length,
-                              ),
-                            );
+                                  text: spokenText,
+                                  selection: TextSelection.collapsed(
+                                    offset: spokenText.length,
+                                  ),
+                                );
                             searchController.onSearchQueryChanged(spokenText);
                           },
                         );
                       },
-                      borderRadius:
-                          BorderRadius.circular(AppSpacing.radius20),
+                      borderRadius: BorderRadius.circular(AppSpacing.radius20),
                       child: Container(
                         margin: AppSpacing.paddingRight8,
                         padding: AppSpacing.paddingAll6,
@@ -522,10 +517,9 @@ class _CategoryScreenContent extends StatelessWidget {
                       AppSpacing.h12,
                       Text(
                         AppStrings.noProductsInCategory,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium
-                            ?.copyWith(color: AppColors.textSecondary),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),

@@ -63,6 +63,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     final rawPhone = _phoneController.text.trim();
+    if (rawPhone.isEmpty || rawPhone.length != 10) {
+      Get.snackbar(
+        AppStrings.appName,
+        AppStrings.invalidPhoneError,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.error,
+        colorText: AppColors.surface,
+        duration: const Duration(seconds: 2),
+      );
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+    _authController.resetLoading();
     final success = await _authController.requestOtp(
       rawPhone,
       onCodeSent: () {},
@@ -70,7 +84,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (success) {
       final formattedPhone =
           _authController.sanitizePhone(rawPhone) ?? rawPhone;
-      Get.toNamed(AppRoutes.otpVerification, arguments: formattedPhone);
+      await Get.toNamed(AppRoutes.otpVerification, arguments: formattedPhone);
+      _authController.resetLoading();
     }
   }
 

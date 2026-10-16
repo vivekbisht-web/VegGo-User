@@ -390,6 +390,15 @@ class AppStrings {
   static const String deleteAddressConfirmation =
       'Are you sure you want to delete this address?';
   static const String noAddressesSaved = 'You have no saved addresses yet.';
+  static const String addAddressTitle = 'Add Delivery Address';
+  static const String addAddressSubtitle =
+      'Please add a delivery address to continue shopping and place orders.';
+  static const String addAddressButton = 'Add Address';
+  static const String addressRequiredTitle = 'Delivery Address Required';
+  static const String addressRequiredSubtitle =
+      'You need a saved delivery address to use this feature.';
+  static const String taxesAndFeesAtCheckout =
+      'Taxes & delivery fees will be calculated at checkout';
   static const String fetchingAddresses = 'Fetching addresses...';
 
   static const String fetchingLocation = 'Fetching live location...';
@@ -486,6 +495,13 @@ class AppStrings {
   static const String verifyCode = 'Verify & Proceed';
   static const String didntReceiveCode = "Didn't receive code? ";
   static const String resendCode = 'Resend';
+  static const String pressBackToChangeNumber =
+      'Press back again to change mobile number';
+  static const String changePhoneNumber = 'Change phone number';
+  static const String changeNumber = 'Change number';
+  static const String pasteCode = 'Paste Code';
+  static const String codePasted = 'Code pasted';
+  static const String autoFillingOtp = 'Auto-filling OTP...';
   static const String resetPassword = 'Reset Password';
   static const String createNewPassword =
       'Create a new, strong password for your account.';
@@ -626,6 +642,8 @@ class AppStrings {
   static const String viewPointsAction = 'View Points →';
   static const String referEarn = 'Refer & Earn';
   static const String referNowAction = 'Refer Now →';
+  static const String manageAddressesAction = 'Manage →';
+  static const String viewSavedItemsAction = 'View All →';
   static const String viewAllOrders = 'View All Orders';
   static const String viewAllOrdersAction = 'View All Orders >';
   static const String toPay = 'To Pay';
@@ -644,7 +662,7 @@ class AppStrings {
   static const String savedItemsDesc = 'View your favorite products';
   static const String paymentMethods = 'Payment Methods';
   static const String paymentMethodsDesc = 'Cards, UPI & other payment options';
-  static const String walletTransactions = 'Daily Market Wallet Transactions';
+  static const String walletTransactions = 'Transactions History';
   static const String walletTransactionsDesc =
       'View wallet history and transactions';
   static const String notificationsDesc =
@@ -736,6 +754,39 @@ class AppStrings {
       '🍃 Eat Fresh, Live Healthy 🍃';
   static const String aiBotServiceDesc =
       'VegGo Smart Assistant is at your service!';
+  static const String chatTitle = 'VegGo Assistant';
+  static const String chatInputHint = 'Ask about orders, deals, or products';
+  static const String chatSend = 'Send';
+  static const String chatLoading = 'Thinking...';
+  static const String chatRatingTitle = 'How was your chat?';
+  static const String chatRatingSkip = 'Skip';
+  static const String chatRatingSubmit = 'Submit rating';
+  static const String chatRatingThanks = 'Thanks for your feedback';
+  static const String chatSomethingWrong = 'Something went wrong';
+  static const String chatRateLimit =
+      'You’re sending messages too fast. Please wait a moment and try again.';
+  static const String chatRetry = 'Retry';
+  static const String chatStartNew = 'Start new chat';
+  static const String chatPickRating = 'Pick a star rating first';
+  static const String chatTalkingAbout = 'Talking about';
+  static const String chatChangeOrder = 'Change order';
+  static const String chatPlacedAt = 'Placed';
+  static const String chatHelpEntry = 'Chat with us';
+  static const String chatHelpDescription =
+      'Get help with your orders, cart, deals, and products.';
+  static const String chatOrderHelp = 'Need help with this order?';
+  static const String chatTagQuickAnswers = 'Quick answers';
+  static const String chatTagEasyToUse = 'Easy to use';
+  static const String chatTagHelpful = 'Helpful';
+  static const String chatTagDidNotUnderstand = 'Didn’t understand me';
+  static const String chatTagWrongAnswer = 'Wrong answer';
+  static const String chatTagTooSlow = 'Too slow';
+  static String chatStarLabel(int value) =>
+      '$value ${value == 1 ? 'star' : 'stars'}';
+  static String chatWaitSeconds(int value) => 'Please wait $value seconds';
+  static const String chatOrderStatus = 'Status';
+  static const String chatOrderItems = 'Items';
+  static const String chatOrderTotal = 'Total';
   static const String categoryFilterDesc =
       'Showing all available fresh produce in this category.';
   static const String underRupees30 = 'Under ${currencySymbol}30';
@@ -923,7 +974,8 @@ class AppStrings {
 
   // DM Points
   static const String availableDmPoints = 'Available DM Points';
-  static const String pointsValueSubtitle = '100 Points = ${currencySymbol}10 Savings';
+  static const String pointsValueSubtitle =
+      '100 Points = ${currencySymbol}10 Savings';
   static const String redeemPoints = 'Redeem Points';
   static const String pointsHistory = 'Points History';
   static const String howToEarnPoints = 'How to Earn Points';
@@ -1037,8 +1089,7 @@ class AppStrings {
       'Type or use voice search to find products...';
 
   // Map & Location Search
-  static const String searchLocationOrAddress =
-      'Search location or address...';
+  static const String searchLocationOrAddress = 'Search location or address...';
   static const String searchingLocations = 'Searching locations...';
   static const String noLocationsFound = 'No locations found';
   static const String currentLocationLabel = 'Current Location';
@@ -1059,5 +1110,14 @@ class AppStrings {
       'Discover stores delivering fresh produce in your area';
   static const String locationBenefit2 =
       'Accurate delivery time and live stock availability';
-}
 
+  //Banner
+  static const String freshDealsBadge = 'FRESH DEALS';
+  static const String bannerHeadlineFallback = 'Up to 20% OFF';
+  static const String bannerSubtitleFallback =
+      'Fresh vegetables delivered today\nto your doorstep';
+
+  static const String freshBadgePercent = '100%';
+  static const String freshBadgeWord = 'Fresh';
+  static const String slash = '/';
+}

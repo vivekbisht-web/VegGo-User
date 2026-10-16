@@ -1,4 +1,4 @@
-//
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app_routes.dart';
 
@@ -17,6 +17,8 @@ import '../features/dashboard/controllers/notification_controller.dart';
 import '../features/dashboard/screens/notification_screen.dart';
 import '../features/home/screens/home_screen.dart';
 import '../features/home/controllers/location_controller.dart';
+import '../features/chat/controllers/chat_controller.dart';
+import '../features/chat/screens/chat_screen.dart';
 
 import '../features/category/screens/category_screen.dart';
 import '../features/category/controller/category_controller.dart';
@@ -62,6 +64,15 @@ class AppPages {
 
   static const String initial = AppRoutes.splash;
 
+  static final GetPage unknownRoute = GetPage(
+    name: AppRoutes.notFound,
+    page: () => const Scaffold(
+      body: Center(
+        child: SizedBox.shrink(),
+      ),
+    ),
+  );
+
   static final List<GetPage> pages = [
     GetPage(
       name: AppRoutes.splash,
@@ -71,16 +82,32 @@ class AppPages {
       }),
     ),
     GetPage(name: AppRoutes.onboarding, page: () => const OnboardingScreen()),
+    GetPage(
+      name: AppRoutes.chat,
+      page: () => const ChatScreen(),
+      binding: BindingsBuilder(() {
+        final arguments = Get.arguments;
+        final orderId = arguments is Map
+            ? arguments['orderId']?.toString()
+            : null;
+        final orderNumber = arguments is Map
+            ? arguments['orderNumber']?.toString()
+            : null;
+        Get.put(
+          ChatController(
+            initialOrderId: orderId,
+            initialOrderNumber: orderNumber,
+          ),
+        );
+      }),
+    ),
     GetPage(name: AppRoutes.login, page: () => const LoginScreen()),
     GetPage(name: AppRoutes.register, page: () => const RegisterScreen()),
     GetPage(
       name: AppRoutes.otpVerification,
       page: () => const OTPVerificationScreen(),
     ),
-    GetPage(
-      name: AppRoutes.basicInfo,
-      page: () => const BasicInfoScreen(),
-    ),
+    GetPage(name: AppRoutes.basicInfo, page: () => const BasicInfoScreen()),
     GetPage(
       name: AppRoutes.dashboard,
       page: () => DashboardScreen(),
@@ -89,7 +116,10 @@ class AppPages {
         Get.put(LocationController());
         Get.put(CartController());
         Get.put(WishlistController());
-        Get.lazyPut<CategoryController>(() => CategoryController(), fenix: true);
+        Get.lazyPut<CategoryController>(
+          () => CategoryController(),
+          fenix: true,
+        );
         Get.lazyPut<AddressController>(() => AddressController(), fenix: true);
         Get.lazyPut<OrdersController>(() => OrdersController(), fenix: true);
         Get.lazyPut<NotificationController>(

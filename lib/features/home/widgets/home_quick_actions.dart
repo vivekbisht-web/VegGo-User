@@ -129,7 +129,9 @@ class _QuickActionCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.error,
-                          borderRadius: BorderRadius.circular(AppSpacing.radius8),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.radius8,
+                          ),
                         ),
                         child: Text(
                           action.badge!,
