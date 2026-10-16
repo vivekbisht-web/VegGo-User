@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/local_storage/shared_prefs_helper.dart';
+import 'package:vegon_user/core/services/push_notification_service.dart';
 import 'package:vegon_user/features/auth/models/auth_models.dart';
 import 'package:vegon_user/features/auth/services/auth_service.dart';
 import 'package:vegon_user/features/profile/controllers/user_profile_controller.dart';
@@ -49,6 +50,7 @@ class SplashController extends GetxController {
 
       if (verification.isValid) {
         _updateUserProfile(verification.userData, verification.profile);
+        PushNotificationService.instance.registerDeviceToken();
         await _waitForSplashAnimation(splashStartTime);
         _navigateNext(isLoggedIn: true);
         return;
@@ -58,6 +60,7 @@ class SplashController extends GetxController {
       final bool isAccessExpired = SharedPrefsHelper.isTokenExpired(activeToken);
       if (verification.isOffline && !isAccessExpired) {
         debugPrint('SplashController: Device offline with valid local token. Proceeding.');
+        PushNotificationService.instance.registerDeviceToken();
         await _waitForSplashAnimation(splashStartTime);
         _navigateNext(isLoggedIn: true);
         return;

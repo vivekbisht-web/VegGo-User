@@ -3,11 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
-
+import 'package:vegon_user/core/constants/app_images.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
-import 'package:vegon_user/core/widgets/custom_button.dart';
-import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/dashboard/controllers/dashboard_controller.dart';
 import 'package:vegon_user/features/home/controllers/home_controller.dart';
 import 'package:vegon_user/features/home/models/banner_models.dart';
@@ -43,7 +41,7 @@ class _HomeBannerState extends State<HomeBanner> {
     _autoScrollTimer = Timer.periodic(_autoScrollInterval, (_) {
       if (!mounted || !_pageController.hasClients) return;
       final banners = _homeController.banners;
-      if (banners.isEmpty) return;
+      if (banners.length <= 1) return;
 
       final nextIndex = (_currentIndex + 1) % banners.length;
       _pageController.animateToPage(
@@ -63,189 +61,225 @@ class _HomeBannerState extends State<HomeBanner> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      final banners = _homeController.banners;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double w = constraints.maxWidth.isFinite
+            ? constraints.maxWidth
+            : AppSpacing.screenWidth;
+        // Natural banner ratio (~3.2:1) matching provided banner artwork
+        final double h = (w * 0.31).clamp(135.0, 175.0);
+        final double s = h / 145.0;
 
-      if (_homeController.isBannersLoading.value && banners.isEmpty) {
-        return SizedBox(
-          height: (AppSpacing.screenHeight * AppSpacing.bannerHeightRatio)
-              .clamp(AppSpacing.bannerHeightMin, AppSpacing.bannerHeightMax),
-          child: const Center(child: CircularProgressIndicator()),
-        );
-      }
+        return Obx(() {
+          final banners = _homeController.banners;
+          final int itemCount = banners.isNotEmpty ? banners.length : 1;
 
-      if (banners.isEmpty) return const SizedBox.shrink();
-
-      final width = AppSpacing.screenWidth;
-      final bannerHeight =
-          (AppSpacing.screenHeight * AppSpacing.bannerHeightRatio).clamp(
-            AppSpacing.bannerHeightMin,
-            AppSpacing.bannerHeightMax,
-          );
-
-      return SizedBox(
-        height: bannerHeight,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppSpacing.radius16),
-          child: Stack(
-            children: [
-              PageView.builder(
-                controller: _pageController,
-                itemCount: banners.length,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentIndex = index;
-                  });
-                },
-                itemBuilder: (context, index) {
-                  final banner = banners[index];
-                  return _BannerCard(banner: banner, width: width);
-                },
-              ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: AppSpacing.radius6,
-                child: _BannerDots(
-                  count: banners.length,
-                  activeIndex: _currentIndex,
+          return Container(
+            height: h,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSpacing.radius16),
+              boxShadow: const [
+                BoxShadow(
+                  color: AppColors.black12,
+                  blurRadius: 8,
+                  offset: Offset(0, 3),
                 ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(AppSpacing.radius16),
+              child: Stack(
+                children: [
+                  PageView.builder(
+                    controller: _pageController,
+                    itemCount: itemCount,
+                    onPageChanged: (index) {
+                      setState(() => _currentIndex = index);
+                    },
+                    itemBuilder: (context, index) {
+                      final banner = banners.isNotEmpty ? banners[index] : null;
+                      return _BannerCard(banner: banner, width: w, scale: s);
+                    },
+                  ),
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 8 * s,
+                    child: _BannerDots(
+                      count: itemCount > 1 ? itemCount : 3,
+                      activeIndex: _currentIndex,
+                      scale: s,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      );
-    });
+            ),
+          );
+        });
+      },
+    );
   }
 }
 
 class _BannerCard extends StatelessWidget {
-  final BannerDataModel banner;
+  final BannerDataModel? banner;
   final double width;
+  final double scale;
 
-  const _BannerCard({required this.banner, required this.width});
+  const _BannerCard({
+    required this.banner,
+    required this.width,
+    required this.scale,
+  });
+
+  void _onShopNowTap() {
+    if (Get.isRegistered<DashboardController>()) {
+      Get.find<DashboardController>().changeTabIndex(1);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final title = banner.title;
-    final subtitle = banner.subtitle;
-    final info = AppStrings.freeDeliveryAbove199;
-    final imageUrl = banner.imageUrl;
-    final buttonText = AppStrings.shopNow;
-    final bgColor = AppColors.bannerPastelGreen;
-    final textColor = AppColors.bannerDarkGreen;
-
     final textTheme = Theme.of(context).textTheme;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(color: bgColor),
-      child: Stack(
-        children: [
-          Positioned(
-            top: 0,
-            right: 0,
-            bottom: 0,
-            width: width * AppSpacing.bannerImageWidthRatio,
-            child: CustomImageView(imageUrl: imageUrl, fit: BoxFit.cover),
-          ),
+    final title = (banner != null && banner!.title.trim().isNotEmpty)
+        ? banner!.title.trim()
+        : AppStrings.bannerHeadlineFallback;
+    final subtitle = (banner != null && banner!.subtitle.trim().isNotEmpty)
+        ? banner!.subtitle.trim()
+        : AppStrings.bannerSubtitleFallback;
 
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    bgColor,
-                    bgColor.withValues(alpha: 0.95),
-                    bgColor.withValues(alpha: 0.0),
+    return Stack(
+      children: [
+        // 1. Full-width high-resolution artwork background
+        Positioned.fill(
+          child: Image.asset(
+            AppImages.bannerFreshDeals,
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+          ),
+        ),
+
+        // 2. Dynamic API data text overlaid on the left side
+        Positioned.fill(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              16 * scale,
+              12 * scale,
+              12 * scale,
+              12 * scale,
+            ),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: width * 0.46,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Badge: FRESH DEALS
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 10 * scale,
+                        vertical: 3 * scale,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.bannerDarkGreen,
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radius20,
+                        ),
+                      ),
+                      child: Text(
+                        AppStrings.freshDealsBadge,
+                        style: textTheme.labelSmall?.copyWith(
+                          color: AppColors.white,
+                          fontSize: 10 * scale,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.35,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 5 * scale),
+
+                    // Headline from API
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.headlineSmall?.copyWith(
+                        color: AppColors.bannerDarkGreen,
+                        fontSize: 14 * scale,
+                        fontWeight: FontWeight.w800,
+                        height: 1.1,
+                      ),
+                    ),
+                    SizedBox(height: 4 * scale),
+
+                    // Subtitle from API
+                    Text(
+                      subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.bodySmall?.copyWith(
+                        color: AppColors.bannerSubtitleGreen,
+                        fontSize: 10 * scale,
+                        fontWeight: FontWeight.w500,
+                        height: 1.25,
+                      ),
+                    ),
+                    SizedBox(height: 8 * scale),
+
+                    // Action button: Shop Now ->
+                    _ShopNowButton(scale: scale, onTap: _onShopNowTap),
                   ],
                 ),
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
+}
 
-          Padding(
-            padding: AppSpacing.bannerPadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: AppSpacing.bannerBadgePadding,
-                        decoration: BoxDecoration(
-                          color: textColor.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(
-                            AppSpacing.radius4,
-                          ),
-                        ),
-                        child: Text(
-                          AppStrings.specialOffer,
-                          style: textTheme.labelSmall?.copyWith(
-                            color: textColor,
-                            fontSize: AppSpacing.bannerFontSizeBadge,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                      ),
-                      AppSpacing.h4,
-                      Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: textTheme.titleMedium?.copyWith(
-                          color: textColor,
-                          fontSize: AppSpacing.bannerFontSizeTitle,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      AppSpacing.h2,
-                      Text(
-                        subtitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: textTheme.titleLarge?.copyWith(
-                          color: textColor,
-                          fontSize: AppSpacing.bannerFontSizeSubtitle,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      AppSpacing.h2,
-                      Text(
-                        info,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                          fontSize: AppSpacing.bannerFontSizeInfo,
-                        ),
-                      ),
-                    ],
-                  ),
+class _ShopNowButton extends StatelessWidget {
+  final VoidCallback onTap;
+  final double scale;
+
+  const _ShopNowButton({required this.onTap, required this.scale});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.bannerDarkGreen,
+      borderRadius: BorderRadius.circular(AppSpacing.radius20),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppSpacing.radius20),
+        onTap: onTap,
+        child: SizedBox(
+          height: 28 * scale,
+          width: 100 * scale,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                AppStrings.shopNow,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: AppColors.white,
+                  fontSize: 12 * scale,
+                  fontWeight: FontWeight.w700,
                 ),
-                CustomButton(
-                  text: buttonText,
-                  height: AppSpacing.bannerButtonHeight,
-                  width: AppSpacing.bannerButtonWidth,
-                  borderRadius: AppSpacing.radius16,
-                  textStyle: textTheme.labelSmall?.copyWith(
-                    color: AppColors.surface,
-                    fontSize: AppSpacing.bannerFontSizeButton,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  onPressed: () {
-                    Get.find<DashboardController>().changeTabIndex(1);
-                  },
-                ),
-              ],
-            ),
+              ),
+              SizedBox(width: 5 * scale),
+              Icon(
+                Icons.arrow_forward_rounded,
+                color: AppColors.white,
+                size: 14 * scale,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -254,8 +288,13 @@ class _BannerCard extends StatelessWidget {
 class _BannerDots extends StatelessWidget {
   final int count;
   final int activeIndex;
+  final double scale;
 
-  const _BannerDots({required this.count, required this.activeIndex});
+  const _BannerDots({
+    required this.count,
+    required this.activeIndex,
+    required this.scale,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -265,16 +304,14 @@ class _BannerDots extends StatelessWidget {
         final isActive = index == activeIndex;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 250),
-          margin: AppSpacing.paddingHorizontal4,
-          width: isActive
-              ? AppSpacing.bannerDotActiveWidth
-              : AppSpacing.bannerDotInactiveWidth,
-          height: AppSpacing.bannerDotHeight,
+          margin: EdgeInsets.symmetric(horizontal: 3.5 * scale),
+          width: 7 * scale,
+          height: 7 * scale,
           decoration: BoxDecoration(
+            shape: BoxShape.circle,
             color: isActive
                 ? AppColors.bannerDarkGreen
-                : AppColors.mintBadge.withValues(alpha: 0.8),
-            borderRadius: BorderRadius.circular(AppSpacing.radius4),
+                : AppColors.bannerDotInactive,
           ),
         );
       }),

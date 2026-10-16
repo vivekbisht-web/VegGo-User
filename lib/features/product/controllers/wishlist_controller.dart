@@ -15,9 +15,21 @@ class WishlistController extends GetxController {
   final WishlistRepository _wishlistRepo = WishlistRepository();
 
   final RxSet<String> wishlistIds = <String>{}.obs;
-  final RxList<ProductDetailsData> wishlistProducts = <ProductDetailsData>[].obs;
+  final RxList<ProductDetailsData> wishlistProducts =
+      <ProductDetailsData>[].obs;
   final RxBool isLoading = false.obs;
   final RxString error = ''.obs;
+
+  List<String> get uniqueCategories {
+    final cats =
+        wishlistProducts
+            .map((p) => p.category.trim())
+            .where((c) => c.isNotEmpty)
+            .toSet()
+            .toList()
+          ..sort();
+    return [AppStrings.all, ...cats];
+  }
 
   @override
   void onInit() {
@@ -59,7 +71,6 @@ class WishlistController extends GetxController {
 
     final wasWishlisted = wishlistIds.contains(productId);
 
-    // Optimistic UI update
     if (wasWishlisted) {
       wishlistIds.remove(productId);
       wishlistProducts.removeWhere((item) => item.id == productId);
@@ -80,7 +91,6 @@ class WishlistController extends GetxController {
       if (wasWishlisted) {
         final response = await _wishlistRepo.removeFromWishlist(productId);
         if (response == null || response.success != true) {
-          // Revert rollback
           wishlistIds.add(productId);
           if (product != null &&
               !wishlistProducts.any((item) => item.id == productId)) {
@@ -105,7 +115,6 @@ class WishlistController extends GetxController {
       } else {
         final response = await _wishlistRepo.addToWishlist(productId);
         if (response == null || response.success != true) {
-          // Revert rollback
           wishlistIds.remove(productId);
           wishlistProducts.removeWhere((item) => item.id == productId);
           Get.snackbar(
@@ -126,7 +135,6 @@ class WishlistController extends GetxController {
         }
       }
     } catch (e) {
-      // Revert on exception
       if (wasWishlisted) {
         wishlistIds.add(productId);
         if (product != null &&

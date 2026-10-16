@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
+import 'package:get/get.dart';
+import 'package:vegon_user/routes/app_routes.dart';
 
 class AiAssistantFab extends StatelessWidget {
   final double bottom;
@@ -21,7 +23,7 @@ class AiAssistantFab extends StatelessWidget {
         shape: const CircleBorder(),
         child: InkWell(
           customBorder: const CircleBorder(),
-          onTap: () {},
+          onTap: () => Get.toNamed(AppRoutes.chat),
           child: Container(
             width: 46,
             height: 46,

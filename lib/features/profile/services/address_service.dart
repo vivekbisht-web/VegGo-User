@@ -244,4 +244,72 @@ class AddressService {
     }
     return null;
   }
+
+  Future<List<Map<String, dynamic>>> searchPlaces(String query) async {
+    final clean = query.trim();
+    if (clean.length < 2) return [];
+
+    try {
+      final dio = Dio();
+      final osmUrl =
+          'https://nominatim.openstreetmap.org/search?q=${Uri.encodeComponent(clean)}&format=json&addressdetails=1&limit=6';
+      final response = await dio.get(
+        osmUrl,
+        options: Options(headers: {'User-Agent': 'veggofresh_user_app/1.0'}),
+      );
+
+      if (response.statusCode == 200 && response.data is List) {
+        final List<Map<String, dynamic>> results = [];
+        for (var item in response.data) {
+          if (item is Map) {
+            final lat = double.tryParse(item['lat']?.toString() ?? '') ?? 0.0;
+            final lon = double.tryParse(item['lon']?.toString() ?? '') ?? 0.0;
+            if (lat == 0.0 && lon == 0.0) continue;
+
+            final address = item['address'] as Map<String, dynamic>? ?? {};
+            final city =
+                address['city'] ??
+                address['town'] ??
+                address['village'] ??
+                address['county'] ??
+                '';
+            final state = address['state'] ?? '';
+            final postalCode = address['postcode'] ?? '';
+            final road =
+                address['road'] ??
+                address['suburb'] ??
+                address['neighbourhood'] ??
+                '';
+            final name = item['name']?.toString() ?? '';
+
+            String addressLine1 = road.toString();
+            if (name.isNotEmpty && name != road) {
+              addressLine1 = '$name, $road'.trim();
+              if (addressLine1.endsWith(',')) {
+                addressLine1 =
+                    addressLine1.substring(0, addressLine1.length - 1);
+              }
+            }
+            if (addressLine1.isEmpty) {
+              addressLine1 = item['display_name']?.toString() ?? '';
+            }
+
+            results.add({
+              'displayName': item['display_name']?.toString() ?? '',
+              'addressLine1': addressLine1,
+              'city': city.toString(),
+              'state': state.toString(),
+              'postalCode': postalCode.toString(),
+              'latitude': lat,
+              'longitude': lon,
+            });
+          }
+        }
+        return results;
+      }
+    } catch (e) {
+      debugPrint('Error searching places: $e');
+    }
+    return [];
+  }
 }

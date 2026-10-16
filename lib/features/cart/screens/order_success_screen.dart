@@ -9,6 +9,9 @@ import 'package:vegon_user/core/widgets/custom_button.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/cart/controllers/checkout_controller.dart';
 import 'package:vegon_user/features/dashboard/controllers/dashboard_controller.dart';
+import 'package:vegon_user/features/orders/controllers/orders_controller.dart';
+import 'package:vegon_user/features/orders/screens/my_orders_screen.dart';
+import 'package:vegon_user/features/orders/screens/order_details_screen.dart';
 
 class OrderSuccessScreen extends StatelessWidget {
   const OrderSuccessScreen({super.key});
@@ -45,9 +48,6 @@ class OrderSuccessScreen extends StatelessWidget {
         child: Column(
           children: [
             _buildSuccessCard(context),
-            AppSpacing.responsiveHeight(0.02),
-
-            _buildDeliveryCard(context),
             AppSpacing.responsiveHeight(0.02),
 
             _buildOrderDetailsCard(context),
@@ -112,8 +112,25 @@ class OrderSuccessScreen extends StatelessWidget {
             text: AppStrings.trackMyOrder,
             icon: Icons.local_shipping_outlined,
             onPressed: () {
-              Get.offAllNamed('/dashboard');
-              Get.find<DashboardController>().changeTabIndex(2);
+              final checkoutCtrl = Get.isRegistered<CheckoutController>()
+                  ? Get.find<CheckoutController>()
+                  : null;
+              final placedData = checkoutCtrl?.placedOrderResult.value?.data;
+              final orderId = placedData?.orders?.isNotEmpty == true
+                  ? placedData!.orders!.first.id
+                  : null;
+
+              final ordersCtrl = Get.isRegistered<OrdersController>()
+                  ? Get.find<OrdersController>()
+                  : Get.put(OrdersController());
+
+              if (orderId != null && orderId.isNotEmpty) {
+                ordersCtrl.fetchOrderDetails(orderId);
+                Get.to(() => const OrderDetailsScreen());
+              } else {
+                ordersCtrl.fetchOrders(isRefresh: true);
+                Get.to(() => const MyOrdersScreen());
+              }
             },
           ),
           AppSpacing.responsiveHeight(0.015),
@@ -125,91 +142,6 @@ class OrderSuccessScreen extends StatelessWidget {
               Get.find<DashboardController>().changeTabIndex(0);
             },
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeliveryCard(BuildContext context) {
-    final checkoutCtrl = Get.isRegistered<CheckoutController>()
-        ? Get.find<CheckoutController>()
-        : null;
-    final addressText = checkoutCtrl?.selectedAddress.value?.address ??
-        'Delivering to your selected address';
-
-    return Container(
-      width: double.infinity,
-      padding: AppSpacing.paddingResponsiveAll(0.04),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.04),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.overlayLight.withValues(alpha: 0.01),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: AppSpacing.paddingResponsiveAll(0.02),
-                decoration: const BoxDecoration(
-                  color: AppColors.secondary,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.access_time,
-                  color: AppColors.textPrimary,
-                  size: AppSpacing.screenWidth * 0.05,
-                ),
-              ),
-              AppSpacing.responsiveWidth(0.03),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppStrings.estimatedDeliveryCaps,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: AppColors.textSecondary,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  Text(
-                    'In 15-20 mins',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          AppSpacing.responsiveHeight(0.02),
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                color: AppColors.primary,
-                size: AppSpacing.screenWidth * 0.05,
-              ),
-              AppSpacing.responsiveWidth(0.03),
-              Expanded(
-                child: Text(
-                  addressText,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: AppColors.textPrimary),
-                ),
-              ),
-            ],
-          ),
-          AppSpacing.responsiveHeight(0.01),
         ],
       ),
     );

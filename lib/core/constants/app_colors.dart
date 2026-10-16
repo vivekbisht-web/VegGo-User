@@ -17,8 +17,10 @@ abstract final class AppColors {
   static const surface = Colors.white;
   static const white = Colors.white;
   static const black = Colors.black;
+  static const black12 = Color(0x1F000000); // ~12% black for shadows
   static const transparent = Colors.transparent;
   static const overlayLight = Color(0x1F000000);
+  static const shadowLight = Color(0x42000000); // Colors.black26 equivalent
 
   static const mintHeader = Color(0xFFDCF4DE);
   static const mintBadge = Color(0xFFC8E6C9);
@@ -119,6 +121,10 @@ abstract final class AppColors {
   static const bannerPastelGreen = Color(0xFFECF8EE);
   static const bannerDarkGreen = Color(0xFF0E5C23);
   static const badgeDarkGreen = Color(0xFF135A22);
+  static const bannerTitleGreen = Color(0xFF0C4A1D);
+  static const bannerSubtitleGreen = Color(0xFF3F624A);
+  static const bannerDotInactive = Color(0xFFBCE3C8);
+  static const bannerWarmTint = Color(0xFFFAF6EE);
 
   // ─────────────────────────────────────────────
   // Misc Feature Colors

@@ -1,4 +1,4 @@
-package com.example.vegon_user
+package com.veggofresh.customer
 
 import io.flutter.embedding.android.FlutterActivity
 

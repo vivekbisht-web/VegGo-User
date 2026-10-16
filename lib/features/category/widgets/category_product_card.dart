@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
-import 'package:vegon_user/core/utils/animation_overlay_helper.dart';
 import 'package:vegon_user/core/widgets/custom_image_view.dart';
 import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/product/controllers/wishlist_controller.dart';
@@ -109,11 +108,22 @@ class CategoryProductCard extends StatelessWidget {
                         ),
                         customBorder: const CircleBorder(),
                         child: Container(
-                          width: 26,
-                          height: 26,
+                          width: 28,
+                          height: 28,
                           decoration: BoxDecoration(
-                            color: AppColors.surface.withValues(alpha: 0.9),
+                            color: AppColors.surface,
                             shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.chipBorder,
+                              width: 0.8,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.overlayLight.withValues(alpha: 0.12),
+                                blurRadius: 4,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
                           ),
                           child: Icon(
                             isFav
@@ -121,8 +131,8 @@ class CategoryProductCard extends StatelessWidget {
                                 : Icons.favorite_border_rounded,
                             color: isFav
                                 ? AppColors.error
-                                : AppColors.borderLight,
-                            size: 16,
+                                : AppColors.textSecondary,
+                            size: 17,
                           ),
                         ),
                       );
@@ -205,10 +215,6 @@ class CategoryProductCard extends StatelessWidget {
                         InkWell(
                           onTap: () {
                             cartController.addToCart(productMap);
-                            AnimationOverlayHelper.showRocketAddToCart(
-                              context,
-                              onComplete: () {},
-                            );
                           },
                           borderRadius: BorderRadius.circular(
                             AppSpacing.radius8,

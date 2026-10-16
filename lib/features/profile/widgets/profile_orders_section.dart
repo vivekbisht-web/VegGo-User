@@ -30,7 +30,7 @@ class ProfileOrdersSection extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () => Get.to(() => const MyOrdersScreen()),
+              onTap: () => Get.to(() => const MyOrdersScreen(initialTabIndex: 0)),
               child: Row(
                 children: [
                   Text(
@@ -54,9 +54,10 @@ class ProfileOrdersSection extends StatelessWidget {
         AppSpacing.h12,
 
         Obx(() {
-          final allCount = '${ordersController.orders.length}';
+          final total = ordersController.totalOrdersCount.value;
+          final allCount = '${total > 0 ? total : ordersController.orders.length}';
           final inProgressCount = '${ordersController.activeOrders.length}';
-          final deliveredCount = '${ordersController.completedOrders.length}';
+          final deliveredCount = '${ordersController.deliveredOrders.length}';
 
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -68,7 +69,7 @@ class ProfileOrdersSection extends StatelessWidget {
                   icon: Icons.shopping_bag_outlined,
                   title: AppStrings.allOrders,
                   count: allCount,
-                  onTap: () => Get.to(() => const MyOrdersScreen()),
+                  onTap: () => Get.to(() => const MyOrdersScreen(initialTabIndex: 0)),
                 ),
                 AppSpacing.w10,
                 _buildOrderStatusChip(
@@ -76,7 +77,7 @@ class ProfileOrdersSection extends StatelessWidget {
                   icon: Icons.inventory_2_outlined,
                   title: AppStrings.inProgress,
                   count: inProgressCount,
-                  onTap: () => Get.to(() => const MyOrdersScreen()),
+                  onTap: () => Get.to(() => const MyOrdersScreen(initialTabIndex: 1)),
                 ),
                 AppSpacing.w10,
                 _buildOrderStatusChip(
@@ -84,7 +85,7 @@ class ProfileOrdersSection extends StatelessWidget {
                   icon: Icons.check_circle_outline,
                   title: AppStrings.delivered,
                   count: deliveredCount,
-                  onTap: () => Get.to(() => const MyOrdersScreen()),
+                  onTap: () => Get.to(() => const MyOrdersScreen(initialTabIndex: 2)),
                 ),
               ],
             ),

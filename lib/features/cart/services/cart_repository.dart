@@ -15,7 +15,28 @@ class CartRepository {
   CartRepository({ApiClient? apiClient})
     : _apiClient = apiClient ?? ApiClient(baseUrl: ApiEndpoints.baseUrl);
 
-  Future<CartModel?> getCart({double? latitude, double? longitude}) async {
+  /// Parses the `data` field of a cart-bearing API response into one
+  /// [CartModel] per vendor. The backend groups items by vendor/shop and
+  /// returns an array (one cart per vendor) even when there's only one;
+  /// this stays defensive in case a single cart object is ever returned
+  /// on its own.
+  List<CartModel> _parseCarts(dynamic data) {
+    if (data is List) {
+      return data
+          .whereType<Map<String, dynamic>>()
+          .map((e) => CartModel.fromJson(e))
+          .toList();
+    } else if (data is Map<String, dynamic>) {
+      return [CartModel.fromJson(data)];
+    }
+    return [];
+  }
+
+  /// Fetches every active vendor cart for the current user.
+  Future<List<CartModel>> getCarts({
+    double? latitude,
+    double? longitude,
+  }) async {
     try {
       final queryParams = <String, dynamic>{};
       if (latitude != null && latitude != 0.0) {
@@ -34,17 +55,12 @@ class CartRepository {
           : response.data as Map<String, dynamic>?;
 
       if (dataMap != null && dataMap[AppStrings.apiSuccess] == true) {
-        final data = dataMap[AppStrings.apiData];
-        if (data is List && data.isNotEmpty) {
-          return CartModel.fromJson(data.first as Map<String, dynamic>);
-        } else if (data is Map<String, dynamic>) {
-          return CartModel.fromJson(data);
-        }
+        return _parseCarts(dataMap[AppStrings.apiData]);
       }
-      return null;
+      return [];
     } catch (e) {
-      debugPrint("Error fetching cart: $e");
-      return null;
+      debugPrint("Error fetching carts: $e");
+      return [];
     }
   }
 
@@ -85,12 +101,16 @@ class CartRepository {
 
   Future<PlaceOrderResponseModel?> placeOrder({
     required String addressId,
+    List<String>? cartIds,
     String? paymentMethodId,
     String? deliverySlotId,
     String? scheduledDate,
   }) async {
     try {
       final Map<String, dynamic> body = {'addressId': addressId};
+      if (cartIds != null && cartIds.isNotEmpty) {
+        body['cartIds'] = cartIds;
+      }
       if (paymentMethodId != null && paymentMethodId.isNotEmpty) {
         body['paymentMethodId'] = paymentMethodId;
       }
@@ -173,17 +193,20 @@ class CartRepository {
 
     if (dataMap != null && dataMap[AppStrings.apiSuccess] == true) {
       final data = dataMap[AppStrings.apiData];
-      if (data is List && data.isNotEmpty) {
-        return CartModel.fromJson(data.first as Map<String, dynamic>);
-      } else if (data is Map<String, dynamic>) {
-        return CartModel.fromJson(data);
+      final carts = _parseCarts(data);
+      if (carts.isNotEmpty) {
+        return carts; // List<CartModel> — every vendor cart, up to date
       }
       return true; // Success but no cart data returned
     }
     return false; // Failed
   }
 
-  Future<CartModel?> updateCartItemQuantity(
+  /// Updates a single cart item's quantity and returns every vendor cart
+  /// as it now stands (a quantity change never removes a whole vendor
+  /// cart, but other carts are still returned so the UI can stay in sync
+  /// without a full refetch).
+  Future<List<CartModel>?> updateCartItemQuantity(
     String cartItemId,
     int quantity,
   ) async {
@@ -194,11 +217,8 @@ class CartRepository {
       );
       final dataMap = response.data as Map<String, dynamic>?;
       if (dataMap != null && dataMap[AppStrings.apiSuccess] == true) {
-        final List<dynamic>? data =
-            dataMap[AppStrings.apiData] as List<dynamic>?;
-        if (data != null && data.isNotEmpty) {
-          return CartModel.fromJson(data.first as Map<String, dynamic>);
-        }
+        final carts = _parseCarts(dataMap[AppStrings.apiData]);
+        if (carts.isNotEmpty) return carts;
       }
       return null;
     } catch (e) {

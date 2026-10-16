@@ -10,8 +10,7 @@ class CheckoutTimeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CheckoutController checkoutController =
-        Get.find<CheckoutController>();
+    final ctrl = Get.find<CheckoutController>();
 
     return Container(
       padding: AppSpacing.paddingResponsiveAll(0.04),
@@ -35,151 +34,104 @@ class CheckoutTimeCard extends StatelessWidget {
             context,
           ),
           AppSpacing.responsiveHeight(0.02),
-
+          Obx(() => _buildDeliveryToggle(context, ctrl)),
           Obx(() {
-            if (checkoutController.isLoadingSlots.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (checkoutController.deliveryDates.isEmpty) {
-              return Text(
-                AppStrings.noDeliverySlots,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-              );
-            }
-
-            return Column(
-              children: [
-                SizedBox(
-                  height: AppSpacing.screenHeight * 0.085,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: checkoutController.deliveryDates.length,
-                    separatorBuilder: (context, index) =>
-                        AppSpacing.responsiveWidth(0.03),
-                    itemBuilder: (context, index) {
-                      final dateItem = checkoutController.deliveryDates[index];
-                      return Obx(() {
-                        final isSelected =
-                            checkoutController.selectedDateIndex.value == index;
-                        return InkWell(
-                          onTap: () =>
-                              checkoutController.selectedDateIndex.value = index,
-                          borderRadius: BorderRadius.circular(
-                            AppSpacing.screenWidth * 0.03,
-                          ),
-                          child: Container(
-                            width: AppSpacing.screenWidth * 0.28,
-                            padding: AppSpacing.paddingAll8,
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.primary.withValues(alpha: 0.05)
-                                  : AppColors.surface,
-                              border: Border.all(
-                                color: isSelected
-                                    ? AppColors.primary
-                                    : AppColors.borderLight.withValues(alpha: 0.5),
-                                width: isSelected ? 2.0 : 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(
-                                AppSpacing.screenWidth * 0.03,
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  dateItem['label']!,
-                                  style: Theme.of(context).textTheme.labelSmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: isSelected
-                                            ? AppColors.primary
-                                            : AppColors.textSecondary,
-                                      ),
-                                ),
-                                AppSpacing.h4,
-                                Text(
-                                  dateItem['date']!,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: isSelected
-                                            ? AppColors.primary
-                                            : AppColors.textPrimary,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      });
-                    },
-                  ),
-                ),
-                AppSpacing.responsiveHeight(0.02),
-
-                if (checkoutController.timeSlots.isNotEmpty)
-                  GridView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: AppSpacing.screenWidth * 0.03,
-                      mainAxisSpacing: AppSpacing.screenWidth * 0.03,
-                      childAspectRatio: 2.8,
-                    ),
-                    itemCount: checkoutController.timeSlots.length,
-                    itemBuilder: (context, index) {
-                      final slot = checkoutController.timeSlots[index];
-                      return Obx(() {
-                        final isSelected =
-                            checkoutController.selectedTimeIndex.value == index;
-                        return InkWell(
-                          onTap: () =>
-                              checkoutController.selectedTimeIndex.value = index,
-                          borderRadius: BorderRadius.circular(
-                            AppSpacing.screenWidth * 0.02,
-                          ),
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? AppColors.primary.withValues(alpha: 0.05)
-                                  : AppColors.surface,
-                              border: Border.all(
-                                color: isSelected
-                                    ? AppColors.primary
-                                    : AppColors.borderLight.withValues(alpha: 0.5),
-                                width: isSelected ? 2.0 : 1.0,
-                              ),
-                              borderRadius: BorderRadius.circular(
-                                AppSpacing.screenWidth * 0.02,
-                              ),
-                            ),
-                            child: Text(
-                              slot,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                                color: isSelected
-                                    ? AppColors.primary
-                                    : AppColors.textPrimary,
-                              ),
-                            ),
-                          ),
-                        );
-                      });
-                    },
-                  ),
-              ],
-            );
+            if (ctrl.isInstantDelivery.value) return const SizedBox.shrink();
+            return _buildScheduleSection(context, ctrl);
           }),
         ],
       ),
+    );
+  }
+
+  Widget _buildDeliveryToggle(BuildContext context, CheckoutController ctrl) {
+    return Row(
+      children: [
+        Expanded(
+          child: _DeliveryOption(
+            icon: Icons.bolt_rounded,
+            title: AppStrings.deliverNow,
+            subtitle: AppStrings.deliverNowSubtitle,
+            isSelected: ctrl.isInstantDelivery.value,
+            onTap: () => ctrl.isInstantDelivery.value = true,
+          ),
+        ),
+        AppSpacing.w12,
+        Expanded(
+          child: _DeliveryOption(
+            icon: Icons.calendar_today_outlined,
+            title: AppStrings.scheduleForLater,
+            subtitle: AppStrings.scheduleForLaterSubtitle,
+            isSelected: !ctrl.isInstantDelivery.value,
+            onTap: () => ctrl.isInstantDelivery.value = false,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildScheduleSection(BuildContext context, CheckoutController ctrl) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppSpacing.responsiveHeight(0.02),
+        if (ctrl.isLoadingSlots.value)
+          const Center(child: CircularProgressIndicator())
+        else if (ctrl.deliveryDates.isEmpty)
+          Text(
+            AppStrings.noDeliverySlots,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+          )
+        else ...[
+          SizedBox(
+            height: AppSpacing.screenHeight * 0.085,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: ctrl.deliveryDates.length,
+              separatorBuilder: (_, _) => AppSpacing.responsiveWidth(0.03),
+              itemBuilder: (context, index) {
+                final dateItem = ctrl.deliveryDates[index];
+                return Obx(() {
+                  final isSelected = ctrl.selectedDateIndex.value == index;
+                  return _DateChip(
+                    label: dateItem['label']!,
+                    date: dateItem['date']!,
+                    isSelected: isSelected,
+                    onTap: () => ctrl.selectedDateIndex.value = index,
+                  );
+                });
+              },
+            ),
+          ),
+          if (ctrl.timeSlots.isNotEmpty) ...[
+            AppSpacing.responsiveHeight(0.02),
+            GridView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: AppSpacing.screenWidth * 0.03,
+                mainAxisSpacing: AppSpacing.screenWidth * 0.03,
+                childAspectRatio: 2.8,
+              ),
+              itemCount: ctrl.timeSlots.length,
+              itemBuilder: (context, index) {
+                final slot = ctrl.timeSlots[index];
+                return Obx(() {
+                  final isSelected = ctrl.selectedTimeIndex.value == index;
+                  return _TimeSlotChip(
+                    slot: slot,
+                    isSelected: isSelected,
+                    onTap: () => ctrl.selectedTimeIndex.value = index,
+                  );
+                });
+              },
+            ),
+          ],
+        ],
+      ],
     );
   }
 
@@ -207,6 +159,170 @@ class CheckoutTimeCard extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _DeliveryOption extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _DeliveryOption({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.03),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: AppSpacing.paddingAll12,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.06)
+              : AppColors.surface,
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.borderLight,
+            width: isSelected ? 2.0 : 1.0,
+          ),
+          borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.03),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: isSelected ? AppColors.primary : AppColors.textSecondary,
+            ),
+            AppSpacing.h6,
+            Text(
+              title,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isSelected ? AppColors.primary : AppColors.textPrimary,
+              ),
+            ),
+            AppSpacing.h2,
+            Text(
+              subtitle,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: AppColors.textSecondary,
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DateChip extends StatelessWidget {
+  final String label;
+  final String date;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _DateChip({
+    required this.label,
+    required this.date,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.03),
+      child: Container(
+        width: AppSpacing.screenWidth * 0.28,
+        padding: AppSpacing.paddingAll8,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.05)
+              : AppColors.surface,
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.borderLight.withValues(alpha: 0.5),
+            width: isSelected ? 2.0 : 1.0,
+          ),
+          borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.03),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isSelected ? AppColors.primary : AppColors.textSecondary,
+              ),
+            ),
+            AppSpacing.h4,
+            Text(
+              date,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isSelected ? AppColors.primary : AppColors.textPrimary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TimeSlotChip extends StatelessWidget {
+  final String slot;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _TimeSlotChip({
+    required this.slot,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.02),
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.05)
+              : AppColors.surface,
+          border: Border.all(
+            color: isSelected
+                ? AppColors.primary
+                : AppColors.borderLight.withValues(alpha: 0.5),
+            width: isSelected ? 2.0 : 1.0,
+          ),
+          borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.02),
+        ),
+        child: Text(
+          slot,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            color: isSelected ? AppColors.primary : AppColors.textPrimary,
+          ),
+        ),
+      ),
     );
   }
 }

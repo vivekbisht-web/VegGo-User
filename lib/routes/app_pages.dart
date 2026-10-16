@@ -1,4 +1,4 @@
-//
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app_routes.dart';
 
@@ -9,11 +9,16 @@ import '../features/splash/onboarding_screen.dart';
 import '../features/auth/screens/login_screen.dart';
 import '../features/auth/screens/register_screen.dart';
 import '../features/auth/screens/otp_verification_screen.dart';
+import '../features/auth/screens/basic_info_screen.dart';
 
 import '../features/dashboard/screens/dashboard_screen.dart';
 import '../features/dashboard/controllers/dashboard_controller.dart';
+import '../features/dashboard/controllers/notification_controller.dart';
 import '../features/dashboard/screens/notification_screen.dart';
 import '../features/home/screens/home_screen.dart';
+import '../features/home/controllers/location_controller.dart';
+import '../features/chat/controllers/chat_controller.dart';
+import '../features/chat/screens/chat_screen.dart';
 
 import '../features/category/screens/category_screen.dart';
 import '../features/category/controller/category_controller.dart';
@@ -45,6 +50,8 @@ import '../features/profile/controllers/address_controller.dart';
 import '../features/profile/screens/payment_methods_screen.dart';
 import '../features/profile/screens/add_payment_method_screen.dart';
 import '../features/profile/screens/wallet_screen.dart';
+import '../features/profile/screens/dm_points_screen.dart';
+import '../features/profile/screens/refer_earn_screen.dart';
 import '../features/profile/screens/favorites_screen.dart';
 import '../features/profile/screens/language_screen.dart';
 import '../features/profile/screens/notifications_settings_screen.dart';
@@ -57,6 +64,15 @@ class AppPages {
 
   static const String initial = AppRoutes.splash;
 
+  static final GetPage unknownRoute = GetPage(
+    name: AppRoutes.notFound,
+    page: () => const Scaffold(
+      body: Center(
+        child: SizedBox.shrink(),
+      ),
+    ),
+  );
+
   static final List<GetPage> pages = [
     GetPage(
       name: AppRoutes.splash,
@@ -66,22 +82,50 @@ class AppPages {
       }),
     ),
     GetPage(name: AppRoutes.onboarding, page: () => const OnboardingScreen()),
+    GetPage(
+      name: AppRoutes.chat,
+      page: () => const ChatScreen(),
+      binding: BindingsBuilder(() {
+        final arguments = Get.arguments;
+        final orderId = arguments is Map
+            ? arguments['orderId']?.toString()
+            : null;
+        final orderNumber = arguments is Map
+            ? arguments['orderNumber']?.toString()
+            : null;
+        Get.put(
+          ChatController(
+            initialOrderId: orderId,
+            initialOrderNumber: orderNumber,
+          ),
+        );
+      }),
+    ),
     GetPage(name: AppRoutes.login, page: () => const LoginScreen()),
     GetPage(name: AppRoutes.register, page: () => const RegisterScreen()),
     GetPage(
       name: AppRoutes.otpVerification,
       page: () => const OTPVerificationScreen(),
     ),
+    GetPage(name: AppRoutes.basicInfo, page: () => const BasicInfoScreen()),
     GetPage(
       name: AppRoutes.dashboard,
       page: () => DashboardScreen(),
       binding: BindingsBuilder(() {
         Get.put(DashboardController());
+        Get.put(LocationController());
         Get.put(CartController());
         Get.put(WishlistController());
-        Get.lazyPut<CategoryController>(() => CategoryController(), fenix: true);
+        Get.lazyPut<CategoryController>(
+          () => CategoryController(),
+          fenix: true,
+        );
         Get.lazyPut<AddressController>(() => AddressController(), fenix: true);
         Get.lazyPut<OrdersController>(() => OrdersController(), fenix: true);
+        Get.lazyPut<NotificationController>(
+          () => NotificationController(),
+          fenix: true,
+        );
       }),
     ),
     GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
@@ -187,6 +231,9 @@ class AppPages {
       page: () => const NotificationsSettingsScreen(),
     ),
     GetPage(name: AppRoutes.wallet, page: () => const WalletScreen()),
+    GetPage(name: AppRoutes.offers, page: () => const CouponsScreen()),
+    GetPage(name: AppRoutes.dmPoints, page: () => const DmPointsScreen()),
+    GetPage(name: AppRoutes.referEarn, page: () => const ReferEarnScreen()),
     GetPage(name: AppRoutes.helpCenter, page: () => const HelpCenterScreen()),
     GetPage(
       name: AppRoutes.contactSupport,

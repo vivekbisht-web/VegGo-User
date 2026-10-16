@@ -258,6 +258,12 @@ class CategorySortFilterBar extends StatelessWidget {
                 label: AppStrings.sortPriceHighToLow,
                 value: AppStrings.sortPriceHighToLow,
               ),
+              _buildSortOption(
+                context,
+                controller,
+                label: AppStrings.sortByPopular,
+                value: AppStrings.sortByPopular,
+              ),
             ],
           ),
         ),
@@ -290,7 +296,7 @@ class CategorySortFilterBar extends StatelessWidget {
               )
             : null,
         onTap: () {
-          controller.selectedSortOption.value = value;
+          controller.setSortOption(value);
           Get.back();
         },
       );

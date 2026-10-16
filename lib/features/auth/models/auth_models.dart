@@ -98,3 +98,55 @@ class SessionVerificationResult {
     this.profile,
   });
 }
+
+class OnboardingStatusData {
+  final bool hasBasicInfo;
+  final String nextAction;
+
+  const OnboardingStatusData({
+    required this.hasBasicInfo,
+    required this.nextAction,
+  });
+
+  factory OnboardingStatusData.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const OnboardingStatusData(
+        hasBasicInfo: false,
+        nextAction: '',
+      );
+    }
+    return OnboardingStatusData(
+      hasBasicInfo: json['hasBasicInfo'] as bool? ?? false,
+      nextAction: (json['nextAction'] as String?)?.trim() ?? '',
+    );
+  }
+}
+
+class OnboardingStatusResponse {
+  final bool success;
+  final String message;
+  final OnboardingStatusData? data;
+
+  const OnboardingStatusResponse({
+    required this.success,
+    required this.message,
+    this.data,
+  });
+
+  factory OnboardingStatusResponse.fromJson(Map<String, dynamic>? json) {
+    if (json == null) {
+      return const OnboardingStatusResponse(
+        success: false,
+        message: '',
+      );
+    }
+    return OnboardingStatusResponse(
+      success: json['success'] as bool? ?? false,
+      message: (json['message'] as String?)?.trim() ?? '',
+      data: json['data'] is Map<String, dynamic>
+          ? OnboardingStatusData.fromJson(json['data'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+}
+

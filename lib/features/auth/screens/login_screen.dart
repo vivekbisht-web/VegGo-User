@@ -50,7 +50,22 @@ class _LoginScreenState extends State<LoginScreen> {
   // }
 
   Future<void> _onGetOtpPressed() async {
+    FocusScope.of(context).unfocus();
+
     final rawPhone = _phoneController.text.trim();
+    if (rawPhone.isEmpty || rawPhone.length != 10) {
+      Get.snackbar(
+        AppStrings.appName,
+        AppStrings.invalidPhoneError,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.error,
+        colorText: AppColors.surface,
+        duration: const Duration(seconds: 2),
+      );
+      return;
+    }
+
+    _authController.resetLoading();
     final success = await _authController.requestOtp(
       rawPhone,
       onCodeSent: () {},
@@ -58,7 +73,8 @@ class _LoginScreenState extends State<LoginScreen> {
     if (success) {
       final formattedPhone =
           _authController.sanitizePhone(rawPhone) ?? rawPhone;
-      Get.toNamed(AppRoutes.otpVerification, arguments: formattedPhone);
+      await Get.toNamed(AppRoutes.otpVerification, arguments: formattedPhone);
+      _authController.resetLoading();
     }
   }
 
@@ -83,6 +99,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 prefixIcon: Icons.phone_android_outlined,
                 keyboardType: TextInputType.phone,
                 maxLength: 10,
+                textInputAction: TextInputAction.done,
+                onSubmitted: (_) => _onGetOtpPressed(),
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                   LengthLimitingTextInputFormatter(10),
@@ -98,27 +116,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               AppSpacing.responsiveHeight(0.06),
-              GestureDetector(
-                onTap: () => Get.toNamed(AppRoutes.register),
-                child: RichText(
-                  text: TextSpan(
-                    text: AppStrings.noAccount,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.textSecondary,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: AppStrings.createAccount,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              AppSpacing.responsiveHeight(0.05),
+              // GestureDetector(
+              //   onTap: () => Get.toNamed(AppRoutes.register),
+              //   child: RichText(
+              //     text: TextSpan(
+              //       text: AppStrings.noAccount,
+              //       style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              //         color: AppColors.textSecondary,
+              //       ),
+              //       children: [
+              //         TextSpan(
+              //           text: AppStrings.createAccount,
+              //           style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              //             color: AppColors.primary,
+              //             fontWeight: FontWeight.bold,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // AppSpacing.responsiveHeight(0.05),
               const FreshnessGuaranteeBadge(),
               AppSpacing.responsiveHeight(0.04),
             ],

@@ -4,12 +4,10 @@
 <dict>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>We need your location to auto-fill your delivery address.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Vegon User</string>
+	<string>Veggo Fresh</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -17,17 +15,47 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>vegon_user</string>
+	<string>Veggo Fresh Customer</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-929528357809-ios-162f40ce4f877b84229390</string>
+				<string>com.googleusercontent.apps.929528357809-3vkjc708hc0qtfn1jkhoebni5hkgp0av</string>
+				<string>app-1-726384647343-ios-e8847977c35cd6ec02885a</string>
+				<string>app-1-726384647343-ios-27a568f5e0587d0802885a</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>VegGo Fresh uses the camera to let you upload profile or product images.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>VegGo Fresh uses your location to show nearby stores and deliver to your address.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>VegGo Fresh uses your location to show nearby stores and deliver to your address.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>VegGo Fresh uses your location to show nearby stores and deliver to your address.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>VegGo Fresh uses your microphone for voice search to help you find products faster.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>VegGo Fresh needs permission to save images to your photo library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>VegGo Fresh accesses your photo library to let you choose a profile picture.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>VegGo Fresh uses speech recognition to convert your voice into search queries.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

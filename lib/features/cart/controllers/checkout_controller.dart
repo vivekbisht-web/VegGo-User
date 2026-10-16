@@ -10,6 +10,7 @@ import 'package:vegon_user/features/cart/controllers/cart_controller.dart';
 import 'package:vegon_user/features/cart/models/checkout_summary_model.dart';
 import 'package:vegon_user/features/cart/models/place_order_response_model.dart';
 import 'package:vegon_user/features/cart/services/cart_repository.dart';
+import 'package:vegon_user/features/orders/services/orders_repository.dart';
 import 'package:vegon_user/features/home/controllers/location_controller.dart';
 import 'package:vegon_user/features/profile/controllers/address_controller.dart';
 import 'package:vegon_user/features/profile/controllers/user_profile_controller.dart';
@@ -18,13 +19,15 @@ import 'package:vegon_user/features/profile/screens/saved_addresses_screen.dart'
 
 class CheckoutController extends GetxController {
   final CartRepository _cartRepo = CartRepository();
+  final OrdersRepository _ordersRepo = OrdersRepository();
   final RazorpayService _razorpayService = RazorpayService();
   void Function(PlaceOrderResponseModel response)? _onOrderPlacedSuccess;
-  
+
   var selectedDateIndex = 0.obs;
   var selectedTimeIndex = 0.obs;
   var selectedPaymentIndex = 0.obs;
-  
+  var isInstantDelivery = true.obs;
+
   var isProcessingOrder = false.obs;
   var isLoadingSlots = false.obs;
   var isLoadingSummary = false.obs;
@@ -32,7 +35,9 @@ class CheckoutController extends GetxController {
   var selectedAddress = Rxn<AddressModel>();
   var checkoutSummary = Rxn<CheckoutSummaryModel>();
   var placedOrderResult = Rxn<PlaceOrderResponseModel>();
-  
+  final RxList<String> targetCartIds = <String>[].obs;
+  final RxList<String> lastResolvedCartIds = <String>[].obs;
+
   var timeSlots = <String>[].obs;
   var deliveryDates = <Map<String, String>>[].obs;
 
@@ -59,6 +64,7 @@ class CheckoutController extends GetxController {
   }
 
   Future<void> _initCheckout() async {
+    _initTargetCartIds();
     final addressCtrl = Get.isRegistered<AddressController>()
         ? Get.find<AddressController>()
         : Get.put(AddressController());
@@ -69,6 +75,50 @@ class CheckoutController extends GetxController {
     if (selectedAddress.value != null) {
       await fetchCheckoutSummary(selectedAddress.value!.id);
     }
+  }
+
+  void _initTargetCartIds() {
+    try {
+      final args = Get.arguments;
+      if (args is Map && args['cartIds'] is List) {
+        targetCartIds.assignAll(
+          (args['cartIds'] as List)
+              .map((e) => e.toString())
+              .where((id) => id.trim().isNotEmpty),
+        );
+      } else if (args is List) {
+        targetCartIds.assignAll(
+          args.map((e) => e.toString()).where((id) => id.trim().isNotEmpty),
+        );
+      }
+    } catch (_) {}
+  }
+
+  List<String> resolveCartIds() {
+    if (targetCartIds.isNotEmpty) {
+      return targetCartIds.toList();
+    }
+
+    if (Get.isRegistered<CartController>()) {
+      final cartCtrl = Get.find<CartController>();
+      final ids = cartCtrl.carts
+          .map((c) => c.id)
+          .where((id) => id.trim().isNotEmpty)
+          .toList();
+      if (ids.isNotEmpty) return ids;
+    }
+
+    final summaryCarts = checkoutSummary.value?.data?.carts;
+    if (summaryCarts != null && summaryCarts.isNotEmpty) {
+      final ids = summaryCarts
+          .map((c) => c.cartId)
+          .whereType<String>()
+          .where((id) => id.trim().isNotEmpty)
+          .toList();
+      if (ids.isNotEmpty) return ids;
+    }
+
+    return [];
   }
 
   void _loadDefaultAddress() {
@@ -89,14 +139,16 @@ class CheckoutController extends GetxController {
           final lat = addr.rawAddressData?.latitude;
           final lng = addr.rawAddressData?.longitude;
           if (lat != null && lng != null) {
-            return (lat - activeLat).abs() < 0.005 && (lng - activeLng).abs() < 0.005;
+            return (lat - activeLat).abs() < 0.005 &&
+                (lng - activeLng).abs() < 0.005;
           }
           return false;
         });
       }
     }
 
-    selectedAddress.value = matchedAddress ??
+    selectedAddress.value =
+        matchedAddress ??
         addressCtrl.addresses.firstWhere(
           (addr) => addr.isDefault,
           orElse: () => addressCtrl.addresses.first,
@@ -130,7 +182,10 @@ class CheckoutController extends GetxController {
 
     deliveryDates.assignAll([
       {"label": AppStrings.today, "date": DateFormat('MMM dd').format(now)},
-      {"label": AppStrings.tomorrow, "date": DateFormat('MMM dd').format(tomorrow)},
+      {
+        "label": AppStrings.tomorrow,
+        "date": DateFormat('MMM dd').format(tomorrow),
+      },
       {
         "label": DateFormat('EEE').format(dayAfter).toUpperCase(),
         "date": DateFormat('MMM dd').format(dayAfter),
@@ -161,8 +216,9 @@ class CheckoutController extends GetxController {
   }
 
   Future<void> placeOrder(
-    void Function(PlaceOrderResponseModel response) onSuccess,
-  ) async {
+    void Function(PlaceOrderResponseModel response) onSuccess, {
+    List<String>? cartIds,
+  }) async {
     if (isProcessingOrder.value) return;
 
     if (Get.isRegistered<CartController>()) {
@@ -192,8 +248,14 @@ class CheckoutController extends GetxController {
     _onOrderPlacedSuccess = onSuccess;
 
     try {
+      final effectiveCartIds = (cartIds != null && cartIds.isNotEmpty)
+          ? cartIds
+          : resolveCartIds();
+      lastResolvedCartIds.assignAll(effectiveCartIds);
+
       final response = await _cartRepo.placeOrder(
         addressId: selectedAddress.value!.id,
+        cartIds: effectiveCartIds.isNotEmpty ? effectiveCartIds : null,
         paymentMethodId: selectedPaymentMethodId,
       );
 
@@ -211,17 +273,19 @@ class CheckoutController extends GetxController {
         // Online payment via Razorpay
         final paymentHold = response.data?.paymentHold;
         final razorpayOrderId = paymentHold?.razorpayOrderId;
-        final razorpayKeyId = (paymentHold?.razorpayKeyId != null &&
+        final razorpayKeyId =
+            (paymentHold?.razorpayKeyId != null &&
                 paymentHold!.razorpayKeyId!.isNotEmpty)
             ? paymentHold.razorpayKeyId!
             : ApiEndpoints.razorpayKey;
 
-        final amount = paymentHold?.totalAmount ??
+        final amount =
+            paymentHold?.totalAmount ??
             (response.data?.orders?.isNotEmpty == true
                 ? response.data!.orders!.first.totalAmount ?? 0.0
                 : (Get.isRegistered<CartController>()
-                    ? Get.find<CartController>().total
-                    : 0.0));
+                      ? Get.find<CartController>().total
+                      : 0.0));
 
         if (amount <= 0) {
           isProcessingOrder.value = false;
@@ -336,15 +400,63 @@ class CheckoutController extends GetxController {
       backgroundColor: AppColors.error,
       colorText: AppColors.surface,
     );
+
+    _cancelPendingOrders();
     _onOrderPlacedSuccess = null;
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
+    // External wallet payment is still in progress — do not cancel the order.
+    // The user will complete payment via their wallet app and the backend
+    // will update the order status via webhook.
     isProcessingOrder.value = false;
-    if (_onOrderPlacedSuccess != null && placedOrderResult.value != null) {
-      final callback = _onOrderPlacedSuccess!;
-      _onOrderPlacedSuccess = null;
-      callback(placedOrderResult.value!);
+    _onOrderPlacedSuccess = null;
+    Get.snackbar(
+      AppStrings.paymentFailed,
+      AppStrings.externalWalletRedirect,
+      backgroundColor: AppColors.warning,
+      colorText: AppColors.surface,
+      duration: const Duration(seconds: 4),
+    );
+  }
+
+  /// Silently cancels all orders that were created by the last [placeOrder] call.
+  /// Called when Razorpay payment fails or is cancelled by the user.
+  void _cancelPendingOrders() {
+    final result = placedOrderResult.value;
+    placedOrderResult.value = null;
+
+    if (result == null) return;
+
+    final orderIds = <String>[];
+
+    // Prefer allocations list (one entry per vendor order)
+    final allocations = result.data?.paymentHold?.allocations;
+    if (allocations != null && allocations.isNotEmpty) {
+      for (final alloc in allocations) {
+        final id = alloc.orderId;
+        if (id != null && id.isNotEmpty) orderIds.add(id);
+      }
+    }
+
+    // Fallback: top-level orders list
+    if (orderIds.isEmpty) {
+      final orders = result.data?.orders;
+      if (orders != null) {
+        for (final o in orders) {
+          final id = o.id;
+          if (id != null && id.isNotEmpty) orderIds.add(id);
+        }
+      }
+    }
+
+    if (orderIds.isEmpty) return;
+
+    for (final id in orderIds) {
+      _ordersRepo.cancelOrder(id).catchError((e) {
+        debugPrint('Failed to auto-cancel order $id after payment failure: $e');
+        return null;
+      });
     }
   }
 
@@ -352,4 +464,3 @@ class CheckoutController extends GetxController {
     Get.to(() => SavedAddressesScreen());
   }
 }
-

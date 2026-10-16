@@ -6,7 +6,10 @@ class ApiEndpoints {
   static const String requestOtp = '/auth/otp/request';
   static const String verifyOtp = '/auth/otp/verify';
   static const String refreshToken = '/auth/refresh';
-  static const String userProfile = '/auth/me';
+  static const String userProfile = '/customer/profile';
+  static const String customerProfile = '/customer/profile';
+  static const String onboardingStatus = '/customer/onboarding/status';
+  static const String onboardingBasicInfo = '/customer/onboarding/basic-info';
   static const String addToCart = '/customer/carts/items';
   static const String viewCart = '/customer/carts';
   static const String cartBadgeCount = '/customer/carts/badge-count';
@@ -14,6 +17,8 @@ class ApiEndpoints {
   static const String deliverySlots = '/customer/orders/delivery-slots';
   static const String placeOrder = '/customer/orders';
   static const String verifyPayment = '/customer/orders/verify-payment';
+  static const String walletBalance = '/payment/wallet/balance';
+  static const String walletTransactions = '/payment/wallet/transactions';
   static const String orders = '/customer/orders';
   static String orderDetails(String id) => '/customer/orders/$id';
   static String orderTrack(String id) => '/customer/orders/$id/track';
@@ -31,6 +36,8 @@ class ApiEndpoints {
   static const String banners = '/customer/banners';
   static const String products = '/customer/products';
   static const String productDeals = '/customer/products/deals';
+  static const String customerChat = '/customer/chat';
+  static const String customerChatRating = '/customer/chat/rating';
 
   static String productDetails(String id) => '/customer/products/$id';
   static String relatedProducts(String id) => '/customer/products/$id/related';
@@ -39,9 +46,18 @@ class ApiEndpoints {
       '/customer/categories/$categoryId/subcategories';
   static const String googleMapsGeocodeApi =
       'https://maps.googleapis.com/maps/api/geocode/json';
-  static const String googleMapsApiKey =
-      String.fromEnvironment('MAPS_API_KEY', defaultValue: '');
+  static const String googleMapsApiKey = String.fromEnvironment(
+    'MAPS_API_KEY',
+    defaultValue: '',
+  );
 
   // Razorpay API
   static const String razorpayKey = 'rzp_test_TTUpC17cOLtNl8';
+
+  // Notification endpoints
+  static const String notifications = '/notifications';
+  static const String notificationsUnreadCount = '/notifications/unread-count';
+  static const String notificationsReadAll = '/notifications/read-all';
+  static String markNotificationRead(String id) => '/notifications/$id/read';
+  static const String deviceToken = '/notifications/device-token';
 }

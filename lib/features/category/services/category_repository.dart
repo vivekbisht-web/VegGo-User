@@ -175,7 +175,7 @@ class CategoryRepository {
     double? latitude,
     double? longitude,
     int page = 0,
-    int size = 10,
+    int size = 100,
   }) async {
     try {
       final queryParams = <String, dynamic>{'page': page, 'size': size};

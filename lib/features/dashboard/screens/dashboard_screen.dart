@@ -10,6 +10,7 @@ import 'package:vegon_user/features/orders/screens/my_orders_screen.dart';
 import 'package:vegon_user/features/profile/screens/favorites_screen.dart';
 import 'package:vegon_user/features/profile/screens/profile_screen.dart';
 import 'package:vegon_user/core/widgets/floating_cart_bar.dart';
+import 'package:vegon_user/core/widgets/ai_assistant_fab.dart';
 import '../controllers/dashboard_controller.dart';
 import '../widgets/app_drawer.dart';
 
@@ -41,14 +42,19 @@ class DashboardScreen extends StatelessWidget {
           key: controller.scaffoldKey,
           backgroundColor: AppColors.surface,
           drawer: const AppDrawer(),
-          body: IndexedStack(
-            index: controller.selectedIndex.value,
-            children: List.generate(
-              pages.length,
-              (index) => controller.visitedTabs.contains(index)
-                  ? pages[index]
-                  : const SizedBox.shrink(),
-            ),
+          body: Stack(
+            children: [
+              IndexedStack(
+                index: controller.selectedIndex.value,
+                children: List.generate(
+                  pages.length,
+                  (index) => controller.visitedTabs.contains(index)
+                      ? pages[index]
+                      : const SizedBox.shrink(),
+                ),
+              ),
+              const AiAssistantFab(bottom: 16, right: 16),
+            ],
           ),
           bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,

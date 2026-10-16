@@ -24,31 +24,43 @@ class CheckoutSummaryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSpacing.screenWidth * 0.04),
       ),
       child: Obx(() {
-        // Safely resolve the first cart, or null if data isn't ready yet.
-        final cart =
-            checkoutController.checkoutSummary.value?.data?.carts?.isNotEmpty ==
-                true
-            ? checkoutController.checkoutSummary.value!.data!.carts![0]
-            : null;
+        final summaryData = checkoutController.checkoutSummary.value?.data;
+        final carts = summaryData?.carts;
 
-        if (cart == null) {
-          // Data not loaded yet (or empty) — show a lightweight placeholder
-          // instead of crashing on a null check.
+        if (carts == null || carts.isEmpty) {
           return const Padding(
-            padding: EdgeInsets.symmetric(vertical: 24),
+            padding: AppSpacing.paddingVertical24,
             child: Center(child: CircularProgressIndicator()),
           );
         }
 
-        final subtotal = cart.subtotal?.toString() ?? '0';
-        final deliveryFee = cart.deliveryFee;
-        final estimatedTax = cart.estimatedTax?.toString() ?? '0';
-        final total = cart.total?.toString() ?? '0';
+        final double subtotalVal = carts.fold<double>(
+          0.0,
+          (sum, c) => sum + (c.subtotal ?? 0.0),
+        );
+        final double deliveryFeeVal = carts.fold<double>(
+          0.0,
+          (sum, c) => sum + (c.deliveryFee ?? 0.0),
+        );
+        final double estimatedTaxVal = carts.fold<double>(
+          0.0,
+          (sum, c) => sum + (c.estimatedTax ?? 0.0),
+        );
+        final double totalVal = summaryData?.grandTotal ??
+            carts.fold<double>(
+              0.0,
+              (sum, c) => sum + (c.total ?? 0.0),
+            );
+
+        final subtotal = subtotalVal.toStringAsFixed(2);
+        final deliveryFee = deliveryFeeVal;
+        final estimatedTax = estimatedTaxVal.toStringAsFixed(2);
+        final total = totalVal.toStringAsFixed(2);
 
         final subtotalLabel =
             '${AppStrings.subtotal} (${cartController.totalItems} ${AppStrings.items})';
 
-        final isDeliveryFree = (deliveryFee == null || deliveryFee == 0);
+        final isDeliveryFree = (deliveryFee <= 0);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +93,7 @@ class CheckoutSummaryCard extends StatelessWidget {
                 Text(
                   isDeliveryFree
                       ? AppStrings.free
-                      : '${AppStrings.currencySymbol}${deliveryFee.toString()}',
+                      : '${AppStrings.currencySymbol}${deliveryFee.toStringAsFixed(2)}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDeliveryFree
@@ -165,7 +177,17 @@ class CheckoutSummaryCard extends StatelessWidget {
                 isLoading: checkoutController.isProcessingOrder.value,
                 onPressed: () {
                   checkoutController.placeOrder((response) {
-                    cartController.clearCart();
+                    final resolvedIds =
+                        checkoutController.lastResolvedCartIds;
+                    if (resolvedIds.isNotEmpty &&
+                        cartController.carts.length > resolvedIds.length) {
+                      for (final cid in resolvedIds) {
+                        cartController.removeCartGroup(cid);
+                      }
+                      cartController.loadCart();
+                    } else {
+                      cartController.clearCart();
+                    }
                     Get.off(() => const OrderSuccessScreen());
                   });
                 },

@@ -69,14 +69,18 @@ class _CustomButtonState extends State<CustomButton>
   }
 
   void _onTapUp(TapUpDetails details) {
-    if (!widget.isLoading) {
-      _controller.reverse();
-      widget.onPressed();
-    }
+    if (!widget.isLoading) _controller.reverse();
   }
 
   void _onTapCancel() {
     if (!widget.isLoading) _controller.reverse();
+  }
+
+  void _handleTap() {
+    if (!widget.isLoading) {
+      _controller.reverse();
+      widget.onPressed();
+    }
   }
 
   @override
@@ -98,9 +102,11 @@ class _CustomButtonState extends State<CustomButton>
     );
 
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTapDown: _onTapDown,
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,
+      onTap: widget.isLoading ? null : _handleTap,
       child: AnimatedBuilder(
         animation: _elevationAnimation,
         builder: (context, child) {

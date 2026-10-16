@@ -1,9 +1,16 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
 import 'package:vegon_user/core/constants/app_strings.dart';
+import 'package:vegon_user/features/cart/screens/coupons_screen.dart';
+import 'package:vegon_user/features/product/controllers/wishlist_controller.dart';
+import 'package:vegon_user/features/profile/controllers/address_controller.dart';
+import 'package:vegon_user/features/profile/controllers/wallet_controller.dart';
+// import 'package:vegon_user/features/profile/screens/dm_points_screen.dart';
+import 'package:vegon_user/features/profile/screens/favorites_screen.dart';
+// import 'package:vegon_user/features/profile/screens/refer_earn_screen.dart';
+import 'package:vegon_user/features/profile/screens/saved_addresses_screen.dart';
 import 'package:vegon_user/features/profile/screens/wallet_screen.dart';
 
 class ProfileStatsRow extends StatelessWidget {
@@ -11,6 +18,14 @@ class ProfileStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final walletController = Get.isRegistered<WalletController>()
+        ? Get.find<WalletController>()
+        : Get.put(WalletController());
+    final addressController = Get.isRegistered<AddressController>()
+        ? Get.find<AddressController>()
+        : Get.put(AddressController());
+    final wishlistController = WishlistController.to;
+
     return Container(
       width: double.infinity,
       padding: AppSpacing.paddingResponsiveSymmetric(
@@ -33,13 +48,15 @@ class ProfileStatsRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Expanded(
-            child: _buildStatItem(
-              context,
-              icon: Icons.account_balance_wallet_outlined,
-              title: AppStrings.dmWallet,
-              value: '${AppStrings.rupeeSymbol}0.00',
-              actionLabel: AppStrings.viewWalletAction,
-              onTap: () => Get.to(() => const WalletScreen()),
+            child: Obx(
+              () => _buildStatItem(
+                context,
+                icon: Icons.account_balance_wallet_outlined,
+                title: AppStrings.dmWallet,
+                value: walletController.formattedBalanceForStats,
+                actionLabel: AppStrings.viewWalletAction,
+                onTap: () => Get.to(() => const WalletScreen()),
+              ),
             ),
           ),
           _buildDivider(),
@@ -48,20 +65,21 @@ class ProfileStatsRow extends StatelessWidget {
               context,
               icon: Icons.confirmation_number_outlined,
               title: AppStrings.myCoupons,
-              value: '0',
+              value: AppStrings.couponsStatsValue,
               actionLabel: AppStrings.viewCouponsAction,
-              onTap: () {},
+              onTap: () => Get.to(() => const CouponsScreen()),
             ),
           ),
+          /*
           _buildDivider(),
           Expanded(
             child: _buildStatItem(
               context,
               icon: Icons.star_outline,
               title: AppStrings.dmPoints,
-              value: '0',
+              value: AppStrings.pointsStatsValue,
               actionLabel: AppStrings.viewPointsAction,
-              onTap: () {},
+              onTap: () => Get.to(() => const DmPointsScreen()),
             ),
           ),
           _buildDivider(),
@@ -70,9 +88,36 @@ class ProfileStatsRow extends StatelessWidget {
               context,
               icon: Icons.card_giftcard_outlined,
               title: AppStrings.referEarn,
-              value: '${AppStrings.rupeeSymbol}0',
+              value: AppStrings.referStatsValue,
               actionLabel: AppStrings.referNowAction,
-              onTap: () {},
+              onTap: () => Get.to(() => const ReferEarnScreen()),
+            ),
+          ),
+          */
+          _buildDivider(),
+          Expanded(
+            child: Obx(
+              () => _buildStatItem(
+                context,
+                icon: Icons.location_on_outlined,
+                title: AppStrings.addresses,
+                value: addressController.addresses.length.toString(),
+                actionLabel: AppStrings.manageAddressesAction,
+                onTap: () => Get.to(() => SavedAddressesScreen()),
+              ),
+            ),
+          ),
+          _buildDivider(),
+          Expanded(
+            child: Obx(
+              () => _buildStatItem(
+                context,
+                icon: Icons.favorite_border,
+                title: AppStrings.savedItems,
+                value: wishlistController.wishlistProducts.length.toString(),
+                actionLabel: AppStrings.viewSavedItemsAction,
+                onTap: () => Get.to(() => const FavoritesScreen()),
+              ),
             ),
           ),
         ],
@@ -111,15 +156,20 @@ class ProfileStatsRow extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           AppSpacing.h2,
-          Text(
-            value,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.bold,
+          Padding(
+            padding: AppSpacing.paddingHorizontal2_5,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+              ),
             ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
           ),
           AppSpacing.h4,
           Text(

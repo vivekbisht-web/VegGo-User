@@ -46,9 +46,16 @@ class ProfileHeaderCard extends StatelessWidget {
                       ),
                       child: Obx(() {
                         final avatarUrl = controller.avatar;
-                        return CustomImageView(
-                          imageUrl: avatarUrl,
-                          fit: BoxFit.cover,
+                        if (avatarUrl.isNotEmpty) {
+                          return CustomImageView(
+                            imageUrl: avatarUrl,
+                            fit: BoxFit.cover,
+                          );
+                        }
+                        return Icon(
+                          Icons.person,
+                          size: AppSpacing.screenWidth * 0.1,
+                          color: AppColors.textSecondary,
                         );
                       }),
                     ),
@@ -84,45 +91,16 @@ class ProfileHeaderCard extends StatelessWidget {
                     Obx(() {
                       return Text(
                         controller.displayName,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: AppColors.surface,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: AppColors.surface,
+                              fontWeight: FontWeight.w700,
+                            ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       );
                     }),
                     AppSpacing.h4,
-                    Obx(() {
-                      final email = controller.email;
-                      if (email.isEmpty) return const SizedBox.shrink();
-                      return Padding(
-                        padding: AppSpacing.paddingOnly(bottom: AppSpacing.radius2),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.email_outlined,
-                              color: AppColors.surface.withValues(alpha: 0.8),
-                              size: AppSpacing.screenWidth * 0.035,
-                            ),
-                            AppSpacing.w4,
-                            Expanded(
-                              child: Text(
-                                email,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.bodySmall
-                                    ?.copyWith(
-                                      color: AppColors.surface.withValues(
-                                        alpha: 0.8,
-                                      ),
-                                    ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }),
                     Obx(() {
                       final phone = controller.phone;
                       if (phone.isEmpty) return const SizedBox.shrink();
@@ -131,60 +109,95 @@ class ProfileHeaderCard extends StatelessWidget {
                           Icon(
                             Icons.phone_outlined,
                             color: AppColors.surface.withValues(alpha: 0.8),
-                            size: AppSpacing.screenWidth * 0.035,
+                            size: AppSpacing.screenWidth * 0.032,
                           ),
                           AppSpacing.w4,
-                          Text(
-                            phone,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: AppColors.surface.withValues(
-                                    alpha: 0.8,
+                          Expanded(
+                            child: Text(
+                              phone,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: AppColors.surface.withValues(
+                                      alpha: 0.8,
+                                    ),
                                   ),
-                                ),
+                            ),
                           ),
                         ],
                       );
                     }),
                     AppSpacing.h6,
 
-                    // Verified Badge
+                    // Verified Badge + Member Since
                     Obx(() {
                       final isVerified = controller.isVerified;
-                      return Container(
-                        padding: AppSpacing.paddingSymmetric(
-                          horizontal: AppSpacing.screenWidth * 0.02,
-                          vertical: AppSpacing.radius2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.verifiedBackground,
-                          borderRadius: BorderRadius.circular(
-                            AppSpacing.screenWidth * 0.03,
+                      final memberSinceYear = controller.memberSinceYear;
+                      return Wrap(
+                        spacing: AppSpacing.screenWidth * 0.015,
+                        runSpacing: AppSpacing.radius4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Container(
+                            padding: AppSpacing.paddingSymmetric(
+                              horizontal: AppSpacing.radius6,
+                              vertical: AppSpacing.radius2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.verifiedBackground,
+                              borderRadius: BorderRadius.circular(
+                                AppSpacing.radius20,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  isVerified
+                                      ? Icons.check_circle
+                                      : Icons.verified_user_outlined,
+                                  color: AppColors.verifiedText,
+                                  size: AppSpacing.radius12,
+                                ),
+                                AppSpacing.w4,
+                                Text(
+                                  isVerified
+                                      ? AppStrings.verified
+                                      : AppStrings.customerRole,
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color: AppColors.verifiedText,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              isVerified
-                                  ? Icons.check_circle
-                                  : Icons.verified_user_outlined,
-                              color: AppColors.verifiedText,
-                              size: AppSpacing.screenWidth * 0.035,
-                            ),
-                            AppSpacing.w4,
-                            Text(
-                              isVerified
-                                  ? AppStrings.verified
-                                  : AppStrings.customerRole,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: AppColors.verifiedText,
-                                    fontWeight: FontWeight.w600,
+                          if (memberSinceYear != null)
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.calendar_today_outlined,
+                                  color: AppColors.surface.withValues(
+                                    alpha: 0.8,
                                   ),
+                                  size: AppSpacing.radius12,
+                                ),
+                                AppSpacing.w4,
+                                Text(
+                                  '${AppStrings.memberSince} $memberSinceYear',
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color: AppColors.surface.withValues(
+                                          alpha: 0.8,
+                                        ),
+                                      ),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                        ],
                       );
                     }),
                   ],
@@ -192,107 +205,90 @@ class ProfileHeaderCard extends StatelessWidget {
               ),
 
               // Edit Profile Button
-              InkWell(
-                onTap: () => Get.to(() => const EditProfileScreen()),
-                borderRadius: BorderRadius.circular(AppSpacing.radius20),
-                child: Container(
-                  padding: AppSpacing.paddingSymmetric(
-                    horizontal: AppSpacing.radius10,
-                    vertical: AppSpacing.radius6,
+              Material(
+                color: AppColors.surface.withValues(alpha: 0.22),
+                shape: CircleBorder(
+                  side: BorderSide(
+                    color: AppColors.surface.withValues(alpha: 0.6),
+                    width: 1,
                   ),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface.withValues(alpha: 0.22),
-                    borderRadius: BorderRadius.circular(AppSpacing.radius20),
-                    border: Border.all(
-                      color: AppColors.surface.withValues(alpha: 0.6),
-                      width: 1,
+                ),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: () => Get.to(() => const EditProfileScreen()),
+                  child: Padding(
+                    padding: AppSpacing.paddingAll8,
+                    child: Icon(
+                      Icons.edit_outlined,
+                      size: AppSpacing.screenWidth * 0.045,
+                      color: AppColors.surface,
                     ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.edit_outlined,
-                        size: AppSpacing.radius14,
-                        color: AppColors.surface,
-                      ),
-                      AppSpacing.w4,
-                      Text(
-                        AppStrings.editProfile,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: AppColors.surface,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
               ),
             ],
           ),
-          AppSpacing.h16,
 
           // Gold Member Card Banner
-          GestureDetector(
-            onTap: () {
-              // Navigates or displays club details
-            },
-            child: Container(
-              padding: AppSpacing.paddingResponsiveSymmetric(
-                horizontal: 0.03,
-                vertical: 0.025,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.goldBackground,
-                borderRadius: BorderRadius.circular(
-                  AppSpacing.screenWidth * 0.03,
-                ),
-                border: Border.all(color: AppColors.goldBorder),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: AppSpacing.paddingAll4,
-                    decoration: const BoxDecoration(
-                      color: AppColors.goldBorder,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.star,
-                      color: AppColors.goldText,
-                      size: AppSpacing.screenWidth * 0.045,
-                    ),
-                  ),
-                  AppSpacing.w10,
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppStrings.dailyMarketClub,
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: AppColors.textPrimary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        Text(
-                          AppStrings.goldMember,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: AppColors.goldText),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    color: AppColors.textSecondary,
-                    size: AppSpacing.screenWidth * 0.05,
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // AppSpacing.h16,
+          // GestureDetector(
+          //   onTap: () {},
+          //   child: Container(
+          //     padding: AppSpacing.paddingResponsiveSymmetric(
+          //       horizontal: 0.03,
+          //       vertical: 0.025,
+          //     ),
+          //     decoration: BoxDecoration(
+          //       color: AppColors.goldBackground,
+          //       borderRadius: BorderRadius.circular(
+          //         AppSpacing.screenWidth * 0.03,
+          //       ),
+          //       border: Border.all(color: AppColors.goldBorder),
+          //     ),
+          //     child: Row(
+          //       children: [
+          //         Container(
+          //           padding: AppSpacing.paddingAll4,
+          //           decoration: const BoxDecoration(
+          //             color: AppColors.goldBorder,
+          //             shape: BoxShape.circle,
+          //           ),
+          //           child: Icon(
+          //             Icons.star,
+          //             color: AppColors.goldText,
+          //             size: AppSpacing.screenWidth * 0.045,
+          //           ),
+          //         ),
+          //         AppSpacing.w10,
+          //         Expanded(
+          //           child: Column(
+          //             crossAxisAlignment: CrossAxisAlignment.start,
+          //             children: [
+          //               Text(
+          //                 AppStrings.dailyMarketClub,
+          //                 style: Theme.of(context).textTheme.bodyMedium
+          //                     ?.copyWith(
+          //                       color: AppColors.textPrimary,
+          //                       fontWeight: FontWeight.bold,
+          //                     ),
+          //               ),
+          //               Text(
+          //                 AppStrings.goldMember,
+          //                 style: Theme.of(context).textTheme.bodySmall
+          //                     ?.copyWith(color: AppColors.goldText),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //         Icon(
+          //           Icons.chevron_right,
+          //           color: AppColors.textSecondary,
+          //           size: AppSpacing.screenWidth * 0.05,
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

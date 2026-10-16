@@ -8,8 +8,10 @@ class AppRoutes {
   static const String login = '/login';
   static const String register = '/register';
   static const String otpVerification = '/otp-verification';
+  static const String basicInfo = '/basic-info';
 
   static const String dashboard = '/dashboard';
+  static const String chat = '/chat';
   static const String home = '/home';
   static const String category = '/category';
 
@@ -39,7 +41,11 @@ class AppRoutes {
   static const String notifications = '/notifications';
   static const String notificationSettings = '/notification-settings';
   static const String wallet = '/wallet';
+  static const String offers = '/offers';
+  static const String dmPoints = '/dm-points';
+  static const String referEarn = '/refer-earn';
   static const String helpCenter = '/help-center';
   static const String contactSupport = '/contact-support';
   static const String termsPrivacy = '/terms-privacy';
+  static const String notFound = '/not-found';
 }

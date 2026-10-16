@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
@@ -12,12 +11,17 @@ import 'package:vegon_user/features/product/screens/product_details_screen.dart'
 
 class HomeProductSection extends StatelessWidget {
   final List<dynamic> products;
+  final int? maxItems;
 
-  const HomeProductSection({super.key, required this.products});
+  const HomeProductSection({super.key, required this.products, this.maxItems});
 
   @override
   Widget build(BuildContext context) {
-    if (products.isEmpty) return const SizedBox.shrink();
+    final displayList = maxItems != null
+        ? products.take(maxItems!).toList()
+        : products;
+
+    if (displayList.isEmpty) return const SizedBox.shrink();
 
     final cardRadius = BorderRadius.circular(AppSpacing.radius16);
     final cartController = Get.isRegistered<CartController>()
@@ -27,8 +31,9 @@ class HomeProductSection extends StatelessWidget {
 
     return GridView.builder(
       shrinkWrap: true,
+      padding: AppSpacing.paddingZero,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: products.length,
+      itemCount: displayList.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: AppSpacing.radius12,
@@ -36,12 +41,13 @@ class HomeProductSection extends StatelessWidget {
         childAspectRatio: 0.72,
       ),
       itemBuilder: (context, index) {
-        final raw = products[index];
+        final raw = displayList[index];
         final Map<String, dynamic> productMap = raw is CategoryProductItem
             ? raw.toMap()
             : (raw is Map<String, dynamic> ? raw : {});
 
-        final String id = productMap['id']?.toString() ??
+        final String id =
+            productMap['id']?.toString() ??
             productMap['_id']?.toString() ??
             productMap['productId']?.toString() ??
             '';
@@ -63,7 +69,7 @@ class HomeProductSection extends StatelessWidget {
             (productMap['image'] ?? productMap['imageUrl']) as String? ?? '';
 
         final textTheme = Theme.of(context).textTheme;
-
+        //  print("Product Data:$productMap");
         return Material(
           color: AppColors.surface,
           borderRadius: cardRadius,
@@ -176,8 +182,9 @@ class HomeProductSection extends StatelessWidget {
                                   shape: const CircleBorder(),
                                   child: InkWell(
                                     customBorder: const CircleBorder(),
-                                    onTap: () =>
-                                        cartController.addToCart(productMap),
+                                    onTap: () {
+                                      cartController.addToCart(productMap);
+                                    },
                                     child: const SizedBox(
                                       width: AppSpacing.addCircleButtonSize,
                                       height: AppSpacing.addCircleButtonSize,
@@ -236,14 +243,20 @@ class HomeProductSection extends StatelessWidget {
                           ),
                           customBorder: const CircleBorder(),
                           child: Container(
-                            width: 26,
-                            height: 26,
+                            width: 28,
+                            height: 28,
                             decoration: BoxDecoration(
-                              color: AppColors.surface.withValues(alpha: 0.9),
+                              color: AppColors.surface,
                               shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.chipBorder,
+                                width: 0.8,
+                              ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.textPrimary.withValues(alpha: 0.08),
+                                  color: AppColors.overlayLight.withValues(
+                                    alpha: 0.12,
+                                  ),
                                   blurRadius: 4,
                                   offset: const Offset(0, 1),
                                 ),
@@ -255,8 +268,8 @@ class HomeProductSection extends StatelessWidget {
                                   : Icons.favorite_border_rounded,
                               color: isFav
                                   ? AppColors.error
-                                  : AppColors.borderLight,
-                              size: 15,
+                                  : AppColors.textSecondary,
+                              size: 17,
                             ),
                           ),
                         );

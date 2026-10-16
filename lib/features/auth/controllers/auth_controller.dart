@@ -1,14 +1,13 @@
-//
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vegon_user/core/constants/api_endpoints.dart';
 import 'package:vegon_user/core/network/api_client.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/local_storage/shared_prefs_helper.dart';
+import '../../../core/services/push_notification_service.dart';
 import '../../../core/widgets/app_dialogs.dart';
 import '../../../routes/app_routes.dart';
 import '../../cart/controllers/cart_controller.dart';
@@ -18,6 +17,7 @@ import '../services/auth_service.dart';
 
 class AuthController extends GetxController {
   final ApiClient _apiClient = ApiClient(baseUrl: ApiEndpoints.baseUrl);
+  final AuthService _authService = AuthService();
 
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final RxBool isLoading = false.obs;
@@ -25,6 +25,7 @@ class AuthController extends GetxController {
   Timer? _resendTimer;
   String? _verificationId;
   int? _resendToken;
+  void Function(PhoneAuthCredential credential)? onAutoVerifiedCallback;
 
   @override
   void onClose() {
@@ -204,6 +205,7 @@ class AuthController extends GetxController {
   Future<void> _clearSession() async {
     _cancelTimer();
     isLoading.value = false;
+    await PushNotificationService.instance.unregisterDeviceToken();
     await SharedPrefsHelper.clearAll();
 
     if (Get.isRegistered<CartController>()) {
@@ -223,9 +225,6 @@ class AuthController extends GetxController {
 
   Future<String?> getIdToken({bool forceRefresh = false}) async {
     final token = await _firebaseAuth.currentUser?.getIdToken(forceRefresh);
-    if (token != null) {
-      debugPrint('🔥 [FirebaseAuthService.getIdToken]: $token');
-    }
     return token;
   }
 
@@ -260,7 +259,11 @@ class AuthController extends GetxController {
         verificationCompleted: (PhoneAuthCredential credential) async {
           if (isClosed) return;
 
-          onAutoVerified?.call(credential);
+          if (onAutoVerifiedCallback != null) {
+            onAutoVerifiedCallback!(credential);
+          } else {
+            onAutoVerified?.call(credential);
+          }
         },
 
         verificationFailed: (FirebaseAuthException e) {
@@ -316,7 +319,18 @@ class AuthController extends GetxController {
         },
       );
 
-      return await completer.future;
+      return await completer.future.timeout(
+        const Duration(seconds: 45),
+        onTimeout: () {
+          if (!isClosed) {
+            isLoading.value = false;
+            if (showSnackbar) {
+              _showSnackbar(AppStrings.otpRequestFailed, isError: true);
+            }
+          }
+          return false;
+        },
+      );
     } catch (_) {
       if (!isClosed) {
         isLoading.value = false;
@@ -339,29 +353,35 @@ class AuthController extends GetxController {
 
     if (_verificationId == null || _verificationId!.isEmpty) {
       if (showSnackbar) {
-        _showSnackbar(
-          'Verification session expired. Please request OTP again.',
-          isError: true,
-        );
+        _showSnackbar(AppStrings.otpSessionExpired, isError: true);
       }
       return false;
     }
 
     if (otp.trim().length != 6) {
       if (showSnackbar) {
-        _showSnackbar('Please enter a valid 6-digit OTP.', isError: true);
+        _showSnackbar(AppStrings.invalidOtpError, isError: true);
       }
       return false;
     }
 
+    final credential = PhoneAuthProvider.credential(
+      verificationId: _verificationId!,
+      smsCode: otp.trim(),
+    );
+
+    return verifyPhoneAuthCredential(credential, showSnackbar: showSnackbar);
+  }
+
+  Future<bool> verifyPhoneAuthCredential(
+    PhoneAuthCredential credential, {
+    bool showSnackbar = true,
+  }) async {
+    if (isLoading.value) return false;
+
     isLoading.value = true;
 
     try {
-      final credential = PhoneAuthProvider.credential(
-        verificationId: _verificationId!,
-        smsCode: otp.trim(),
-      );
-
       final userCredential = await _firebaseAuth.signInWithCredential(
         credential,
       );
@@ -369,28 +389,27 @@ class AuthController extends GetxController {
       isLoading.value = false;
 
       if (userCredential.user != null) {
-        if (userCredential.user != null) {
-          final idToken = await userCredential.user!.getIdToken();
-          if (idToken != null && idToken.isNotEmpty) {
-            final res = await _apiClient.post(
-              "/auth/otp/verify/firebase",
-
-              data: {'idToken': idToken, "role": "VENDOR"},
-            );
-            if (res.statusCode == 200 || res.statusCode == 201) {
-              SharedPrefsHelper.saveAccessToken(
-                res.data['data']['accessToken'] ?? "",
-              );
-              SharedPrefsHelper.saveRefreshToken(
-                res.data['data']['refreshToken'] ?? "",
-              );
-              _cancelTimer();
-              Get.offAllNamed(AppRoutes.dashboard);
-              return true;
-            } else {
-              return false;
+        final idToken = await userCredential.user!.getIdToken();
+        if (idToken != null && idToken.isNotEmpty) {
+          final res = await _apiClient.post(
+            "/auth/otp/verify/firebase",
+            data: {'idToken': idToken, "role": AppStrings.customerRole},
+          );
+          if (res.statusCode == 200 || res.statusCode == 201) {
+            final accessToken = res.data['data']?['accessToken'] ?? "";
+            final refreshToken = res.data['data']?['refreshToken'] ?? "";
+            if (accessToken.isNotEmpty) {
+              await SharedPrefsHelper.saveAccessToken(accessToken);
             }
-            // Authenticate with backend
+            if (refreshToken.isNotEmpty) {
+              await SharedPrefsHelper.saveRefreshToken(refreshToken);
+            }
+            PushNotificationService.instance.registerDeviceToken();
+            _cancelTimer();
+            await checkOnboardingStatusAndNavigate();
+            return true;
+          } else {
+            return false;
           }
         }
       }
@@ -404,24 +423,23 @@ class AuthController extends GetxController {
 
         switch (e.code) {
           case 'invalid-verification-code':
-            message = 'Invalid OTP. Please check and try again.';
+            message = AppStrings.invalidOtpError;
             break;
 
           case 'session-expired':
-            message = 'OTP has expired. Please request a new OTP.';
+            message = AppStrings.otpSessionExpired;
             break;
 
           case 'invalid-verification-id':
-            message =
-                'Verification session is invalid. Please request OTP again.';
+            message = AppStrings.otpSessionExpired;
             break;
 
           case 'credential-already-in-use':
-            message = 'This phone number is already linked to another account.';
+            message = AppStrings.otpCredentialInUse;
             break;
 
           default:
-            message = e.message ?? 'OTP verification failed.';
+            message = e.message ?? AppStrings.otpVerificationFailed;
         }
 
         _showSnackbar(message, isError: true);
@@ -432,13 +450,55 @@ class AuthController extends GetxController {
       isLoading.value = false;
 
       if (showSnackbar) {
-        _showSnackbar(
-          'Something went wrong while verifying OTP.',
-          isError: true,
-        );
+        _showSnackbar(AppStrings.otpGenericError, isError: true);
       }
 
       return false;
+    }
+  }
+
+  Future<void> checkOnboardingStatusAndNavigate() async {
+    try {
+      final statusResponse = await _authService.getOnboardingStatus();
+      if (statusResponse.success && statusResponse.data != null) {
+        final statusData = statusResponse.data!;
+        if (statusData.hasBasicInfo ||
+            statusData.nextAction == AppStrings.onboardingActionHome) {
+          Get.offAllNamed(AppRoutes.dashboard);
+        } else {
+          Get.offAllNamed(AppRoutes.basicInfo);
+        }
+      } else {
+        Get.offAllNamed(AppRoutes.dashboard);
+      }
+    } catch (_) {
+      Get.offAllNamed(AppRoutes.dashboard);
+    }
+  }
+
+  Future<bool> submitBasicInfo(String fullName) async {
+    final cleanName = fullName.trim();
+    if (cleanName.isEmpty) {
+      _showSnackbar(AppStrings.enterFullNameError, isError: true);
+      return false;
+    }
+
+    isLoading.value = true;
+    try {
+      final success = await _authService.submitBasicInfo(cleanName);
+      if (success) {
+        _showSnackbar(AppStrings.basicInfoUpdatedSuccess, isError: false);
+        Get.offAllNamed(AppRoutes.dashboard);
+        return true;
+      } else {
+        _showSnackbar(AppStrings.basicInfoUpdateFailed, isError: true);
+        return false;
+      }
+    } catch (_) {
+      _showSnackbar(AppStrings.basicInfoUpdateFailed, isError: true);
+      return false;
+    } finally {
+      isLoading.value = false;
     }
   }
 

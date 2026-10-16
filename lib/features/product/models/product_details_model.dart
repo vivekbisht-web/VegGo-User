@@ -86,9 +86,11 @@ class ProductDetailsData {
   final String shopName;
   final String category;
   final String imageUrl;
+  final List<String> imageUrls;
   final String unit;
   final int discountPercent;
   final bool bestSeller;
+  final double rating;
 
   ProductDetailsData({
     required this.id,
@@ -100,9 +102,11 @@ class ProductDetailsData {
     required this.shopName,
     required this.category,
     required this.imageUrl,
+    this.imageUrls = const [],
     required this.unit,
     required this.discountPercent,
     required this.bestSeller,
+    this.rating = 4.5,
   });
 
   static double _parseDouble(dynamic value) {
@@ -125,6 +129,21 @@ class ProductDetailsData {
     return null;
   }
 
+  static String cleanUrl(dynamic raw) {
+    if (raw == null) return '';
+    final str = raw.toString().trim();
+    if (str.isEmpty) return '';
+    final mdMatch = RegExp(r'\[.*?\]\((https?://[^\)]+)\)').firstMatch(str);
+    if (mdMatch != null) {
+      return mdMatch.group(1)?.trim() ?? '';
+    }
+    final urlMatch = RegExp(r'''(https?://[^\s)\]"']+)''').firstMatch(str);
+    if (urlMatch != null) {
+      return urlMatch.group(1)?.trim() ?? '';
+    }
+    return str.replaceAll(RegExp(r'[\[\]\(\)]'), '').trim();
+  }
+
   static int _parseInt(dynamic value) {
     if (value == null) return 0;
     if (value is num) return value.toInt();
@@ -136,13 +155,15 @@ class ProductDetailsData {
   }
 
   factory ProductDetailsData.fromJson(Map<String, dynamic> rawJson) {
-    final Map<String, dynamic> json = (rawJson['product'] is Map<String, dynamic>)
+    final Map<String, dynamic> json =
+        (rawJson['product'] is Map<String, dynamic>)
         ? rawJson['product'] as Map<String, dynamic>
         : ((rawJson['catalogProduct'] is Map<String, dynamic>)
-            ? rawJson['catalogProduct'] as Map<String, dynamic>
-            : rawJson);
+              ? rawJson['catalogProduct'] as Map<String, dynamic>
+              : rawJson);
 
-    final String resolvedId = rawJson['productId']?.toString() ??
+    final String resolvedId =
+        rawJson['productId']?.toString() ??
         rawJson['catalogProductId']?.toString() ??
         json['id']?.toString() ??
         json['_id']?.toString() ??
@@ -153,25 +174,76 @@ class ProductDetailsData {
       id: resolvedId,
       name: json['name']?.toString() ?? rawJson['name']?.toString() ?? '',
       price: _parseDouble(json['price'] ?? rawJson['price']),
-      originalPrice: _parseNullableDouble(json['originalPrice'] ?? rawJson['originalPrice']),
-      description: json['description']?.toString() ?? rawJson['description']?.toString() ?? '',
-      shopId: json['shopId']?.toString() ?? rawJson['shopId']?.toString() ?? '',
-      shopName: json['shopName']?.toString() ?? rawJson['shopName']?.toString() ?? '',
-      category: json['category']?.toString() ?? rawJson['category']?.toString() ?? '',
-      imageUrl: json['imageUrl']?.toString() ??
-          json['image']?.toString() ??
-          json['iconUrl']?.toString() ??
-          rawJson['imageUrl']?.toString() ??
-          rawJson['image']?.toString() ??
-          '',
-      unit: json['unit']?.toString() ?? rawJson['unit']?.toString() ?? AppStrings.kg1,
-      discountPercent: _parseInt(
-        json['discountPercent'] ?? json['discount'] ?? rawJson['discountPercent'] ?? rawJson['discount'],
+      originalPrice: _parseNullableDouble(
+        json['originalPrice'] ?? rawJson['originalPrice'],
       ),
-      bestSeller: json['bestSeller'] as bool? ??
+      description:
+          json['description']?.toString() ??
+          rawJson['description']?.toString() ??
+          '',
+      shopId: json['shopId']?.toString() ?? rawJson['shopId']?.toString() ?? '',
+      shopName:
+          json['shopName']?.toString() ?? rawJson['shopName']?.toString() ?? '',
+      category:
+          json['category']?.toString() ?? rawJson['category']?.toString() ?? '',
+      imageUrl: () {
+        final single = cleanUrl(
+          json['imageUrl'] ??
+              json['image'] ??
+              json['iconUrl'] ??
+              rawJson['imageUrl'] ??
+              rawJson['image'],
+        );
+        if (single.isNotEmpty) return single;
+        final rawUrls = json['imageUrls'] ?? rawJson['imageUrls'];
+        if (rawUrls is List && rawUrls.isNotEmpty) {
+          final first = cleanUrl(rawUrls.first);
+          if (first.isNotEmpty) return first;
+        }
+        return '';
+      }(),
+      imageUrls: () {
+        final rawUrls = json['imageUrls'] ?? rawJson['imageUrls'];
+        final List<String> list = [];
+        if (rawUrls is List) {
+          for (final item in rawUrls) {
+            final cleaned = cleanUrl(item);
+            if (cleaned.isNotEmpty && !list.contains(cleaned)) {
+              list.add(cleaned);
+            }
+          }
+        }
+        final single = cleanUrl(
+          json['imageUrl'] ??
+              json['image'] ??
+              json['iconUrl'] ??
+              rawJson['imageUrl'] ??
+              rawJson['image'],
+        );
+        if (single.isNotEmpty && !list.contains(single)) {
+          list.insert(0, single);
+        }
+        return list;
+      }(),
+      unit:
+          json['unit']?.toString() ??
+          rawJson['unit']?.toString() ??
+          AppStrings.kg1,
+      discountPercent: _parseInt(
+        json['discountPercent'] ??
+            json['discount'] ??
+            rawJson['discountPercent'] ??
+            rawJson['discount'],
+      ),
+      bestSeller:
+          json['bestSeller'] as bool? ??
           json['isBestSeller'] as bool? ??
           rawJson['bestSeller'] as bool? ??
           false,
+      rating: () {
+        final parsed = _parseDouble(json['rating'] ?? rawJson['rating']);
+        return parsed > 0.0 ? parsed : 4.5;
+      }(),
     );
   }
 
@@ -187,9 +259,11 @@ class ProductDetailsData {
       'category': category,
       'imageUrl': imageUrl,
       'image': imageUrl,
+      'imageUrls': imageUrls,
       'unit': unit,
       'discountPercent': discountPercent,
       'bestSeller': bestSeller,
+      'rating': rating,
     };
   }
 
@@ -205,11 +279,13 @@ class ProductDetailsData {
       'category': category,
       'image': imageUrl,
       'imageUrl': imageUrl,
+      'imageUrls': imageUrls,
       'unit': unit,
       'discountPercent': discountPercent,
       'discount': discountPercent > 0 ? '$discountPercent% OFF' : null,
       'bestSeller': bestSeller,
       'isBestSeller': bestSeller,
+      'rating': rating,
     };
   }
 }

@@ -7,6 +7,7 @@ class AppStrings {
 
   static const String yourCart = 'Your Cart';
   static const String items = 'Items';
+  static const String item = 'Item';
   static const String cartEmpty = 'Your cart is empty';
   static const String cartEmptyDesc =
       'Explore our market selection and add fresh organic items to your cart.';
@@ -24,6 +25,7 @@ class AppStrings {
       'Get FREE delivery on orders over ${currencySymbol}299!\nStandard delivery charge is ${currencySymbol}30.';
   static const String gotIt = 'Got it';
   static const String estimatedTaxes = 'Estimated Taxes';
+  static const String platformCharge = 'Platform Charge';
   static const String promoPrefix = 'Promo: ';
   static const String promoRemove = '(Remove)';
   static const String promoCode = 'Promo code';
@@ -39,7 +41,8 @@ class AppStrings {
   static const String invalidQuantity = 'Invalid item quantity.';
   static const String invalidPrice = 'Invalid item price.';
   static const String unableToAddProduct = 'Unable to add product to cart.';
-  static const String failedToUpdateQuantity = 'Failed to update item quantity.';
+  static const String failedToUpdateQuantity =
+      'Failed to update item quantity.';
   static const String failedToRemoveItem = 'Failed to remove item.';
   static const String pleaseEnterPromo = 'Please enter a promo code';
   static const String invalidCouponCode = 'Invalid coupon code';
@@ -172,7 +175,7 @@ class AppStrings {
   static const String category = 'Category';
   static const String continueBtn = 'Continue';
   static const String submit = 'Submit';
-  static const String cancel = 'Cancel';
+  //static const String cancel = 'Cancel';
   static const String viewAll = 'View All';
   static const String showLess = 'Show Less';
   static const String addedToCart = 'Added to Cart';
@@ -280,6 +283,13 @@ class AppStrings {
   static const String enterValidEmail = 'Please enter a valid email';
   static const String enterValidPhone = 'Please enter a valid phone number';
   static const String enterName = 'Please enter your name';
+  static const String invalidResponseFormat = 'Invalid response format';
+  static const String failedToFetchProfile = 'Failed to fetch profile';
+  static const String chooseImageSource = 'Choose Image Source';
+  static const String camera = 'Camera';
+  static const String gallery = 'Gallery';
+  static const String cancel = 'Cancel';
+  static const String memberSince = 'Member since';
 
   static const String notificationPreferences = 'Notification Preferences';
   static const String pushNotifications = 'Push Notifications';
@@ -322,6 +332,7 @@ class AppStrings {
   static const String allOrders = 'All Orders';
   static const String inProgress = 'In Progress';
   static const String rateReorder = 'Rate / Reorder';
+  static const String rateOrder = 'Rate Order';
   static const String details = 'Details';
   static const String description = 'Description';
   static const String trackOrder = 'Track Order';
@@ -379,6 +390,15 @@ class AppStrings {
   static const String deleteAddressConfirmation =
       'Are you sure you want to delete this address?';
   static const String noAddressesSaved = 'You have no saved addresses yet.';
+  static const String addAddressTitle = 'Add Delivery Address';
+  static const String addAddressSubtitle =
+      'Please add a delivery address to continue shopping and place orders.';
+  static const String addAddressButton = 'Add Address';
+  static const String addressRequiredTitle = 'Delivery Address Required';
+  static const String addressRequiredSubtitle =
+      'You need a saved delivery address to use this feature.';
+  static const String taxesAndFeesAtCheckout =
+      'Taxes & delivery fees will be calculated at checkout';
   static const String fetchingAddresses = 'Fetching addresses...';
 
   static const String fetchingLocation = 'Fetching live location...';
@@ -399,7 +419,7 @@ class AppStrings {
   static const String emptyFieldError = 'This field cannot be empty';
   static const String mapTileUrl =
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  static const String mapTileUserAgent = 'com.example.vegon_user';
+  static const String mapTileUserAgent = 'com.veggofresh.customer';
   static const String liveOrderTracking = 'Live Order Tracking';
   static const String deliveryPartner = 'Delivery Partner';
   static const String deliveryLocation = 'Delivery Location';
@@ -475,6 +495,13 @@ class AppStrings {
   static const String verifyCode = 'Verify & Proceed';
   static const String didntReceiveCode = "Didn't receive code? ";
   static const String resendCode = 'Resend';
+  static const String pressBackToChangeNumber =
+      'Press back again to change mobile number';
+  static const String changePhoneNumber = 'Change phone number';
+  static const String changeNumber = 'Change number';
+  static const String pasteCode = 'Paste Code';
+  static const String codePasted = 'Code pasted';
+  static const String autoFillingOtp = 'Auto-filling OTP...';
   static const String resetPassword = 'Reset Password';
   static const String createNewPassword =
       'Create a new, strong password for your account.';
@@ -487,6 +514,9 @@ class AppStrings {
   static const String invoiceDetails = 'Invoice Details';
   static const String invoiceUnavailable = 'Invoice is currently unavailable';
   static const String invoiceNumber = 'Invoice #';
+  static const String generatingInvoice = 'Generating your invoice PDF...';
+  static const String invoiceDownloadFailed =
+      'Failed to generate invoice. Please try again.';
   static const String billedTo = 'Billed To';
   static const String date = 'Date';
   static const String close = 'Close';
@@ -549,6 +579,8 @@ class AppStrings {
   static const String off20Percent = '20% OFF';
   static const String off16Percent = '16% OFF';
   static const String off15Percent = '15% OFF';
+  static const String percentOffSuffix = '% OFF';
+  static const String deal = 'DEAL';
   static const String tomato = 'Tomato';
   static const String potato = 'Potato';
   static const String banana = 'Banana';
@@ -610,6 +642,8 @@ class AppStrings {
   static const String viewPointsAction = 'View Points →';
   static const String referEarn = 'Refer & Earn';
   static const String referNowAction = 'Refer Now →';
+  static const String manageAddressesAction = 'Manage →';
+  static const String viewSavedItemsAction = 'View All →';
   static const String viewAllOrders = 'View All Orders';
   static const String viewAllOrdersAction = 'View All Orders >';
   static const String toPay = 'To Pay';
@@ -628,7 +662,7 @@ class AppStrings {
   static const String savedItemsDesc = 'View your favorite products';
   static const String paymentMethods = 'Payment Methods';
   static const String paymentMethodsDesc = 'Cards, UPI & other payment options';
-  static const String walletTransactions = 'Daily Market Wallet Transactions';
+  static const String walletTransactions = 'Transactions History';
   static const String walletTransactionsDesc =
       'View wallet history and transactions';
   static const String notificationsDesc =
@@ -679,6 +713,7 @@ class AppStrings {
   static const String allProducts = 'All Products';
 
   static const String categories = 'Categories';
+  static const String noProductsInCategory = 'No products in this category';
   static const String failedToLoadCategories = 'Failed to load categories';
   static const String orders = 'Orders';
   static const String freshFastTrustedTagline = 'FRESH. FAST. TRUSTED.';
@@ -719,6 +754,39 @@ class AppStrings {
       '🍃 Eat Fresh, Live Healthy 🍃';
   static const String aiBotServiceDesc =
       'VegGo Smart Assistant is at your service!';
+  static const String chatTitle = 'VegGo Assistant';
+  static const String chatInputHint = 'Ask about orders, deals, or products';
+  static const String chatSend = 'Send';
+  static const String chatLoading = 'Thinking...';
+  static const String chatRatingTitle = 'How was your chat?';
+  static const String chatRatingSkip = 'Skip';
+  static const String chatRatingSubmit = 'Submit rating';
+  static const String chatRatingThanks = 'Thanks for your feedback';
+  static const String chatSomethingWrong = 'Something went wrong';
+  static const String chatRateLimit =
+      'You’re sending messages too fast. Please wait a moment and try again.';
+  static const String chatRetry = 'Retry';
+  static const String chatStartNew = 'Start new chat';
+  static const String chatPickRating = 'Pick a star rating first';
+  static const String chatTalkingAbout = 'Talking about';
+  static const String chatChangeOrder = 'Change order';
+  static const String chatPlacedAt = 'Placed';
+  static const String chatHelpEntry = 'Chat with us';
+  static const String chatHelpDescription =
+      'Get help with your orders, cart, deals, and products.';
+  static const String chatOrderHelp = 'Need help with this order?';
+  static const String chatTagQuickAnswers = 'Quick answers';
+  static const String chatTagEasyToUse = 'Easy to use';
+  static const String chatTagHelpful = 'Helpful';
+  static const String chatTagDidNotUnderstand = 'Didn’t understand me';
+  static const String chatTagWrongAnswer = 'Wrong answer';
+  static const String chatTagTooSlow = 'Too slow';
+  static String chatStarLabel(int value) =>
+      '$value ${value == 1 ? 'star' : 'stars'}';
+  static String chatWaitSeconds(int value) => 'Please wait $value seconds';
+  static const String chatOrderStatus = 'Status';
+  static const String chatOrderItems = 'Items';
+  static const String chatOrderTotal = 'Total';
   static const String categoryFilterDesc =
       'Showing all available fresh produce in this category.';
   static const String underRupees30 = 'Under ${currencySymbol}30';
@@ -835,24 +903,21 @@ class AppStrings {
       'An error occurred during payment. Please try again.';
   static const String razorpayFailedToOpen =
       'Failed to open payment gateway. Please try again.';
+  static const String externalWalletRedirect =
+      'Redirected to external wallet. Your order will be confirmed once payment is received.';
   static const String noDeliverySlots = 'No delivery slots available.';
   static const String defaultText = 'Default';
   static const String cartEmptyWarning =
       'Your cart is empty. Please add items to proceed.';
-  static const String pleaseSelectAddress =
-      'Please select a delivery address.';
-  static const String paymentMethodSaved =
-      'Payment method saved successfully.';
+  static const String pleaseSelectAddress = 'Please select a delivery address.';
+  static const String paymentMethodSaved = 'Payment method saved successfully.';
   static const String invalidCardNumber =
       'Please enter a valid 16-digit card number.';
   static const String invalidExpiry =
       'Please enter a valid expiry date (MM/YY).';
-  static const String invalidCvv =
-      'Please enter a valid 3 or 4 digit CVV.';
-  static const String invalidCardHolder =
-      'Please enter the cardholder name.';
-  static const String verifyingPayment =
-      'Verifying payment with bank...';
+  static const String invalidCvv = 'Please enter a valid 3 or 4 digit CVV.';
+  static const String invalidCardHolder = 'Please enter the cardholder name.';
+  static const String verifyingPayment = 'Verifying payment with bank...';
   static const String paymentVerificationFailed =
       'Payment verification failed. Please contact support if amount was debited.';
   static const String apiRazorpayPaymentId = 'razorpayPaymentId';
@@ -867,4 +932,192 @@ class AppStrings {
   static const String useLiveLocation = 'Use Live Location';
   static const String today = 'TODAY';
   static const String tomorrow = 'TOMORROW';
+  static const String deliverNow = 'Deliver Now';
+  static const String deliverNowSubtitle = 'Instant delivery (20–40 min)';
+  static const String scheduleForLater = 'Schedule for Later';
+  static const String scheduleForLaterSubtitle = 'Choose a date & time slot';
+  static const String basicInfoTitle = 'Complete Your Profile';
+  static const String basicInfoSubtitle =
+      'Please enter your full name to get started.';
+  static const String enterFullNameError = 'Please enter your full name';
+  static const String continueText = 'Continue';
+  static const String basicInfoUpdatedSuccess =
+      'Profile details saved successfully';
+  static const String basicInfoUpdateFailed = 'Failed to save profile details';
+  static const String onboardingActionHome = 'HOME';
+  static const String onboardingActionBasicInfo = 'BASIC_INFO';
+  static const String otpSessionExpired =
+      'Verification session expired. Please request OTP again.';
+  static const String otpCredentialInUse =
+      'This phone number is already linked to another account.';
+  static const String otpGenericError =
+      'Something went wrong while verifying OTP.';
+
+  // Notifications (extended)
+  static const String noNewNotificationsDesc =
+      'You\'ll see your order updates and alerts here.';
+  static const String markAllRead = 'Mark all read';
+  static const String failedToLoadNotifications =
+      'Failed to load notifications';
+  static const String failedToMarkRead = 'Failed to mark notification as read';
+  static const String allMarkedRead = 'All notifications marked as read';
+  static const String tryAgain = 'Try Again';
+  static const String justNow = 'Just now';
+  static const String minuteAgo = 'm ago';
+  static const String hourAgo = 'h ago';
+  static const String dayAgo = 'd ago';
+
+  // Home Products Pagination
+  static const String loadMoreProducts = 'Load More Products';
+  static const String exploreAllProducts = 'Explore All Products';
+  static const String allProductsLoaded = 'All Products Loaded';
+
+  // DM Points
+  static const String availableDmPoints = 'Available DM Points';
+  static const String pointsValueSubtitle =
+      '100 Points = ${currencySymbol}10 Savings';
+  static const String redeemPoints = 'Redeem Points';
+  static const String pointsHistory = 'Points History';
+  static const String howToEarnPoints = 'How to Earn Points';
+  static const String earnPointsShopTitle = 'Shop Fresh & Earn';
+  static const String earnPointsShopDesc =
+      'Earn 1 DM Point for every ${currencySymbol}10 spent on groceries';
+  static const String earnPointsReviewTitle = 'Rate & Review';
+  static const String earnPointsReviewDesc =
+      'Earn 50 bonus points on writing a verified review';
+  static const String earnPointsReferTitle = 'Invite Friends';
+  static const String earnPointsReferDesc =
+      'Earn 100 points when your friend places their first order';
+  static const String pts = 'pts';
+  static const String pointsRedeemSuccess =
+      'Points will be applied automatically at checkout!';
+  static const String orderReward = 'Order Reward #DM-2940110';
+  static const String welcomeBonus = 'Welcome Bonus Points';
+  static const String redeemedOnOrder = 'Redeemed on Order #DM-2918842';
+  static const String bonusCampaign = 'Fresh Harvest Bonus';
+  static const String pointsDate1 = 'Jul 24, 2026';
+  static const String pointsDate2 = 'Jul 20, 2026';
+  static const String pointsDate3 = 'Jul 15, 2026';
+  static const String pointsDate4 = 'Jul 10, 2026';
+  static const String pointsPlus25 = '+25 pts';
+  static const String pointsPlus100 = '+100 pts';
+  static const String pointsMinus50 = '-50 pts';
+  static const String pointsPlus175 = '+175 pts';
+  static const String totalPointsBalance = '250';
+
+  // Refer & Earn
+  static const String referAndEarnTitle = 'Invite Friends & Earn';
+  static const String referAndEarnSubtitle =
+      'Share your referral code with friends. When they place their first order, you get ${currencySymbol}50 in your wallet and they get ${currencySymbol}50 off!';
+  static const String yourReferralCode = 'Your Referral Code';
+  static const String defaultReferralCode = 'VEGGO50';
+  static const String copyCode = 'Copy';
+  static const String codeCopied = 'Referral code copied to clipboard!';
+  static const String shareReferralLink = 'Share Invite Link';
+  static const String howItWorks = 'How It Works';
+  static const String referStep1Title = 'Share Your Code';
+  static const String referStep1Desc =
+      'Send your invite code or link to your friends and family.';
+  static const String referStep2Title = 'Friend Places First Order';
+  static const String referStep2Desc =
+      'Your friend signs up and shops fresh groceries on VegGo.';
+  static const String referStep3Title = 'Both Get Rewarded';
+  static const String referStep3Desc =
+      'You receive ${currencySymbol}50 in your DM Wallet and your friend gets ${currencySymbol}50 off.';
+  static const String yourReferralStats = 'Your Referral Stats';
+  static const String successfulInvites = 'Friends Invited';
+  static const String totalRewardsEarned = 'Total Earned';
+  static const String invitesCount = '5';
+  static const String rewardsEarnedValue = '${currencySymbol}250.00';
+  static const String referralShareText =
+      'Order fresh groceries on VegGo! Use my code VEGGO50 for ${currencySymbol}50 off on your first order. Download VegGo now!';
+  static const String inviteSharedSuccess = 'Invite link copied to clipboard!';
+  static const String step1Number = '1';
+  static const String step2Number = '2';
+  static const String step3Number = '3';
+
+  // Stats Row Values
+  static const String walletStatsValue = '${currencySymbol}450.00';
+  static const String couponsStatsValue = '3';
+  static const String pointsStatsValue = '250';
+  static const String referStatsValue = '${currencySymbol}50';
+
+  // Wallet
+  static const String filterAll = 'ALL';
+  static const String filterCredit = 'CREDIT';
+  static const String filterDebit = 'DEBIT';
+  static const String allFilter = 'All';
+  static const String creditFilter = 'Credit';
+  static const String debitFilter = 'Debit';
+  static const String noTransactionsFound = 'No transactions found';
+  static const String noTransactionsDesc =
+      'Your wallet transaction history will appear here';
+  static const String failedToLoadWallet = 'Failed to load wallet data';
+  static const String failedToLoadTransactions = 'Failed to load transactions';
+  static const String plusSymbol = '+';
+  static const String minusSymbol = '-';
+  static const String referencePrefix = 'Ref: ';
+  static const String suffixThousand = 'k';
+  static const String suffixLakh = 'L';
+  static const String suffixCrore = 'Cr';
+
+  // Location & Address Selection
+  static const String selectDeliveryLocation = 'Select Delivery Location';
+  static const String usingGpsSubtitle = 'Using GPS to detect exact location';
+  static const String savedAddressesTitle = 'Saved Addresses';
+  static const String locationUpdated = 'Location updated';
+  static const String pleaseEnableLocationService =
+      'Please enable location service in device settings';
+  static const String deliveryLocationUpdated = 'Delivery location updated';
+  static const String starSymbol = '★ ';
+  static const String savePrefix = 'Save ';
+
+  // Voice Search & Microphone
+  static const String microphonePermissionDenied =
+      'Microphone permission is required for voice search';
+  static const String microphonePermissionDeniedForever =
+      'Microphone permission permanently denied. Please enable in settings.';
+  static const String voiceSearch = 'Voice Search';
+  static const String listeningForItems = 'Listening for items...';
+  static const String voiceSearchHint =
+      'Say "Potato", "Tomato", "Mango", or any grocery item';
+  static const String tapMicToStart = 'Tap mic to start speaking';
+  static const String tapMicToPause = 'Tap mic to pause';
+  static const String speechNotAvailable =
+      'Voice search is not available on this device';
+  static const String typeOrVoiceSearchHint =
+      'Type or use voice search to find products...';
+
+  // Map & Location Search
+  static const String searchLocationOrAddress = 'Search location or address...';
+  static const String searchingLocations = 'Searching locations...';
+  static const String noLocationsFound = 'No locations found';
+  static const String currentLocationLabel = 'Current Location';
+  static const String addressSavedAndSet = 'Address saved and set as current';
+  static const String zoomIn = 'Zoom In';
+  static const String zoomOut = 'Zoom Out';
+
+  // Location Permission & Device Settings Sheet
+  static const String deviceLocationOff = 'Device location is off';
+  static const String enableLocationTitle = 'Enable your location';
+  static const String enableLocationSubtitle =
+      'Turn on device location to see nearby stores, accurate delivery estimates, and available fresh products.';
+  static const String enableDeviceLocationButton = 'Enable Device Location';
+  static const String grantLocationPermissionButton =
+      'Grant Location Permission';
+  static const String selectLocationManually = 'Select Location Manually';
+  static const String locationBenefit1 =
+      'Discover stores delivering fresh produce in your area';
+  static const String locationBenefit2 =
+      'Accurate delivery time and live stock availability';
+
+  //Banner
+  static const String freshDealsBadge = 'FRESH DEALS';
+  static const String bannerHeadlineFallback = 'Up to 20% OFF';
+  static const String bannerSubtitleFallback =
+      'Fresh vegetables delivered today\nto your doorstep';
+
+  static const String freshBadgePercent = '100%';
+  static const String freshBadgeWord = 'Fresh';
+  static const String slash = '/';
 }

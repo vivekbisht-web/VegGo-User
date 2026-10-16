@@ -89,15 +89,18 @@ class HomeLiveSearchResults extends StatelessWidget {
                     final cat = categories[index];
                     return InkWell(
                       onTap: () {
-                        if (Get.isRegistered<CategoryController>()) {
-                          final catCtrl = Get.find<CategoryController>();
-                          final catIndex = catCtrl.categories.indexWhere(
-                            (c) => c.id == cat.id,
-                          );
-                          if (catIndex != -1) {
-                            catCtrl.selectCategory(catIndex);
-                          }
-                        }
+                        FocusScope.of(context).unfocus();
+                        searchController.clearSearch();
+
+                        final catCtrl = Get.isRegistered<CategoryController>()
+                            ? Get.find<CategoryController>()
+                            : Get.put(CategoryController());
+
+                        catCtrl.selectCategoryById(
+                          cat.id,
+                          fallbackCategory: cat,
+                        );
+
                         if (Get.isRegistered<DashboardController>()) {
                           Get.find<DashboardController>().changeTabIndex(1);
                         }

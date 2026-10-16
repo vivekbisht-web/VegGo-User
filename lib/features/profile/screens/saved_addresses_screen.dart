@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:vegon_user/core/constants/app_colors.dart';
 import 'package:vegon_user/core/constants/app_spacing.dart';
@@ -28,54 +27,67 @@ class SavedAddressesScreen extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: Obx(() {
-                if (controller.isFetching.value) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: AppColors.primary),
-                  );
-                }
+              child: RefreshIndicator(
+                color: AppColors.primary,
+                onRefresh: () => controller.fetchAddresses(),
+                child: Obx(() {
+                  if (controller.isFetching.value) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: AppColors.primary),
+                    );
+                  }
 
-                if (controller.addresses.isEmpty) {
-                  return Center(
-                    child: Text(
-                      AppStrings.noAddressesSaved,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  );
-                }
+                  if (controller.addresses.isEmpty) {
+                    return ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(
+                          height: AppSpacing.screenHeight * 0.5,
+                          child: Center(
+                            child: Text(
+                              AppStrings.noAddressesSaved,
+                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
 
-                return ListView(
-                  children: [
-                    ...controller.addresses.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      var address = entry.value;
-                      return Padding(
-                        padding: AppSpacing.paddingOnly(
-                          bottom: AppSpacing.screenWidth * 0.04,
+                  return ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      ...controller.addresses.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        var address = entry.value;
+                        return Padding(
+                          padding: AppSpacing.paddingOnly(
+                            bottom: AppSpacing.screenWidth * 0.04,
+                          ),
+                          child: _buildAddressCard(
+                            context,
+                            index: index,
+                            title: address.title,
+                            address: address.address,
+                            icon: address.icon,
+                            isDefault: address.isDefault,
+                          ),
+                        );
+                      }),
+                      AppSpacing.h24,
+                      Text(
+                        AppStrings.addAddressDesc,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.textSecondary,
                         ),
-                        child: _buildAddressCard(
-                          context,
-                          index: index,
-                          title: address.title,
-                          address: address.address,
-                          icon: address.icon,
-                          isDefault: address.isDefault,
-                        ),
-                      );
-                    }),
-                    AppSpacing.h24,
-                    Text(
-                      AppStrings.addAddressDesc,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondary,
                       ),
-                    ),
-                  ],
-                );
-              }),
+                    ],
+                  );
+                }),
+              ),
             ),
             CustomButton(
               text: AppStrings.addNewAddress,
@@ -134,7 +146,7 @@ class SavedAddressesScreen extends StatelessWidget {
                 Icon(icon, color: AppColors.primary),
                 AppSpacing.w8,
                 Text(
-                  "title",
+                  title,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -219,50 +231,98 @@ class SavedAddressesScreen extends StatelessWidget {
   }
 
   void _confirmDelete(BuildContext context, int index) {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radius16),
-        ),
-        title: Text(
-          AppStrings.delete,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: AppColors.textPrimary,
-          ),
-        ),
-        content: Text(
-          AppStrings.deleteAddressConfirmation,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Cancel',
-              style: Theme.of(
-                context,
-              ).textTheme.labelLarge?.copyWith(color: AppColors.textSecondary),
+    if (index < 0 || index >= controller.addresses.length) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        final RxBool isDeleting = false.obs;
+
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (didPop, _) {
+            if (didPop) return;
+            if (!isDeleting.value && dialogContext.mounted) {
+              Navigator.of(dialogContext).pop();
+            }
+          },
+          child: AlertDialog(
+            backgroundColor: AppColors.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppSpacing.radius16),
             ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              controller.deleteAddress(index);
-            },
-            child: Text(
+            title: Text(
               AppStrings.delete,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppColors.error,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
               ),
             ),
+            content: Text(
+              AppStrings.deleteAddressConfirmation,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
+            ),
+            actions: [
+              Obx(
+                () => TextButton(
+                  onPressed: isDeleting.value
+                      ? null
+                      : () {
+                          if (dialogContext.mounted) {
+                            Navigator.of(dialogContext).pop();
+                          }
+                        },
+                  child: Text(
+                    AppStrings.cancel,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: isDeleting.value
+                          ? AppColors.border
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ),
+              Obx(() {
+                if (isDeleting.value) {
+                  return const Padding(
+                    padding: AppSpacing.paddingHorizontal16,
+                    child: SizedBox(
+                      width: AppSpacing.radius16,
+                      height: AppSpacing.radius16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: AppSpacing.radius2,
+                        color: AppColors.error,
+                      ),
+                    ),
+                  );
+                }
+                return TextButton(
+                  onPressed: () async {
+                    isDeleting.value = true;
+                    try {
+                      await controller.deleteAddress(index);
+                    } finally {
+                      if (dialogContext.mounted) {
+                        Navigator.of(dialogContext).pop();
+                      }
+                    }
+                  },
+                  child: Text(
+                    AppStrings.delete,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: AppColors.error,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                );
+              }),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

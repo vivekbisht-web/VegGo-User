@@ -1,4 +1,3 @@
-//
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
@@ -36,13 +35,14 @@ class HomeBestDeals extends StatelessWidget {
         return _buildShimmerGrid();
       }
 
-      final deals = homeController.bestDeals;
+      final deals = homeController.bestDeals.take(6).toList();
       if (deals.isEmpty) {
         return const SizedBox.shrink();
       }
 
       return GridView.builder(
         shrinkWrap: true,
+        padding: AppSpacing.paddingZero,
         physics: const NeverScrollableScrollPhysics(),
         itemCount: deals.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -58,9 +58,20 @@ class HomeBestDeals extends StatelessWidget {
           final original = (item.originalPrice ?? (item.price * 1.25)).toInt();
           final name = item.name;
           final unit = item.unit;
-          final discountTag = item.discountPercent > 0
-              ? '${item.discountPercent}% OFF'
-              : AppStrings.off20Percent;
+          final calculatedDiscount =
+              (item.originalPrice != null &&
+                  item.originalPrice! > item.price &&
+                  item.originalPrice! > 0)
+              ? (((item.originalPrice! - item.price) / item.originalPrice!) *
+                        100)
+                    .round()
+              : 0;
+          final effectivePercent = item.discountPercent > 0
+              ? item.discountPercent
+              : calculatedDiscount;
+          final String? discountTag = effectivePercent > 0
+              ? '$effectivePercent${AppStrings.percentOffSuffix}'
+              : (item.bestSeller ? AppStrings.bestSeller : null);
 
           return Material(
             color: AppColors.surface,
@@ -150,8 +161,8 @@ class HomeBestDeals extends StatelessWidget {
                                             '${AppStrings.rupeeSymbol}$original',
                                             style: textTheme.bodySmall
                                                 ?.copyWith(
-                                                  color: AppColors
-                                                      .strikethrough,
+                                                  color:
+                                                      AppColors.strikethrough,
                                                   decoration: TextDecoration
                                                       .lineThrough,
                                                   fontSize: 10.5,
@@ -166,8 +177,9 @@ class HomeBestDeals extends StatelessWidget {
                                     shape: const CircleBorder(),
                                     child: InkWell(
                                       customBorder: const CircleBorder(),
-                                      onTap: () =>
-                                          cartController.addToCart(productMap),
+                                      onTap: () {
+                                        cartController.addToCart(productMap);
+                                      },
                                       child: const SizedBox(
                                         width: AppSpacing.addCircleButtonSize,
                                         height: AppSpacing.addCircleButtonSize,
@@ -187,14 +199,14 @@ class HomeBestDeals extends StatelessWidget {
                       ],
                     ),
 
-                    if (item.discountPercent > 0)
+                    if (discountTag != null)
                       Positioned(
                         top: AppSpacing.radius8,
                         left: AppSpacing.radius8,
                         child: Container(
                           padding: AppSpacing.paddingSymmetric(
                             horizontal: AppSpacing.radius8,
-                            vertical: 3,
+                            vertical: AppSpacing.radius2,
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.bannerDarkGreen,
@@ -225,14 +237,20 @@ class HomeBestDeals extends StatelessWidget {
                           ),
                           customBorder: const CircleBorder(),
                           child: Container(
-                            width: 26,
-                            height: 26,
+                            width: 28,
+                            height: 28,
                             decoration: BoxDecoration(
-                              color: AppColors.surface.withValues(alpha: 0.9),
+                              color: AppColors.surface,
                               shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.chipBorder,
+                                width: 0.8,
+                              ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColors.textPrimary.withValues(alpha: 0.08),
+                                  color: AppColors.overlayLight.withValues(
+                                    alpha: 0.12,
+                                  ),
                                   blurRadius: 4,
                                   offset: const Offset(0, 1),
                                 ),
@@ -244,8 +262,8 @@ class HomeBestDeals extends StatelessWidget {
                                   : Icons.favorite_border_rounded,
                               color: isFav
                                   ? AppColors.error
-                                  : AppColors.borderLight,
-                              size: 15,
+                                  : AppColors.textSecondary,
+                              size: 17,
                             ),
                           ),
                         );
