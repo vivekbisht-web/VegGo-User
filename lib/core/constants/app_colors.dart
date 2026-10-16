@@ -141,4 +141,16 @@ abstract final class AppColors {
 
   static const quantityBorder = Color(0xFFD1D5DB);
   static const overlayDark = Color(0xB3000000);
+
+  // ─────────────────────────────────────────────
+  // Complaints
+  // ─────────────────────────────────────────────
+
+  static const complaintPendingBg = Color(0xFFFFF8E1);
+  static const complaintPendingText = Color(0xFFF57F17);
+  static const complaintResolvedBg = Color(0xFFE8F5E9);
+  static const complaintResolvedText = Color(0xFF2E7D32);
+  static const complaintReopenedBg = Color(0xFFE3F2FD);
+  static const complaintReopenedText = Color(0xFF1565C0);
 }
+

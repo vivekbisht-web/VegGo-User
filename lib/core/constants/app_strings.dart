@@ -1120,4 +1120,70 @@ class AppStrings {
   static const String freshBadgePercent = '100%';
   static const String freshBadgeWord = 'Fresh';
   static const String slash = '/';
+
+  // ─── Complaints ───────────────────────────────
+  static const String myComplaints = 'My Complaints';
+  static const String fileComplaint = 'File a Complaint';
+  static const String noComplaintsYet = 'No complaints yet';
+  static const String noComplaintsDesc =
+      'If you face any issue with an order or product, raise a complaint here.';
+  static const String complaintCategory = 'Category';
+  static const String complaintTitle = 'Title';
+  static const String complaintDescription = 'Description';
+  static const String complaintAttachments = 'Attachments (optional)';
+  static const String complaintSubmit = 'Submit Complaint';
+  static const String complaintSubmitting = 'Submitting...';
+  static const String complaintSubmitSuccess = 'Complaint submitted successfully';
+  static const String complaintSubmitFailed = 'Failed to submit complaint';
+  static const String complaintDetails = 'Complaint Details';
+  static const String complaintTicketNumber = 'Ticket #';
+  static const String complaintStatusPending = 'Pending';
+  static const String complaintStatusResolved = 'Resolved';
+  static const String complaintStatusReopened = 'Reopened';
+  static const String complaintStatusUnknown = 'Unknown';
+  static const String complaintReopenBtn = 'Reopen Complaint';
+  static const String complaintReopenReason = 'Reason for reopening';
+  static const String complaintReopenReasonHint =
+      'Explain why you are reopening this complaint...';
+  static const String complaintReopenSubmit = 'Submit Reopen Request';
+  static const String complaintReopenSuccess = 'Complaint reopened successfully';
+  static const String complaintReopenFailed = 'Failed to reopen complaint';
+  static const String complaintReopenCannotMsg =
+      'Only resolved complaints can be reopened';
+  static const String complaintEnterTitle = 'Please enter a title';
+  static const String complaintEnterDesc = 'Please enter a description';
+  static const String complaintSelectCategory = 'Please select a category';
+  static const String complaintEnterReopenReason = 'Please enter a reason';
+  static const String complaintFilterAll = 'All';
+  static const String complaintFilterPending = 'Pending';
+  static const String complaintFilterResolved = 'Resolved';
+  static const String complaintFilterReopened = 'Reopened';
+  static const String complaintCreatedOn = 'Created on';
+  static const String complaintUpdatedOn = 'Updated on';
+  static const String complaintAddPhoto = 'Add Photo';
+  static const String complaintLoadFailed = 'Failed to load complaints';
+  static const String complaintRaiseNew = 'Raise a Complaint';
+  static const String complaintSupportEntry = 'Raise a Complaint';
+  static const String complaintSupportDesc =
+      'Have an issue? Let us know and we\'ll resolve it quickly.';
+
+  // Complaint categories (display labels)
+  static const String catOrderIssue = 'Order Issue';
+  static const String catPaymentIssue = 'Payment Issue';
+  static const String catDeliveryIssue = 'Delivery Issue';
+  static const String catProductQuality = 'Product Quality';
+  static const String catAppIssue = 'App Issue';
+  static const String catAccountIssue = 'Account Issue';
+  static const String catVendorBehavior = 'Vendor Behavior';
+  static const String catDeliveryBehavior = 'Delivery Partner Behavior';
+  static const String catWrongItem = 'Wrong Item';
+  static const String catMissingItem = 'Missing Item';
+  static const String catPricingIssue = 'Pricing Issue';
+  static const String catOther = 'Other';
+
+  static const String complaintTrackStatus = 'Track & view tickets';
+  static const String complaintFileNewDesc = 'Register a new grievance';
 }
+
+
+

@@ -48,4 +48,10 @@ class AppRoutes {
   static const String contactSupport = '/contact-support';
   static const String termsPrivacy = '/terms-privacy';
   static const String notFound = '/not-found';
+
+  // Complaints
+  static const String myComplaints = '/my-complaints';
+  static const String fileComplaint = '/file-complaint';
+  static const String complaintDetails = '/complaint-details';
 }
+

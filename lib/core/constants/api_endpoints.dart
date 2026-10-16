@@ -60,4 +60,10 @@ class ApiEndpoints {
   static const String notificationsReadAll = '/notifications/read-all';
   static String markNotificationRead(String id) => '/notifications/$id/read';
   static const String deviceToken = '/notifications/device-token';
+
+  // Complaint endpoints
+  static const String complaints = '/complaints';
+  static const String myComplaints = '/complaints/my';
+  static String complaintDetails(String id) => '/complaints/$id';
+  static String reopenComplaint(String id) => '/complaints/$id/reopen';
 }

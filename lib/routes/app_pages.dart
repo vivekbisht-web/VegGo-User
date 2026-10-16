@@ -58,6 +58,10 @@ import '../features/profile/screens/notifications_settings_screen.dart';
 import '../features/profile/screens/help_center_screen.dart';
 import '../features/profile/screens/contact_support_screen.dart';
 import '../features/profile/screens/terms_privacy_screen.dart';
+import '../features/complaints/screens/my_complaints_screen.dart';
+import '../features/complaints/screens/file_complaint_screen.dart';
+import '../features/complaints/screens/complaint_details_screen.dart';
+import '../features/complaints/controllers/complaint_controller.dart';
 
 class AppPages {
   AppPages._();
@@ -242,6 +246,27 @@ class AppPages {
     GetPage(
       name: AppRoutes.termsPrivacy,
       page: () => const TermsPrivacyScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.myComplaints,
+      page: () => const MyComplaintsScreen(),
+      binding: BindingsBuilder(() {
+        Get.put(ComplaintController());
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.fileComplaint,
+      page: () => const FileComplaintScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<ComplaintController>(() => ComplaintController(), fenix: true);
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.complaintDetails,
+      page: () => const ComplaintDetailsScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<ComplaintController>(() => ComplaintController(), fenix: true);
+      }),
     ),
   ];
 }
